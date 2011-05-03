@@ -203,4 +203,53 @@ Mem = (Shadow & ~0x20000000) << 3
 Bad = Shadow * 4;
 }}}
 
+= Run-time library =
+The run-time library replaces `malloc`, `free` and similar functions and sets SEGV handler.
+
+`malloc` allocates the requested amount of memory with redzones around it.
+The shadow values corresponding to the redzones are poisoned
+and the shadow values for the main memory region are cleared.
+
+`free` poisons shadow values for the entire region and puts the chunk of memory
+into a quarantine queue (such that this chunk
+will not be returned again by malloc during some period of time).
+
+SEGV handler checks if the address of the failed access lies in the `Bad` memory region.
+If it does, the error message is printed.
+
+
+==Unwinding stack==
+... is a problem.
+We need to get the stack trace for every `malloc` and `free`.
+Using libunwind appears to be very slow.
+
+
+==Symbolising stack==
+... is a problem too.
+Currently `addr2line` postprocessing is used.
+
+= Example =
+The following is an example of use-after free error:
+{{{
+==818== ERROR: AddressSanitizer crashed on address 0x00000800029155e0 at pc 0x00408350
+WRITE of size 1 at 0x00000800029155e0; shadow: 0x000004000148ab30; mem: 0x000000000148aaf0 thread: 0x8917a720
+    #0 0x00408350  << void asan_write<unsigned char>(unsigned char*)  asan_test.cc:21
+    #1 0x7fc588b4992a
+    #2 0x7fc588b49a28
+    #3 0x7fc588b49adb
+    #4 0x7fc588b4dcfd
+    #5 0x00407bce  << main  asan_test.cc:288
+ 0x000000000148aaf0 is the address located 0 bytes inside of region:
+[0x000000000148aaf0,0x000000000148aafa) -- allocated memory of 0xa (10) bytes
+[0x000000000148aaa0,0x000000000148aaf0) -- left red zone
+[0x000000000148aafa,0x000000000148ab4a) -- right red zone
+freed by thread 0x8917a720 here:
+    #0 0x00411e6b  << free  asan_rtl.cc:1025
+    #1 0x00407cc9  << free_ccc(void*)  asan_test.cc:46
+    #2 0x00407ce9  << free_bbb(void*)  asan_test.cc:48
+previously allocated by thread 0x8917a720 here:
+    #0 0x004107c7  << malloc  asan_rtl.cc:1018
+    #1 0x00407be6  << malloc_fff(unsigned long)  asan_test.cc:33
+    #2 0x00407c06  << malloc_eee(unsigned long)  asan_test.cc:35
+}}}
 
