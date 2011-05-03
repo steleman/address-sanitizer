@@ -1,1 +1,21 @@
 #summary AddressSanitizer algorithm
+
+=Short version=
+The run-time library replaces the `malloc` and `free` functions.
+The memory around malloc-ed regions (red zones) is poisoned. 
+The `free`-ed memory is placed in quarantine and also poisoned.
+Every memory access in the program is transformed by the compiler in the following way:
+
+Before:
+{{{
+*a = 0;
+}}}
+After:
+{{{
+if (Poisoned(a) {
+  GeneratePageFault(a);
+}
+*a = 0;
+}}}
+
+The tricky part is how to implement `Poisoned` very fast.
