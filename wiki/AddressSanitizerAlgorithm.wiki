@@ -121,7 +121,7 @@ d:    48 b9 ff ff ff ff ff    mov    $0xffff9fffffffffff,%rcx
 24:   c7 07 01 00 00 00       movl   $0x1,(%rdi)          <<< original instruction
 }}}
 
-==64 bit compact==
+==Compact mapping==
 Byte-to-byte correspondence between the main and the shadow memory 
 introduces 2x memory overhead. It is desirable to have more compact byte-to-bit correspondence
 or, in fact, *qword-to-byte correspondence* (i.e. one 8-byte qword of the main memory corresponds
@@ -138,7 +138,26 @@ The only case where different bytes of an aligned qword have different state is 
 a malloc-ed region. For example, if we call `malloc(13)`, we will have one full unpoisoned
 qword and one qword where 5 first bytes are unpoisoned.
 
+For the compact mapping the instrumentation look like this:
+{{{
+byte *shadow_address = MemToShadow(address);
+byte shadow_value = *shadow_address;
+if (shadow_value) {
+  if (SlowPathCheck(shadow_value, address, kAccessSize)) {
+    char *bad_address = ShadowToBad(shadow_address);
+    *bad_address = kAccessSize + 16 * kAccessIsWrite;
+  }
+}
+}}}
 
+{{{
+// Check the cases where we access first k bytes of the qword
+// and these k bytes are unpoisoned.
+bool SlowPathCheck(shadow_value, address, kAccessSize) {
+  last_addressed_byte = (address & 7) + kAccessSize;
+  return last_addressed_byte > shadow_value);
+}
+}}}
 
-
+==64-bit compact==
 ==32 bit==
