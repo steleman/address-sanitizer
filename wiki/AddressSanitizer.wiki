@@ -20,7 +20,7 @@ See also:
   * AddressSanitizerAlgorithm
 
 = Example =
-The following is an example of use-after free error message:
+The following is an example of use-after-free error message:
 {{{
 ==818== ERROR: AddressSanitizer crashed on address 0x00000800029155e0 at pc 0x00408350
 WRITE of size 1 at 0x00000800029155e0; shadow: 0x000004000148ab30; mem: 0x000000000148aaf0 thread: 0x8917a720
