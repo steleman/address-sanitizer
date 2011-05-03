@@ -8,14 +8,45 @@ Every memory access in the program is transformed by the compiler in the followi
 
 Before:
 {{{
-*a = 0;
+*address = 0;
 }}}
 After:
 {{{
-if (Poisoned(a) {
-  GeneratePageFault(a);
+if (IsPoisoned(address) {
+  GeneratePageFault(address);
 }
-*a = 0;
+*address = 0;
 }}}
 
 The tricky part is how to implement `Poisoned` very fast.
+
+
+=Memory mapping=
+The virtual address space is divided into 3 disjoint classes:
+  * Main application memory (`Mem`): this memory is used by the regular application code.
+  * Shadow memory (`Shadow`): this memory contains the shadow values (or metadata). There is a correspondence between the shadow and the main application memory. *Poisoning* a byte in the main memory means writing some special value into the corresponding shadow memory.
+  * Bad unmapped memory (`Bad`): access to this memory causes SEGV.
+
+These 3 classes of memory should be organized in such a way that 
+`MemToShadow` and `ShadowToBad` are fast and reversible 
+(i.e. it is possible to implement `ShadowToMem` and `BadToShadow`).
+
+The instrumentation performed by the compiler:
+{{{
+shadow_address = MemToShadow(address);
+if (IsPoisoned(shadow_address)) {
+  bad_address = ShadowToMem(shadow_address);
+  *bad_address = kAccessSize + 16 * kAccessIsWrite;
+}
+}}}
+
+Once the page fault happens and SEGV is caught, we have the PC and the address 
+where the fault occurred.
+The failing address is `bad_address`, which allows us to compute `ShadowToMem(BadToShadow(bad_address))`
+and provide the information about the original application address (e.g. where it has been allocated or deallocated). The PC allows us to disassemble the failing instruction 
+and extract `kAccessSize` and `kAccessIsWrite` (on x86 they are encoded as one of the instruction bytes).
+
+==64 bit==
+
+
+==32 bit==
