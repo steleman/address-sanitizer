@@ -74,6 +74,7 @@ ShadowToBad(Shadow) {
 BadToShadow(Bad{
   return Bad / 2;
 }
+}}}
 
 These functions create a one-byte-to-one-byte correspondence between the main and the shadow memory. The mapping looks like this:
 || `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
