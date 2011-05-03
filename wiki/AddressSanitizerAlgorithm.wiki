@@ -129,14 +129,16 @@ to one byte of shadow memory) because bits are not addressable and extracting bi
 
 It should be noted, that there are only 9 different values for 
 a shadow byte in qword-to-byte mapping:
-  * All 8 bytes in qword is unpoisoned (i.e. addressible)
-  * All 8 bytes in qword are poisoned (i.e. not addressible)
-  * First `k` bytes are unpoisoned, the rest are poisoned. 
+  * All 8 bytes in qword is unpoisoned (i.e. addressible). The shadow byte is 0.
+  * All 8 bytes in qword are poisoned (i.e. not addressible). The shadow byte is 8 or any larger value.
+  * First `k` bytes are unpoisoned, the rest are poisoned. The shadow byte is `k`.
 
 This is guaranteed by the fact that `malloc` returns 8-byte aligned chunks of memory.
 The only case where different bytes of an aligned qword have different state is the tail of 
 a malloc-ed region. For example, if we call `malloc(13)`, we will have one full unpoisoned
 qword and one qword where 5 first bytes are unpoisoned.
+
+
 
 
 ==32 bit==
