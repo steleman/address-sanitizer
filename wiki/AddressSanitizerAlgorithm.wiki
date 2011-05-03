@@ -75,9 +75,7 @@ BadToShadow(Bad{
   return Bad / 2;
 }
 
-These functions create a one-byte-to-one-byte correspondence 
-between the main and the shadow memory.
-The mapping looks like this:
+These functions create a one-byte-to-one-byte correspondence between the main and the shadow memory. The mapping looks like this:
 || `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 || `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
 || `[0x0000080000000000, 0x0000100000000000)` || `LowBad`     ||
@@ -85,8 +83,7 @@ The mapping looks like this:
 || `[0x00003e0000000000, 0x0000400000000000)` || `HighBad`    ||
 || `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
 
-Poisoning a byte in main memory means writing a non-zero value into 
-the corresponding shadow value. The instrumentation looks like this:
+Poisoning a byte in main memory means writing a non-zero value into the corresponding shadow value. The instrumentation looks like this:
 {{{
 // BEFORE
 void write(int *a) {
