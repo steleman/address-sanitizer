@@ -76,7 +76,7 @@ BadToShadow(Bad{
 }
 }}}
 
-These functions create a one-byte-to-one-byte correspondence between the main and the shadow memory. The mapping looks like this:
+These functions create a byte-to-byte correspondence between the main and the shadow memory. The mapping looks like this:
 || `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 || `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
 || `[0x0000080000000000, 0x0000100000000000)` || `LowBad`     ||
@@ -120,5 +120,22 @@ d:    48 b9 ff ff ff ff ff    mov    $0xffff9fffffffffff,%rcx
 20:   c6 04 09 14             movb   $0x14,(%rcx,%rcx,1)  <<< kAccessIsWrite and kAccessSize
 24:   c7 07 01 00 00 00       movl   $0x1,(%rdi)          <<< original instruction
 }}}
+
+==64 bit compact==
+Byte-to-byte correspondence between the main and the shadow memory 
+introduces 2x memory overhead. It is desirable to have more compact byte-to-bit correspondence
+or, in fact, *qword-to-byte correspondence* (i.e. one 8-byte qword of the main memory corresponds
+to one byte of shadow memory) because bits are not addressable and extracting bits might be slow. 
+
+It should be noted, that there are only 9 different values for 
+a shadow byte in qword-to-byte mapping:
+  * All 8 bytes in qword is unpoisoned (i.e. addressible)
+  * All 8 bytes in qword are poisoned (i.e. not addressible)
+  * First `k` bytes are unpoisoned, the rest are poisoned. 
+This is guaranteed by the fact that `malloc` returns 8-byte aligned chunks of memory. 
+The only case where different bytes of an aligned qword have different state is the tail of 
+a malloc-ed region. For example, if we call `malloc(13)`, we will have one full unpoisoned
+qword and one qword where 5 first bytes are unpoisoned.
+
 
 ==32 bit==
