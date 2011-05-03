@@ -14,7 +14,7 @@ The key advantage of this tool is that it is very fast (< 2x slowdown in most ca
 The tool consists of a compiler instrumentation module (currently, uses LLVM plugin)
 and a run-time library which replaces the `malloc` function. 
 
-The tool is in early stage of development but it can already run the Chromium browser (on Linux) and find bugs in it. 
+The tool is in early stage of development but it already can run the Chromium browser (on Linux) and find bugs in it.
 
 See also: 
   * AddressSanitizerAlgorithm

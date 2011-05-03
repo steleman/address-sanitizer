@@ -8,17 +8,17 @@ Every memory access in the program is transformed by the compiler in the followi
 
 Before:
 {{{
-*address = 0;
+*address = ...;
 }}}
 After:
 {{{
 if (IsPoisoned(address) {
   GeneratePageFault(address);
 }
-*address = 0;
+*address = ...;
 }}}
 
-The tricky part is how to implement `Poisoned` very fast.
+The tricky part is how to implement `IsPoisoned` very fast.
 
 
 =Memory mapping=
@@ -47,6 +47,80 @@ and provide the information about the original application address (e.g. where i
 and extract `kAccessSize` and `kAccessIsWrite` (on x86 they are encoded as one of the instruction bytes).
 
 ==64 bit==
+On 64-bit Linux, the virtual address space is usually divided into 
+two parts, `LowMem` and `HighMem`. `LowMem` starts from 0. `HighMem` ends with `2^48`.
+We can also declare (almost arbitrary) upper bound for `LowMem` and lower bound for `HighMem`.
+|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
+|| `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
 
+The simplest mapping functions are as follows:
+{{{
+kLowShadowMask  = 0x0000040000000000;
+kHighShadowMask = 0x0000600000000000;
+MemToShadow(Mem) {
+  return = Mem | kLowShadowMask & ~kHighShadowMask;
+}
+
+ShadowToMem(Shadow)
+  return (Shadow < kLowShadowMask *2)
+         ? (Shadow & ~kLowShadowMask)
+         : (Shadow | kHighShadowMask);
+}
+
+ShadowToBad(Shadow) {
+  return Shadow * 2;
+}
+
+BadToShadow(Bad{
+  return Bad / 2;
+}
+
+These functions create a one-byte-to-one-byte correspondence 
+between the main and the shadow memory.
+The mapping looks like this:
+|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
+|| `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
+|| `[0x0000080000000000, 0x0000100000000000)` || `LowBad`     ||
+|| `[0x00001f0000000000, 0x0000200000000000)` || `HighShadow` ||
+|| `[0x00003e0000000000, 0x0000400000000000)` || `HighBad`    ||
+|| `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
+
+Poisoning a byte in main memory means writing a non-zero value into 
+the corresponding shadow value. The instrumentation looks like this:
+{{{
+// BEFORE
+void write(int *a) {
+  *a = 0;
+}
+}}}
+{{{
+// AFTER (64 bit)
+void write(int *a) {
+  uintptr_t shadow_address = (uintptr_t)a;
+  shadow_address |=  0x0000040000000000;
+  shadow_address &= ~0x0000600000000000;
+  shadow_address += 64; // to avoid cache bank conflicts.
+  if (*(int*)(shadow_address)) {
+    char *bad_address = (char*)(shadow_address * 2);
+    *bad_address = kAccessSize + 16 * kAccessIsWrite;
+  }
+  *a = 0;
+}
+}}}
+
+Example of instrumented code:
+{{{
+// 64 bit
+0:    48 b8 00 00 00 00 00    mov    $0x40000000000,%rax
+7:    04 00 00
+a:    48 09 f8                or     %rdi,%rax
+d:    48 b9 ff ff ff ff ff    mov    $0xffff9fffffffffff,%rcx
+14:   9f ff ff
+17:   48 21 c1                and    %rax,%rcx            
+1a:   83 79 40 00             cmpl   $0x0,0x40(%rcx)      <<< %rcx is the shadow address
+1e:   74 04                   je     24 <write_int_1+0x24>
+20:   c6 04 09 14             movb   $0x14,(%rcx,%rcx,1)  <<< kAccessIsWrite and kAccessSize
+24:   c7 07 01 00 00 00       movl   $0x1,(%rdi)          <<< original instruction
+}}}
 
 ==32 bit==
