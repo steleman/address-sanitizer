@@ -1,3 +1,21 @@
 #summary AddressSanitizer: a fast memory error detector
 
-*UNDER CONSTRUCTION*
+=Introduction=
+
+Many tools for finding memory bugs exist. <BR>
+[http://www.valgrind.org Valgrind], [http://code.google.com/p/drmemory/ DrMemory],
+[http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap], 
+[http://en.wikipedia.org/wiki/Electric_Fence  Electric Fence], Purify, Intel Inspector are among them. 
+All these tools share the same problem -- they are slow. 
+
+We propose a new tool called AddressSanitizer (*asan*) which finds 
+*out-of-bound* and *use-after-free* bugs (a subset of bugs detectable by Valgrind).
+The key advantage of this tool is that it is very fast (< 2x slowdown in most cases).
+The tool consists of a compiler instrumentation module (currently, uses LLVM plugin)
+and a run-time library which replaces the `malloc` function. 
+
+The tool is in early stage of development but it can already run the Chromium browser (on Linux) and find bugs in it. 
+
+See also: 
+  * AddressSanitizerAlgorithm
+
