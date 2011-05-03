@@ -208,6 +208,7 @@ Bad = Shadow * 4;
 }}}
 
 = Run-time library =
+==Malloc==
 The run-time library replaces `malloc`, `free` and similar functions and sets SEGV handler.
 
 `malloc` allocates the requested amount of memory with redzones around it.
