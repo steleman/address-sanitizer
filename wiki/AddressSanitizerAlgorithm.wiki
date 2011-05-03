@@ -1,5 +1,7 @@
 #summary AddressSanitizer algorithm
 
+<wiki:toc max_depth="3" />
+
 =Short version=
 The run-time library replaces the `malloc` and `free` functions.
 The memory around malloc-ed regions (red zones) is poisoned. 
@@ -46,7 +48,7 @@ The failing address is `bad_address`, which allows us to compute `ShadowToMem(Ba
 and provide the information about the original application address (e.g. where it has been allocated or deallocated). The PC allows us to disassemble the failing instruction 
 and extract `kAccessSize` and `kAccessIsWrite` (on x86 they are encoded as one of the instruction bytes).
 
-==64 bit==
+==Full mapping==
 On 64-bit Linux, the virtual address space is usually divided into 
 two parts, `LowMem` and `HighMem`. `LowMem` starts from 0. `HighMem` ends with `2^48`.
 We can also declare (almost arbitrary) upper bound for `LowMem` and lower bound for `HighMem`.
@@ -159,7 +161,7 @@ bool SlowPathCheck(shadow_value, address, kAccessSize) {
 }
 }}}
 
-==64-bit compact==
+===64-bit compact===
 || `[0x0000000000000000, 0x0000008000000000)` || `LowMem`     ||
 || `[0x0000100000000000, 0x0000101000000000)` || `LowShadow`  ||
 || `[0x0000200000000000, 0x0000202000000000)` || `LowBad`     ||
@@ -172,7 +174,9 @@ Shadow = (Mem >> 3) | 0x0000100000000000;
 Bad = Shadow * 2
 }}}
 
-==32 bit==
+===32 bit===
+The 32-bit address space is scarce, full (byte-to-byte) mapping seems to be
+impossible to implement reasonably fast.
 
 Regular Linux 32-bit address space:
 
