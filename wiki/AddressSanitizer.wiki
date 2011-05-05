@@ -16,8 +16,9 @@ and a run-time library which replaces the `malloc` function.
 
 The tool is in early stage of development but it already can run the Chromium browser (on Linux) and find bugs in it.
 
-See also: 
-  * AddressSanitizerAlgorithm
+See also:
+  * AddressSanitizerAlgorithm -- if you are curious how it works.
+  * ToDo -- if you want to help.
 
 =Building AddressSanitizer=
 The following will build the modified `clang` binary and run tests.
