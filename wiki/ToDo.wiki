@@ -1,0 +1,11 @@
+#summary TODO items for AddressSanitizer
+
+TODO items in no particular order:
+
+  * Port AddressSanitizer RTL to Mac. 
+  * Implement GCC instrumentation pass.
+  * Implement compiler analysis to minimize instrumentation (i.e. do not instrument memory accesses which can be statically proven to be safe.
+  * Improve the clang driver support (make clang add the correct libraries automagically)
+  * Post the cpu2006 results.
+  * Implement in-process symbolizer.
+  * Implement faster stack unwinding. 
