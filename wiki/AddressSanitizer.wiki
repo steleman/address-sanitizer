@@ -11,13 +11,26 @@ All these tools share the same problem -- they are slow.
 We propose a new tool called AddressSanitizer (*asan*) which finds 
 *out-of-bound* and *use-after-free* bugs (a subset of bugs detectable by Valgrind).
 The key advantage of this tool is that it is very fast (< 2x slowdown in most cases).
-The tool consists of a compiler instrumentation module (currently, uses LLVM plugin)
+The tool consists of a compiler instrumentation module (currently, an LLVM pass)
 and a run-time library which replaces the `malloc` function. 
 
 The tool is in early stage of development but it already can run the Chromium browser (on Linux) and find bugs in it.
 
 See also: 
   * AddressSanitizerAlgorithm
+
+=Building AddressSanitizer=
+The following will build the modified `clang` binary and run tests.
+Getting and building LLVM/Clang will take some time.
+{{{
+svn checkout http://address-sanitizer.googlecode.com/svn/trunk/ address-sanitizer
+cd address-sanitizer
+./llvm/get_clang.sh
+./llvm/patch_clang.sh
+./llvm/build_clang.sh
+cd asan
+make -j && ./asan_test32 && ./asan_test64 && ./asan_test64full
+}}}
 
 = Example =
 The following is an example of use-after-free error message:
