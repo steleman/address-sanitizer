@@ -161,6 +161,15 @@ bool SlowPathCheck(shadow_value, address, kAccessSize) {
 }
 }}}
 
+The compact mapping uses less memory, but has more code on the slow path.
+Also the compact mapping will not catch unaligned partially out-of-bound accesses:
+{{{
+  int *x = new int;  // allocates 4 bytes:   [0,4).
+  int *unaligned = (int*)((char*)x + 2);
+  // This is an out-of-bound access of range [2-6),
+  *unaligned = 1;
+}}}
+
 ===64-bit compact===
 || `[0x0000000000000000, 0x0000008000000000)` || `LowMem`     ||
 || `[0x0000100000000000, 0x0000101000000000)` || `LowShadow`  ||
@@ -232,3 +241,13 @@ Using libunwind appears to be very slow.
 ==Symbolising stack==
 ... is a problem too.
 Currently `addr2line` postprocessing is used.
+
+=Misc=
+==In-Memory poisoning==
+It is possible to poison the memory itself instead of using
+shadow memroy. This will make the instrumentation even cheaper,
+but may require more sophisticated run-time library
+and may appear more fragile.
+
+
+
