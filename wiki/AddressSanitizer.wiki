@@ -53,11 +53,16 @@ int main() {
 % ASAN_LIB=libasan64.a ../clang_build/Release+Asserts/bin/clang -O2 -g   use-after-free.c
 }}}
 
+Currently, AddressSanitizer uses an external symbolizer. 
+You need to define an environment variable to use it: 
+{{{
+export ASAN_FILTER="../scripts/asan_symbolize.py"
+}}}
+
 Now, run the executable.
-Filter the output through `asan_symbolize.py` script to get symbolized reports.
 
 {{{
-% ./a.out 2>&1 | ../scripts/asan_symbolize.py /asan/
+% ./a.out
 ==22420== ERROR: AddressSanitizer crashed on address 0x0000200000703c18 at pc 0x401947
 READ of size 1 at 0x0000200000703c18; shadow: 0x0000100000381e0c; mem: 0x0000000001c0f065 thread: 0x787d4720
     #0 0x401947 main use-after-free.c:5
