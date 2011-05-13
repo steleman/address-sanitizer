@@ -41,33 +41,38 @@ So far, AddressSanitizer has been tested only on Linux Ubuntu 10.04, 64-bit
 
 = Using AddressSanitizer =
 In order to use AddressSanitizer you will need to build your program
-with the modified `clang` binary and link against the run-time library (as well as few other libraries).
+with the modified `clang` binary and tell it where the run-time library resides.
 {{{
 % cat use-after-free.c
 #include <stdlib.h>
 int main() {
-  char *x = malloc(10 * sizeof(char*));
+  char *x = (char*)malloc(10 * sizeof(char*));
   free(x);
   return x[5];
 }
-% ../clang_build/Debug+Asserts/bin/clang -O2  use-after-free.c asan_rtl64.a -lpthread -lstdc++
-% ./a.out
-==1067== ERROR: AddressSanitizer crashed on address 0x0000200000607818 at pc 0x4013e7
-READ of size 1 at 0x0000200000607818; shadow: 0x0000100000303c0c; mem: 0x000000000181e065 thread: 0x2d7d8720
-PC: 0x00000000004013e7: c6 04 00 01 0f be 03 48
-    #0 0x4013e7
-    #1 0x7f652cb33c4d (/lib/libc-2.11.1.so+0x1ec4d)
-    #2 0x4012d9
- 0x000000000181e065 is the address located 5 bytes inside of region:
-[0x000000000181e060,0x000000000181e0b0) -- allocated memory of 0x50 (80) bytes
-freed by thread 0x2d7d8720 here:
-    #0 0x404cc9
-    #1 0x4013bb
-    #2 0x7f652cb33c4d (/lib/libc-2.11.1.so+0x1ec4d)
-    #3 0x4012d9
-previously allocated by thread 0x2d7d8720 here:
-    #0 0x4062e5
-    #1 0x4013b0
-    #2 0x7f652cb33c4d (/lib/libc-2.11.1.so+0x1ec4d)
-    #3 0x4012d9
+% ASAN_LIB=libasan64.a ../clang_build/Release+Asserts/bin/clang -O2 -g   use-after-free.c
+}}}
+
+Now, run the executable.
+Filter the output through `asan_symbolize.py` script to get symbolized reports.
+
+{{{
+% ./a.out 2>&1 | ../scripts/asan_symbolize.py /asan/
+==22420== ERROR: AddressSanitizer crashed on address 0x0000200000703c18 at pc 0x401947
+READ of size 1 at 0x0000200000703c18; shadow: 0x0000100000381e0c; mem: 0x0000000001c0f065 thread: 0x787d4720
+    #0 0x401947 main use-after-free.c:5
+    #1 0x7ff87792cc4d __libc_start_main ??:0
+    #2 0x401839 _start ??:0
+ 0x0000000001c0f065 is the address located 5 bytes inside of region:
+[0x0000000001c0f060,0x0000000001c0f0b0) -- allocated memory of 0x50 (80) bytes
+freed by thread 0x787d4720 here:
+    #0 0x404b9b free asan_rtl.cc:1203
+    #1 0x40191b main use-after-free.c:5
+    #2 0x7ff87792cc4d __libc_start_main ??:0
+    #3 0x401839 _start ??:0
+previously allocated by thread 0x787d4720 here:
+    #0 0x405c27 malloc asan_rtl.cc:1196
+    #1 0x401910 main use-after-free.c:3
+    #2 0x7ff87792cc4d __libc_start_main ??:0
+    #3 0x401839 _start ??:0
 }}}
