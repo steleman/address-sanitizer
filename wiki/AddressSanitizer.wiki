@@ -81,3 +81,24 @@ previously allocated by thread 0x787d4720 here:
     #2 0x7ff87792cc4d __libc_start_main ??:0
     #3 0x401839 _start ??:0
 }}}
+
+=Flags=
+
+Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
+{{{
+ASAN_OPTIONS=v=1:red_zone_words=16 ./a.out
+}}}
+
+|| flag|| default || description ||
+|| v  || 0 || be more verbose (mostly for testing the tool itself) ||
+|| red_zone_words || 10 || size of malloc redzones (in words)  ||
+|| malloc_context_size || 10 || number of frames in `malloc`/`free` stack traces||
+|| fast_unwind || 0 || use faster but less reliable stack unwinder ||
+|| || || ||
+
+The environment variable `ASAN_SYMBOLIZER` allows to pass a filter run run the output through. Example: 
+{{{
+ASAN_FILTER="../scripts/asan_symbolize.py | c++filt" ./a.out
+}}}
+
+
