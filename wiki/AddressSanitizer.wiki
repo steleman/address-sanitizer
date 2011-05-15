@@ -96,9 +96,7 @@ ASAN_OPTIONS=v=1:red_zone_words=16 ./a.out
 || fast_unwind || 0 || use faster but less reliable stack unwinder ||
 || || || ||
 
-The environment variable `ASAN_SYMBOLIZER` allows to pass a filter run run the output through. Example: 
+The environment variable `ASAN_SYMBOLIZER` allows to pass a filter program to run the output through. Example: 
 {{{
 ASAN_FILTER="../scripts/asan_symbolize.py | c++filt" ./a.out
 }}}
-
-
