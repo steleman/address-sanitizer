@@ -12,8 +12,8 @@ Many tools for finding memory bugs exist. <BR>
 All these tools share the same problem -- they are slow. 
 
 We propose a new tool called AddressSanitizer (*asan*) which finds 
-*out-of-bound* and *use-after-free* bugs (a subset of bugs detectable by Valgrind).
-The key advantage of this tool is that it is very fast (< 2x slowdown in most cases).
+*out-of-bound* (both stack and heap) and *use-after-free* bugs.
+The key advantage of this tool is that it is very fast (~2x slowdown in most cases).
 The tool consists of a compiler instrumentation module (currently, an LLVM pass)
 and a run-time library which replaces the `malloc` function. 
 
