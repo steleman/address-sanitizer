@@ -9,5 +9,6 @@ TODO items in no particular order:
   * Post the cpu2006 results.
   * Implement in-process symbolizer.
   * Implement faster stack unwinding. 
-  * Poison stack and globals
+  * Redzones for globals
   * handle LLVM's memcpy/memset
+  * build bot
