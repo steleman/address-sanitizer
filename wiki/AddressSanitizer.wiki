@@ -86,14 +86,14 @@ previously allocated by thread 0x787d4720 here:
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
 {{{
-ASAN_OPTIONS=v=1:red_zone_words=16 ./a.out
+ASAN_OPTIONS=v=1:red_zone_words=24 ./a.out
 }}}
 
 || flag|| default || description ||
 || v  || 0 || be more verbose (mostly for testing the tool itself) ||
-|| red_zone_words || 10 || size of malloc redzones (in words)  ||
-|| malloc_context_size || 10 || number of frames in `malloc`/`free` stack traces||
-|| fast_unwind || 0 || use faster but less reliable stack unwinder ||
+|| red_zone_words || 16 || size of malloc redzones (in words)  ||
+|| malloc_context_size || 16 || number of frames in `malloc`/`free` stack traces. Can not be greater than `red_zone_words`.||
+|| fast_unwind || 1 || fast_unwind=1 uses frame pointers (fast, but not very reliable). fast_unwind=0 uses libunwind ||
 || || || ||
 
 The environment variable `ASAN_SYMBOLIZER` allows to pass a filter program to run the output through. Example: 
