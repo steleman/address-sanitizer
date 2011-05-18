@@ -85,6 +85,12 @@ previously allocated by thread 0x787d4720 here:
 
 =Flags=
 
+Compile-time flags are passed via clang flag `-mllvm -asan-flag=x`.
+|| flag|| default || description ||
+|| -asan || 1 || enable AddressSanitizer ||
+|| -asan-stack || 1 || Enable stack poisoning. Currently does *not* work in presence of EH or longjmp ||
+
+
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
 {{{
 ASAN_OPTIONS=v=1:red_zone_words=24 ./a.out
