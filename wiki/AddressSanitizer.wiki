@@ -85,7 +85,7 @@ previously allocated by thread 0x787d4720 here:
 
 =Flags=
 
-Compile-time flags are passed via clang flag `-mllvm -asan-flag=x`.
+Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
 || -asan || 1 || enable AddressSanitizer ||
 || -asan-stack || 1 || Enable stack poisoning. Currently does *not* work in presence of EH or longjmp ||
