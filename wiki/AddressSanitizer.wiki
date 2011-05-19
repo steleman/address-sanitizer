@@ -100,7 +100,26 @@ ASAN_OPTIONS=v=1:red_zone_words=24:symbolize=0 ./a.out
 || || || ||
 
 =Call stack=
-TODO
+AddressSanitizer collects call stacks on the following events:
+  * `malloc` and `free`
+  * thread creation
+  * failure
 
-May be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]. If you run with symbolize=0, the result may be filtered through `scripts/asan_symbolize.py` to get the symbols.
-fast_unwind=1 uses frame pointers (fast, but not very reliable). fast_unwind=0 uses libunwind
+`malloc` and `free` happen relatively frequently and it is important to unwind the call stack fast.
+By default, a fast and somewhat unreliable unwinder based on frame pointers is used.
+If you see short or garbled call stacks, disable the fast unwinder (`fast_unwind=0`).
+The slow unwinder uses `libunwind` and is ... really slow.
+
+If you don't care about `malloc`/`free` call stacks, simply disable the unwinder completely
+(`malloc_context_size=0`).
+For infrequent events (thread creation, failure) we always use the slow unwinder.
+
+Each stack frame needs to be symbolized. Given a PC, we need to print
+{{{
+  #0xabcdf function_name, file_name.cc:1234
+}}}
+By default, we use a built-in symboilzer based on `libbfd`.
+It may be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]. 
+You may want to disabled the symbolizer (`symbolize=0`) and after the run filter
+the result may be filtered through `scripts/asan_symbolize.py` to get the symbols.
+
