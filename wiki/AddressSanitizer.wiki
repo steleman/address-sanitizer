@@ -114,12 +114,29 @@ If you don't care about `malloc`/`free` call stacks, simply disable the unwinder
 (`malloc_context_size=0`).
 For infrequent events (thread creation, failure) we always use the slow unwinder.
 
-Each stack frame needs to be symbolized. Given a PC, we need to print
+Each stack frame needs to be symbolized (fo course, if the binary is compiled with debug info).
+Given a PC, we need to print
 {{{
-  #0xabcdf function_name, file_name.cc:1234
+  #0xabcdf function_name file_name.cc:1234
 }}}
 By default, we use a built-in symboilzer based on `libbfd`.
 It may be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]. 
-You may want to disabled the symbolizer (`symbolize=0`) and after the run filter
-the result may be filtered through `scripts/asan_symbolize.py` to get the symbols.
+You may want to disable the symbolizer (`symbolize=0`) and after the run filter
+the result through `scripts/asan_symbolize.py` to get the symbols.
+This script takes an optional parameter -- a file prefix.
+The substring `.*prefix` will be removed from the file names.
+{{{
+% ASAN_OPTIONS=symbolize=0 ./a.out
+    ...
+    #0 0x402c77 (/home/you/address-sanitizer/asan/a.out+0x402c77)
+    ...
+% ASAN_OPTIONS=symbolize=0 ./a.out 2>&1  | ../scripts/asan_symbolize.py
+   ...
+   #0 0x402c77 in main /home/you/address-sanitizer/asan/use-after-free.c:5
+   ...
+% ASAN_OPTIONS=symbolize=0 ./a.out 2>&1  | ../scripts/asan_symbolize.py /you/
+   ...
+   #0 0x402c77 in main address-sanitizer/asan/use-after-free.c:5
+   ...
+}}}
 
