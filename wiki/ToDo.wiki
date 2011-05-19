@@ -4,8 +4,6 @@ TODO items in no particular order:
 
   * Run-time:
     * Port AddressSanitizer RTL to Mac. 
-    * Implement in-process symbolizer.
-    * Implement faster stack unwinding. 
     * implement our own malloc (instead of using libc's) to always get 64-byte alignment. 
   * Instrumentation:
     * Implement GCC instrumentation pass.
