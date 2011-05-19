@@ -232,16 +232,6 @@ SEGV handler checks if the address of the failed access lies in the `Bad` memory
 If it does, the error message is printed.
 
 
-==Unwinding stack==
-... is a problem.
-We need to get the stack trace for every `malloc` and `free`.
-Using libunwind appears to be very slow.
-
-
-==Symbolising stack==
-... is a problem too.
-Currently `addr2line` postprocessing is used.
-
 =Misc=
 ==In-Memory poisoning==
 It is possible to poison the memory itself instead of using
