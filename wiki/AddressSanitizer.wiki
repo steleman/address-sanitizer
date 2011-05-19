@@ -63,8 +63,7 @@ READ of size 1 at 0x0000200000703c18; shadow: 0x0000100000381e0c; mem: 0x0000000
     #0 0x401947 main use-after-free.c:5
     #1 0x7ff87792cc4d __libc_start_main ??:0
     #2 0x401839 _start ??:0
- 0x0000000001c0f065 is the address located 5 bytes inside of region:
-[0x0000000001c0f060,0x0000000001c0f0b0) -- allocated memory of 0x50 (80) bytes
+0x0000000001c0f065 is located 5 bytes inside of 80-byte region [0x0000000001c0f060,0x0000000001c0f0b0)
 freed by thread 0x787d4720 here:
     #0 0x404b9b free asan_rtl.cc:1203
     #1 0x40191b main use-after-free.c:5
