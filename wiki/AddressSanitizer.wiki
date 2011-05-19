@@ -114,15 +114,15 @@ If you don't care about `malloc`/`free` call stacks, simply disable the unwinder
 (`malloc_context_size=0`).
 For infrequent events (thread creation, failure) we always use the slow unwinder.
 
-Each stack frame needs to be symbolized (fo course, if the binary is compiled with debug info).
+Each stack frame needs to be symbolized (of course, if the binary is compiled with debug info).
 Given a PC, we need to print
 {{{
   #0xabcdf function_name file_name.cc:1234
 }}}
 By default, we use a built-in symboilzer based on `libbfd`.
 It may be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]. 
-You may want to disable the symbolizer (`symbolize=0`) and after the run filter
-the result through `scripts/asan_symbolize.py` to get the symbols.
+You may want to disable the symbolizer (`symbolize=0`) and filter
+the log file through `scripts/asan_symbolize.py` to get the symbols.
 This script takes an optional parameter -- a file prefix.
 The substring `.*prefix` will be removed from the file names.
 {{{
