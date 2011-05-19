@@ -54,12 +54,6 @@ int main() {
 % ASAN_LIB=libasan64.a ../clang_build/Release+Asserts/bin/clang -O2 -g   use-after-free.c
 }}}
 
-Currently, AddressSanitizer uses an external symbolizer. 
-You need to define an environment variable to use it: 
-{{{
-export ASAN_FILTER="../scripts/asan_symbolize.py"
-}}}
-
 Now, run the executable.
 
 {{{
@@ -101,11 +95,7 @@ ASAN_OPTIONS=v=1:red_zone_words=24:symbolize=0 ./a.out
 || red_zone_words || 16 || size of malloc redzones (in words)  ||
 || malloc_context_size || 16 || number of frames in `malloc`/`free` stack traces. Can not be greater than `red_zone_words`.||
 || fast_unwind || 1 || fast_unwind=1 uses frame pointers (fast, but not very reliable). fast_unwind=0 uses libunwind ||
-|| symbolize|| 1  || use builtin symbolizer based on libbfd. May be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]||
+|| symbolize|| 1  || use builtin symbolizer based on libbfd. May be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]. If you run with symbolize=0, the result may be filtered through `scripts/asan_symbolize.py` to get the symbols.||
 || demangle || 1 || demangle function names (if symbolize=1) ||
 || || || ||
 
-The environment variable `ASAN_SYMBOLIZER` allows to pass a filter program to run the output through. Example: 
-{{{
-ASAN_FILTER="../scripts/asan_symbolize.py | c++filt" ./a.out
-}}}
