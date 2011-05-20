@@ -29,11 +29,13 @@ Getting and building LLVM/Clang will take some time.
 {{{
 svn checkout http://address-sanitizer.googlecode.com/svn/trunk/ address-sanitizer
 cd address-sanitizer
-./llvm/get_clang.sh
-./llvm/patch_clang.sh
-./llvm/build_clang.sh
-cd asan
-make -j && ./asan_test32 && ./asan_test64 && ./asan_test64full
+./llvm/get_clang.sh      # Slow. Do it only for the first time.
+./llvm/unpatch_clang.sh  # Remove the previous patch, if you are building agan.
+./llvm/patch_clang.sh    # Patch the llvm/clang sources.
+./llvm/build_clang.sh    # Build clang
+cd asan                  
+make -j                  # Build libasan{32,64}.a and the tests
+./asan_test32 && ./asan_test64 && ./asan_test64full  # Run the tests
 }}}
 
 So far, AddressSanitizer has been tested only on Linux Ubuntu 10.04, 64-bit
