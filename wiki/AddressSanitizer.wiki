@@ -42,7 +42,7 @@ We plan to support Mac as well (Mac variant worked at some point), but we are no
 
 = Using AddressSanitizer =
 In order to use AddressSanitizer you will need to build your program
-with the modified `clang` binary and tell it where the run-time library resides.
+with the modified `clang` binary using the `-fasan` switch.
 {{{
 % cat use-after-free.c
 #include <stdlib.h>
@@ -51,7 +51,7 @@ int main() {
   free(x);
   return x[5];
 }
-% ASAN_LIB=libasan64.a ../clang_build/Release+Asserts/bin/clang -O2 -g   use-after-free.c
+% ../clang_build/Release+Asserts/bin/clang -fasan -O2 -g   use-after-free.c
 }}}
 
 Now, run the executable.
@@ -80,7 +80,6 @@ previously allocated by thread 0x787d4720 here:
 
 Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
-|| -asan || 1 || enable AddressSanitizer ||
 || -asan-stack || 1 || Enable stack poisoning. Currently does *not* work in presence of EH or longjmp ||
 
 
