@@ -91,7 +91,7 @@ previously allocated by thread 0x787d4720 here:
 
 Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
-|| -asan-stack || 1 || Enable stack poisoning. Currently does *not* work in presence of EH or longjmp ||
+|| -asan-stack || 1 || Enable stack poisoning. Currently does *not* work in presence of C++ exceptions or custom stack unwinders (longjmp is supported).  ||
 
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
