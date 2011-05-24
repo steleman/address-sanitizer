@@ -92,6 +92,7 @@ previously allocated by thread 0x787d4720 here:
 Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
 || -asan-stack || 1 || Enable stack poisoning. Currently does *not* work in presence of C++ exceptions or custom stack unwinders (longjmp is supported).  ||
+|| -asan-ignore ||  || Pass an [#Ignore_file ignore file] ||
 
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
@@ -148,4 +149,22 @@ The substring `.*prefix` will be removed from the file names.
    #0 0x402c77 in main address-sanitizer/asan/use-after-free.c:5
    ...
 }}}
+
+=Ignore file=
+In some cases a particular function should be ignored (not instrumented) by AddressSanitizer.
+One of the reasons is speed (e.g. a hot function known to be correct).
+Another reason is to avoid reporting known problems.
+
+To ignore certain functions, create a file `my_ignores.txt` and pass it to AddressSanitizer
+at compile time using `-mllvm -asan-ignore=my_ignores.txt`:
+{{{
+# Ignore exactly this function (the names are mangled)
+fun:MyFooBar
+# Ignore MyFooBar(void) if it is in C++:
+fun:_Z8MyFooBarv
+# Ignore all function containing MyFooBar
+fun:*MyFooBar*
+}}}
+
+
 
