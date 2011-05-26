@@ -3,56 +3,56 @@
 =Spec CPU 2006 =
 Use-after-free in 400.perlbench (a pointer is used after it is passed to `realloc`).
 {{{
-READ of size 1 at 0x00000000023b7413 thread T0 (bad: 0x00002000008edd04; shadow: 0x0000100000476e82)                                                                                                                                                           
-    #0 0x66490a in Perl_sv_setpvn sv.c:4127                                                                                                                                                                                                                    
-    #1 0x45766c in Perl_magic_get mg.c:772                                                                                                                                                                                                                     
-    #2 0x453bcb in Perl_mg_get mg.c:169                                                                                                                                                                                                                        
-    #3 0x669fb8 in Perl_sv_setsv_flags sv.c:3796                                                                                                                                                                                                               
-    #4 0x684c3f in Perl_sv_mortalcopy sv.c:6748                                                                                                                                                                                                                
-    #5 0x56fedd in Perl_pp_leaveeval pp_ctl.c:3486                                                                                                                                                                                                             
-    #6 0x635d44 in Perl_runops_standard run.c:37                                                                                                                                                                                                               
-    #7 0x4d2ad6 in S_run_body perl.c:2017                                                                                                                                                                                                                      
-    #8 0x4f9077 in main perlmain.c:100                                                                                                                                                                                                                         
-    #9 0x7fa3900e2c4d in __libc_start_main ??:0                                                                                                                                                                                                                
-    #10 0x403519 in _start ??:0                                                                                                                                                                                                                                
-0x00000000023b7413 is located 3 bytes inside of 5-byte region [0x00000000023b7410,0x00000000023b7415)                                                                                                                                                          
-freed by thread T0 here:                                                                                                                                                                                                                                       
-    #0 0x7bc852 in realloc _asan_rtl_                                                                                                                                                                                                                          
-    #1 0x733e2e in Perl_safesysrealloc util.c:132                                                                                                                                                                                                              
-    #2 0x650a82 in Perl_sv_grow sv.c:1620                                                                                                                                                                                                                      
-    #3 0x66c3f5 in Perl_sv_setsv_flags sv.c:4012                                                                                                                                                                                                               
-    #4 0x5735e8 in Perl_pp_sassign pp_hot.c:122                                                                                                                                                                                                                
-    #5 0x635d44 in Perl_runops_standard run.c:37                                                                                                                                                                                                               
-    #6 0x4d2ad6 in S_run_body perl.c:2017                                                                                                                                                                                                                      
-    #7 0x4f9077 in main perlmain.c:100                                                                                                                                                                                                                         
-    #8 0x7fa3900e2c4d in __libc_start_main ??:0                                                                                                                                                                                                                
-previously allocated by thread T0 here:                                                                                                                                                                                                                        
-    #0 0x7bc852 in realloc _asan_rtl_                                                                                                                                                                                                                          
-    #1 0x733e2e in Perl_safesysrealloc util.c:132                                                                                                                                                                                                              
-    #2 0x650a82 in Perl_sv_grow sv.c:1620                                                                                                                                                                                                                      
-    #3 0x6745f5 in Perl_sv_catpvn_flags sv.c:4376                                                                                                                                                                                                              
-    #4 0x675027 in Perl_sv_catsv_flags sv.c:4460                                                                                                                                                                                                               
-    #5 0x5402a3 in Perl_pp_substcont pp_ctl.c:190                                                                                                                                                                                                              
-    #6 0x635d44 in Perl_runops_standard run.c:37                                                                                                                                                                                                               
-    #7 0x4d2ad6 in S_run_body perl.c:2017                                                                                                                                                                                                                      
-    #8 0x4f9077 in main perlmain.c:100                                                                                                                                                                                                                         
-    #9 0x7fa3900e2c4d in __libc_start_main ??:0          
+READ of size 1 at 0x00000000023b7413 thread T0 (bad: 0x00002000008edd04; shadow: 0x0000100000476e82)
+    #0 0x66490a in Perl_sv_setpvn sv.c:4127
+    #1 0x45766c in Perl_magic_get mg.c:772
+    #2 0x453bcb in Perl_mg_get mg.c:169
+    #3 0x669fb8 in Perl_sv_setsv_flags sv.c:3796
+    #4 0x684c3f in Perl_sv_mortalcopy sv.c:6748
+    #5 0x56fedd in Perl_pp_leaveeval pp_ctl.c:3486
+    #6 0x635d44 in Perl_runops_standard run.c:37
+    #7 0x4d2ad6 in S_run_body perl.c:2017
+    #8 0x4f9077 in main perlmain.c:100
+    #9 0x7fa3900e2c4d in __libc_start_main ??:0
+    #10 0x403519 in _start ??:0
+0x00000000023b7413 is located 3 bytes inside of 5-byte region [0x00000000023b7410,0x00000000023b7415)
+freed by thread T0 here:
+    #0 0x7bc852 in realloc _asan_rtl_
+    #1 0x733e2e in Perl_safesysrealloc util.c:132
+    #2 0x650a82 in Perl_sv_grow sv.c:1620
+    #3 0x66c3f5 in Perl_sv_setsv_flags sv.c:4012
+    #4 0x5735e8 in Perl_pp_sassign pp_hot.c:122
+    #5 0x635d44 in Perl_runops_standard run.c:37
+    #6 0x4d2ad6 in S_run_body perl.c:2017
+    #7 0x4f9077 in main perlmain.c:100
+    #8 0x7fa3900e2c4d in __libc_start_main ??:0
+previously allocated by thread T0 here:
+    #0 0x7bc852 in realloc _asan_rtl_
+    #1 0x733e2e in Perl_safesysrealloc util.c:132
+    #2 0x650a82 in Perl_sv_grow sv.c:1620
+    #3 0x6745f5 in Perl_sv_catpvn_flags sv.c:4376
+    #4 0x675027 in Perl_sv_catsv_flags sv.c:4460
+    #5 0x5402a3 in Perl_pp_substcont pp_ctl.c:190
+    #6 0x635d44 in Perl_runops_standard run.c:37
+    #7 0x4d2ad6 in S_run_body perl.c:2017
+    #8 0x4f9077 in main perlmain.c:100
+    #9 0x7fa3900e2c4d in __libc_start_main ??:0
 }}}
 
 
-Stack buffer overflow in 464.h264ref: 
+Stack buffer overflow in 464.h264ref:
 {{{
 int k, satd = 0, m[16], dd, d[16];
 ...
-for (dd=d[k=0]; k<16; dd=d[++k]) 
+for (dd=d[k=0]; k<16; dd=d[++k])
                          ^^^^^^
-// On the last iteration, d[++k] reads d[16], one element after the array boundary. 
+// On the last iteration, d[++k] reads d[16], one element after the array boundary.
 
-READ of size 4 mem: 0x00007fff516bd140 thread T0 
-#0 0x506211 in SATD mv-search.c:1093 
-#1 0x509524 in SubPelBlockMotionSearch mv-search.c:1398 
-#2 0x527300 in BlockMotionSearch mv-search.c:2672 
-#3 0x53091e in PartitionMotionSearch mv-search.c:3272 
+READ of size 4 mem: 0x00007fff516bd140 thread T0
+#0 0x506211 in SATD mv-search.c:1093
+#1 0x509524 in SubPelBlockMotionSearch mv-search.c:1398
+#2 0x527300 in BlockMotionSearch mv-search.c:2672
+#3 0x53091e in PartitionMotionSearch mv-search.c:3272
 ...
 Address 0x00007fff516bd140 is inside T0's stack
 }}}
