@@ -10,14 +10,14 @@ Every memory access in the program is transformed by the compiler in the followi
 
 Before:
 {{{
-*address = ...;
+*address = ...;  // or: ... = *address;
 }}}
 After:
 {{{
 if (IsPoisoned(address) {
   GeneratePageFault(address);
 }
-*address = ...;
+*address = ...;  // or: ... = *address;
 }}}
 
 The tricky part is how to implement `IsPoisoned` very fast.
@@ -37,7 +37,7 @@ The instrumentation performed by the compiler:
 {{{
 shadow_address = MemToShadow(address);
 if (IsPoisoned(shadow_address)) {
-  bad_address = ShadowToMem(shadow_address);
+  bad_address = ShadowToBad(shadow_address);
   *bad_address = kAccessSize + 16 * kAccessIsWrite;
 }
 }}}
