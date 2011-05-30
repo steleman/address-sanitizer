@@ -10,5 +10,4 @@ TODO items in no particular order:
     * Implement compiler analysis to minimize instrumentation (i.e. do not instrument memory accesses which can be statically proven to be safe.
     * Improve the clang driver support (make clang add the correct libraries automagically)
     * Redzones for globals
-  * Post the cpu2006 results.
   * Set up a build bot
