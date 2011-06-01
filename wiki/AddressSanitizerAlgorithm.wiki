@@ -104,16 +104,18 @@ void write(int *a) {
 Example of instrumented code:
 {{{
 // 64 bit
-0:    48 b8 00 00 00 00 00    mov    $0x40000000000,%rax
-7:    04 00 00
-a:    48 09 f8                or     %rdi,%rax
-d:    48 b9 ff ff ff ff ff    mov    $0xffff9fffffffffff,%rcx
-14:   9f ff ff
-17:   48 21 c1                and    %rax,%rcx            
-1a:   83 79 40 00             cmpl   $0x0,0x40(%rcx)      <<< %rcx is the shadow address
-1e:   74 04                   je     24 <write_int_1+0x24>
-20:   c6 04 09 14             movb   $0x14,(%rcx,%rcx,1)  <<< kAccessIsWrite and kAccessSize
-24:   c7 07 01 00 00 00       movl   $0x1,(%rdi)          <<< original instruction
+0:   48 b9 ff ff ff ff ff    mov    $0xffff9bffffffffff,%rcx
+7:   9b ff ff
+a:   48 21 f9                and    %rdi,%rcx
+d:   48 b8 00 00 00 00 00    mov    $0x40000000000,%rax
+14:   04 00 00
+17:   48 09 c1                or     %rax,%rcx
+1a:   48 83 79 40 00          cmpq   $0x0,0x40(%rcx)    <<< read the shadow
+1f:   74 0b                   je     2c <write_int_1+0x2c>
+21:   48 89 38                mov    %rdi,(%rax)        <<< store the address
+24:   c6 04 25 ff 0f 00 00    movb   $0x48,0xfff        <<< CRASH!
+2b:   48
+2c:   48 c7 07 01 00 00 00    movq   $0x1,(%rdi)
 }}}
 
 ==Compact mapping==
