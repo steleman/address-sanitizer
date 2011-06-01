@@ -40,7 +40,7 @@ EOF
 % ./a.out
 ==================================================================
 ==10068== ERROR: AddressSanitizer crashed on address 0x00002000005d24c8 at pc 0x402988 bp 0x7fff696c13b0 sp 0x7fff696c13a0
-READ of size 1 at 0x0000000001749325 thread T0 (bad: 0x00002000005d24c8; shadow: 0x00001000002e9264)
+READ of size 1 at 0x0000000001749325 thread T0
     #0 0x402988 in main /tmp/asan/test.c:5
     #1 0x7f645951ec4d in __libc_start_main ?:0
     #2 0x402879 in _start ?:0
