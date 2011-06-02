@@ -15,12 +15,12 @@ Before:
 After:
 {{{
 if (IsPoisoned(address) {
-  GeneratePageFault(address);
+  ReportError(address);
 }
 *address = ...;  // or: ... = *address;
 }}}
 
-The tricky part is how to implement `IsPoisoned` very fast.
+The tricky part is how to implement `IsPoisoned` very fast and `ReportError` very compact.
 
 
 =Memory mapping=
