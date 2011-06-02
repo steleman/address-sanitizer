@@ -43,8 +43,8 @@ if (ShadowIsPoisoned(shadow_address)) {
 On 64-bit Linux, the virtual address space is usually divided into
 two parts, `LowMem` and `HighMem`. `LowMem` starts from 0. `HighMem` ends with `2^48`.
 We can also declare (almost arbitrary) upper bound for `LowMem` and lower bound for `HighMem`.
-|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 || `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
+|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 
 The simplest mapping between `Mem` and `Shadow` is:
 {{{
@@ -54,10 +54,10 @@ Shadow = Mem | kLowShadowMask & ~kHighShadowMask;
 }}}
 
 This mapping ceates a byte-to-byte correspondence between the main and the shadow memory. The mapping looks like this:
-|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
-|| `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
-|| `[0x00001f0000000000, 0x0000200000000000)` || `HighShadow` ||
 || `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
+|| `[0x00001f0000000000, 0x0000200000000000)` || `HighShadow` ||
+|| `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
+|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 
 Poisoning a byte in main memory means writing a non-zero value into the corresponding shadow value. The instrumentation looks like this:
 {{{
@@ -128,10 +128,10 @@ Also the compact mapping will not catch unaligned partially out-of-bound accesse
 }}}
 
 ===64-bit compact===
-|| `[0x0000000000000000, 0x0000008000000000)` || `LowMem`     ||
-|| `[0x0000100000000000, 0x0000101000000000)` || `LowShadow`  ||
-|| `[0x00001fe000000000, 0x00001fffffffffff]` || `HighShadow` ||
 || `[0x00007f0000000000, 0x00007fffffffffff]` || `HighMem`    ||
+|| `[0x00001fe000000000, 0x00001fffffffffff]` || `HighShadow` ||
+|| `[0x0000100000000000, 0x0000101000000000)` || `LowShadow`  ||
+|| `[0x0000000000000000, 0x0000008000000000)` || `LowMem`     ||
 
 {{{
 Shadow = (Mem >> 3) | 0x0000100000000000;
@@ -143,17 +143,17 @@ impossible to implement reasonably fast.
 
 Regular Linux 32-bit address space:
 
-|| `[0x00000000, 0x1fffffff]` || `LowMem`           ||
-|| `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
-|| `[0x30000000, 0x3fffffff]` || `HighShadow`       ||
 || `[0x40000000, 0xffffffff]` || `HighMem`          ||
+|| `[0x30000000, 0x3fffffff]` || `HighShadow`       ||
+|| `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
+|| `[0x00000000, 0x1fffffff]` || `LowMem`           ||
 
 CrOS (32-bit, uses `CONFIG_VMSPLIT_2G=y` kernel config option):
 
-|| `[0x00000000, 0x1fffffff]` || `LowMem`           ||
-|| `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
-|| `[0x26000000, 0x2fffffff]` || `HighShadow`       ||
 || `[0x30000000, 0x7fffffff]` || `HighMem`          ||
+|| `[0x26000000, 0x2fffffff]` || `HighShadow`       ||
+|| `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
+|| `[0x00000000, 0x1fffffff]` || `LowMem`           ||
 
 For both cases the shadow mapping is the same:
 {{{
