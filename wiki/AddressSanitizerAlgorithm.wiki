@@ -177,7 +177,7 @@ In order to catch stack buffer overflow, AddressSanitizer instruments the code l
 Before:
 {{{
 void foo() {
-  char a[10];
+  char a[8];
   ...
   return;
 }
