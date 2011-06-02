@@ -36,10 +36,8 @@ The instrumentation performed by the compiler:
 {{{
 shadow_address = MemToShadow(address);
 if (IsPoisoned(shadow_address)) {
-  // Put 'address' somewhere.
-  *(uintptr_t)kSomeFixedAddress = address;
-  // Now crash.
-  *(uintptr_t)(0xfff) = kAccessSize + 16 * kAccessIsWrite; // crash
+  // Put 'address', access size and access type somewhere.
+  Crash()
 }
 }}}
 
@@ -93,30 +91,11 @@ void write(int *a) {
     // - put the effective address 'a' somewhere
     // - put the access size and type somwehere
     // - crash
-    // One way to do all that in two instructions:
-    *(uintptr_t*)kLowShadowMask = a;
-    *(uintptr_t*)0xfff = kAccessIsWrite * 64 + kAccessSize;
   }
   *a = 0;
 }
 }}}
 
-Example of instrumented code:
-{{{
-// 64 bit
-0:   48 b9 ff ff ff ff ff    mov    $0xffff9bffffffffff,%rcx
-7:   9b ff ff
-a:   48 21 f9                and    %rdi,%rcx
-d:   48 b8 00 00 00 00 00    mov    $0x40000000000,%rax
-14:   04 00 00
-17:   48 09 c1                or     %rax,%rcx
-1a:   48 83 79 40 00          cmpq   $0x0,0x40(%rcx)    <<< read the shadow
-1f:   74 0b                   je     2c <write_int_1+0x2c>
-21:   48 89 38                mov    %rdi,(%rax)        <<< store the address
-24:   c6 04 25 ff 0f 00 00    movb   $0x48,0xfff        <<< CRASH!
-2b:   48
-2c:   48 c7 07 01 00 00 00    movq   $0x1,(%rdi)
-}}}
 
 ==Compact mapping==
 Byte-to-byte correspondence between the main and the shadow memory 
@@ -201,6 +180,24 @@ CrOS (32-bit, uses `CONFIG_VMSPLIT_2G=y` kernel config option):
 Shadow = (Mem >> 3) | 0x20000000;
 Mem = (Shadow & ~0x20000000) << 3
 }}}
+
+== Example of instrumented code ==
+{{{
+// 64 bit
+0:    48 89 f9                mov    %rdi,%rcx
+3:    48 c1 e9 03             shr    $0x3,%rcx
+7:    48 b8 00 00 00 00 00    mov    $0x100000000000,%rax
+e:    10 00 00
+11:   48 09 c8                or     %rcx,%rax
+14:   80 38 00                cmpb   $0x0,(%rax)  << load shadow
+17:   75 08                   jne    21
+19:   48 c7 07 01 00 00 00    movq   $0x1,(%rdi)  << original code
+20:   c3                      retq
+21:   48 89 f8                mov    %rdi,%rax    << save the address in %rax
+24:   0f 0b                   ud2a                << CRASH
+26:   5b                      pop    %rbx         << Encode access size and type in the insturction
+}}}
+
 
 = Run-time library =
 ==Malloc==
