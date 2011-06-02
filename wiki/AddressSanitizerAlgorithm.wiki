@@ -23,7 +23,7 @@ if (IsPoisoned(address) {
 The tricky part is how to implement `IsPoisoned` very fast and `ReportError` very compact.
 
 
-=Memory mapping=
+=Memory mapping and Instrumentation=
 The virtual address space is divided into 2 disjoint classes:
   * Main application memory (`Mem`): this memory is used by the regular application code.
   * Shadow memory (`Shadow`): this memory contains the shadow values (or metadata). There is a correspondence between the shadow and the main application memory. *Poisoning* a byte in the main memory means writing some special value into the corresponding shadow memory.
