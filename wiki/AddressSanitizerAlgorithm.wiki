@@ -190,7 +190,7 @@ e:    10 00 00
 
 = Run-time library =
 ==Malloc==
-The run-time library replaces `malloc`, `free` and similar functions and sets SEGV handler.
+The run-time library replaces `malloc`, `free` and similar functions and sets SIGILL handler.
 
 `malloc` allocates the requested amount of memory with redzones around it.
 The shadow values corresponding to the redzones are poisoned
@@ -200,5 +200,5 @@ and the shadow values for the main memory region are cleared.
 into a quarantine queue (such that this chunk
 will not be returned again by malloc during some period of time).
 
-SEGV handler extracts the failing address, access type/size and prints the error message.
+SIGILL handler extracts the failing address, access type/size and prints the error message.
 
