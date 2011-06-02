@@ -1,6 +1,6 @@
 #summary AddressSanitizer algorithm
 
-<wiki:toc max_depth="3" />
+<wiki:toc max_depth="2" />
 
 =Short version=
 The run-time library replaces the `malloc` and `free` functions.
@@ -160,7 +160,7 @@ For both cases the shadow mapping is the same:
 Shadow = (Mem >> 3) | 0x20000000;
 }}}
 
-==ReportError==
+==Report Error==
 The `ReportError` could be implemented as a call, but there are many other,
 more efficient and/or compact solutions.
 Currently, we do the following:
