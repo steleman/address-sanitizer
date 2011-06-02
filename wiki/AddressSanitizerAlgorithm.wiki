@@ -15,7 +15,7 @@ Before:
 After:
 {{{
 if (IsPoisoned(address) {
-  ReportError(address);
+  ReportError(address, kAccessSize, kIsWrite);
 }
 *address = ...;  // or: ... = *address;
 }}}
@@ -29,21 +29,15 @@ The virtual address space is divided into 2 disjoint classes:
   * Shadow memory (`Shadow`): this memory contains the shadow values (or metadata). There is a correspondence between the shadow and the main application memory. *Poisoning* a byte in the main memory means writing some special value into the corresponding shadow memory.
 
 These 2 classes of memory should be organized in such a way that
-`MemToShadow` is fast and reversible
-(i.e. it is possible to implement `ShadowToMem`).
+`MemToShadow` is fast.
 
 The instrumentation performed by the compiler:
 {{{
 shadow_address = MemToShadow(address);
-if (IsPoisoned(shadow_address)) {
-  // Put 'address', access size and access type somewhere.
-  Crash()
+if (ShadowIsPoisoned(shadow_address)) {
+  ReportError(address, kAccessSize, kIsWrite);
 }
 }}}
-
-Once the page fault happens and SEGV is caught, we have the PC where the fault occurred.
-This gives us the access type (read or write) and size.
-The failing address is stored in some fixed address (basically, a global).
 
 ==Full mapping==
 On 64-bit Linux, the virtual address space is usually divided into
@@ -52,22 +46,14 @@ We can also declare (almost arbitrary) upper bound for `LowMem` and lower bound 
 || `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 || `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
 
-The simplest mapping functions are as follows:
+The simplest mapping between `Mem` and `Shadow` is:
 {{{
 kLowShadowMask  = 0x0000040000000000;
 kHighShadowMask = 0x0000600000000000;
-MemToShadow(Mem) {
-  return = Mem | kLowShadowMask & ~kHighShadowMask;
-}
-
-ShadowToMem(Shadow)
-  return (Shadow < kLowShadowMask *2)
-         ? (Shadow & ~kLowShadowMask)
-         : (Shadow | kHighShadowMask);
-}
+Shadow = Mem | kLowShadowMask & ~kHighShadowMask;
 }}}
 
-These functions create a byte-to-byte correspondence between the main and the shadow memory. The mapping looks like this:
+This mapping ceates a byte-to-byte correspondence between the main and the shadow memory. The mapping looks like this:
 || `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 || `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
 || `[0x00001f0000000000, 0x0000200000000000)` || `HighShadow` ||
@@ -88,9 +74,7 @@ void write(int *a) {
   shadow_address &= ~0x0000600000000000;
   shadow_address += 64; // to avoid cache bank conflicts.
   if (*(int*)(shadow_address)) {
-    // - put the effective address 'a' somewhere
-    // - put the access size and type somwehere
-    // - crash
+    ReportError(address, kAccessSize, kIsWrite);
   }
   *a = 0;
 }
@@ -120,7 +104,7 @@ byte *shadow_address = MemToShadow(address);
 byte shadow_value = *shadow_address;
 if (shadow_value) {
   if (SlowPathCheck(shadow_value, address, kAccessSize)) {
-    // store the address and crash
+    ReportError(address, kAccessSize, kIsWrite);
   }
 }
 }}}
@@ -154,7 +138,7 @@ Shadow = (Mem >> 3) | 0x0000100000000000;
 }}}
 
 ===32 bit===
-The 32-bit address space is scarce, full (byte-to-byte) mapping seems to be
+The 32-bit address space is scarce and full (byte-to-byte) mapping seems to be
 impossible to implement reasonably fast.
 
 Regular Linux 32-bit address space:
@@ -164,11 +148,6 @@ Regular Linux 32-bit address space:
 || `[0x30000000, 0x3fffffff]` || `HighShadow`       ||
 || `[0x40000000, 0xffffffff]` || `HighMem`          ||
 
-{{{
-Shadow = (Mem >> 3) | 0x20000000;
-Mem = (Shadow & ~0x20000000) << 3;
-}}}
-
 CrOS (32-bit, uses `CONFIG_VMSPLIT_2G=y` kernel config option):
 
 || `[0x00000000, 0x1fffffff]` || `LowMem`           ||
@@ -176,14 +155,22 @@ CrOS (32-bit, uses `CONFIG_VMSPLIT_2G=y` kernel config option):
 || `[0x26000000, 0x2fffffff]` || `HighShadow`       ||
 || `[0x30000000, 0x7fffffff]` || `HighMem`          ||
 
+For both cases the shadow mapping is the same:
 {{{
 Shadow = (Mem >> 3) | 0x20000000;
-Mem = (Shadow & ~0x20000000) << 3
 }}}
+
+==ReportError==
+The `ReportError` could be implemented as a call, but there are many other,
+more efficient and/or compact solutions.
+Currently, we do the following:
+  * copy the failure address to `%rax`
+  * execute `ud2` (generates SIGILL)
+  * Encode access type and size in a one-byte instruction which follows `ud2`.
 
 == Example of instrumented code ==
 {{{
-// 64 bit
+// instrumenting a 64-bit store instruction
 0:    48 89 f9                mov    %rdi,%rcx
 3:    48 c1 e9 03             shr    $0x3,%rcx
 7:    48 b8 00 00 00 00 00    mov    $0x100000000000,%rax
@@ -191,10 +178,10 @@ e:    10 00 00
 11:   48 09 c8                or     %rcx,%rax
 14:   80 38 00                cmpb   $0x0,(%rax)  << load shadow
 17:   75 08                   jne    21
-19:   48 c7 07 01 00 00 00    movq   $0x1,(%rdi)  << original code
+19:   48 c7 07 01 00 00 00    movq   $0x1,(%rdi)  << original store instruction
 20:   c3                      retq
 21:   48 89 f8                mov    %rdi,%rax    << save the address in %rax
-24:   0f 0b                   ud2a                << CRASH
+24:   0f 0b                   ud2a                << generate SIGILL
 26:   5b                      pop    %rbx         << Encode access size and type in the insturction
 }}}
 
