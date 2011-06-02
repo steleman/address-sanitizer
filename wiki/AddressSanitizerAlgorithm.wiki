@@ -199,7 +199,7 @@ void foo() {
 }
 }}}
 
-== Example of instrumented code ==
+== Examples of instrumented code ==
 {{{
 // instrumenting a 64-bit store instruction (x86_64)
 0:    48 89 f9                mov    %rdi,%rcx
