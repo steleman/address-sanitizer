@@ -201,7 +201,7 @@ void foo() {
 
 == Example of instrumented code ==
 {{{
-// instrumenting a 64-bit store instruction
+// instrumenting a 64-bit store instruction (x86_64)
 0:    48 89 f9                mov    %rdi,%rcx
 3:    48 c1 e9 03             shr    $0x3,%rcx
 7:    48 b8 00 00 00 00 00    mov    $0x100000000000,%rax
@@ -213,9 +213,30 @@ e:    10 00 00
 20:   c3                      retq
 21:   48 89 f8                mov    %rdi,%rax    << save the address in %rax
 24:   0f 0b                   ud2a                << generate SIGILL
-26:   5b                      pop    %rbx         << Encode access size and type in the insturction
+26:   5b                      pop    %rbx         << kAccessSize and kIsWrite encoded in the instruction
 }}}
 
+{{{
+// instrumenting a 16-bit store instruction (x86)
+ 0:	48 89 f8             	mov    %rdi,%rax
+ 3:	48 c1 e8 03          	shr    $0x3,%rax
+ 7:	48 b9 00 00 00 00 00 	mov    $0x100000000000,%rcx
+ e:	10 00 00 
+11:	48 09 c1             	or     %rax,%rcx
+14:	8a 01                	mov    (%rcx),%al  << load shadow
+16:	84 c0                	test   %al,%al     << compare shadow with 0
+18:	74 12                	je     2c          << Jump to SlowPathCheck
+1a:	89 f9                	mov    %edi,%ecx   << SlowPathCheck
+1c:	83 e1 07             	and    $0x7,%ecx   << SlowPathCheck
+1f:	83 c1 02             	add    $0x2,%ecx   << SlowPathCheck
+22:	38 c1                	cmp    %al,%cl     << SlowPathCheck
+24:	7e 06                	jle    2c
+26:	48 89 f8             	mov    %rdi,%rax   << save the address in %eax
+29:	0f 0b                	ud2a               << generate SIGILL
+2b:	59                   	pop    %rcx        << kAccessSize and kIsWrite encoded in the instruction
+2c:	66 c7 07 01 00       	movw   $0x1,(%rdi) << original store instruction
+31:	c3                   	retq   
+}}}
 
 = Run-time library =
 ==Malloc==
