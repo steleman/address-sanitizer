@@ -53,13 +53,14 @@ kHighShadowMask = 0x0000600000000000;
 Shadow = Mem | kLowShadowMask & ~kHighShadowMask;
 }}}
 
-This mapping ceates a byte-to-byte correspondence between the main and the shadow memory. The mapping looks like this:
+This mapping ceates a byte-to-byte correspondence between the main and the shadow memory.
 || `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
 || `[0x00001f0000000000, 0x0000200000000000)` || `HighShadow` ||
 || `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
 || `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
 
-Poisoning a byte in main memory means writing a non-zero value into the corresponding shadow value. The instrumentation looks like this:
+Poisoning a byte in main memory means writing a non-zero value into the
+corresponding shadow value. The instrumentation looks like this:
 {{{
 // BEFORE
 void write(int *a) {
@@ -82,19 +83,19 @@ void write(int *a) {
 
 
 ==Compact mapping==
-Byte-to-byte correspondence between the main and the shadow memory 
+Byte-to-byte correspondence between the main and the shadow memory
 introduces 2x memory overhead. It is desirable to have more compact byte-to-bit correspondence
 or, in fact, *qword-to-byte correspondence* (i.e. one 8-byte qword of the main memory corresponds
-to one byte of shadow memory) because bits are not addressable and extracting bits might be slow. 
+to one byte of shadow memory) because bits are not addressable and extracting bits might be slow.
 
-It should be noted, that there are only 9 different values for 
+It should be noted, that there are only 9 different values for
 a shadow byte in qword-to-byte mapping:
   * All 8 bytes in qword are unpoisoned (i.e. addressible). The shadow value is 0.
   * All 8 bytes in qword are poisoned (i.e. not addressible). The shadow value is 8 or any larger value.
   * First `k` bytes are unpoisoned, the rest are poisoned. The shadow value is `k`.
 
 This is guaranteed by the fact that `malloc` returns 8-byte aligned chunks of memory.
-The only case where different bytes of an aligned qword have different state is the tail of 
+The only case where different bytes of an aligned qword have different state is the tail of
 a malloc-ed region. For example, if we call `malloc(13)`, we will have one full unpoisoned
 qword and one qword where 5 first bytes are unpoisoned.
 
@@ -164,9 +165,10 @@ Shadow = (Mem >> 3) | 0x20000000;
 The `ReportError` could be implemented as a call, but there are many other,
 more efficient and/or compact solutions.
 Currently, we do the following:
-  * copy the failure address to `%rax`
+  * copy the failure address to `%rax` (`%eax`).
   * execute `ud2` (generates SIGILL)
   * Encode access type and size in a one-byte instruction which follows `ud2`.
+Overal these 3 instructions require 5-6 bytes of machine code.
 
 == Example of instrumented code ==
 {{{
