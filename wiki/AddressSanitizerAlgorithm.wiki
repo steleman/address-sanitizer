@@ -202,13 +202,3 @@ will not be returned again by malloc during some period of time).
 
 SEGV handler extracts the failing address, access type/size and prints the error message.
 
-
-=Misc=
-==In-Memory poisoning==
-It is possible to poison the memory itself instead of using
-shadow memroy. This will make the instrumentation even cheaper,
-but may require more sophisticated run-time library
-and may appear more fragile.
-
-
-
