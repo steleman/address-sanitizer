@@ -87,6 +87,8 @@ Byte-to-byte correspondence between the main and the shadow memory
 introduces 2x memory overhead. It is desirable to have more compact byte-to-bit correspondence
 or, in fact, *qword-to-byte correspondence* (i.e. one 8-byte qword of the main memory corresponds
 to one byte of shadow memory) because bits are not addressable and extracting bits might be slow.
+The 32-bit address space is scarce and full (byte-to-byte) mapping seems to be
+impossible.
 
 It should be noted, that there are only 9 different values for
 a shadow byte in qword-to-byte mapping:
@@ -139,8 +141,6 @@ Shadow = (Mem >> 3) | 0x0000100000000000;
 }}}
 
 ===32 bit===
-The 32-bit address space is scarce and full (byte-to-byte) mapping seems to be
-impossible to implement reasonably fast.
 
 Regular Linux 32-bit address space:
 
@@ -169,6 +169,35 @@ Currently, we do the following:
   * execute `ud2` (generates SIGILL)
   * Encode access type and size in a one-byte instruction which follows `ud2`.
 Overal these 3 instructions require 5-6 bytes of machine code.
+
+==Stack==
+In order to catch stack buffer overflow, AddressSanitizer instruments the code like this
+(using compact shadow mapping):
+
+Before:
+{{{
+void foo() {
+  char a[10];
+  ...
+  return;
+}
+}}}
+After:
+{{{
+void foo() {
+  char redzone1[32];  // 32-byte aligned
+  char a[8];          // 32-byte aligned
+  char redzone2[24];
+  char redzone3[32];  // 32-byte aligned
+  int  *shadow_base = MemToShadow(redzone1);
+  shadow_base[0] = 0xffffffff;  // poison redzone1
+  shadow_base[1] = 0xffffff00;  // poison redzone2, unpoison 'a'
+  shadow_base[2] = 0xffffffff;  // poison redzone3
+  ...
+  shadow_base[0] = shadow_base[1] = shadow_base[2] = 0; // unpoison all
+  return;
+}
+}}}
 
 == Example of instrumented code ==
 {{{
