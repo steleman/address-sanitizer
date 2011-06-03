@@ -21,7 +21,7 @@ if (IsPoisoned(address) {
 }}}
 
 The tricky part is how to implement `IsPoisoned` very fast and `ReportError` very compact.
-Also, instrumenting some of the accesses may be proved redundant. See CompileTimeOptimizations.
+Also, instrumenting some of the accesses may be proved redundant. See CompileTimeOptimizations .
 
 
 =Memory mapping and Instrumentation=
@@ -252,4 +252,3 @@ into a quarantine queue (such that this chunk
 will not be returned again by malloc during some period of time).
 
 SIGILL handler extracts the failing address, access type/size and prints the error message.
-
