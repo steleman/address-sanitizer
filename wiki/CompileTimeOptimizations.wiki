@@ -1,1 +1,20 @@
 #summary Compile-time optimizations for AddressSanitizer
+
+=Introduction=
+AddressSanitizer does not need to instrument all memory accesses to find all bugs.
+
+The simplest example:
+{{{
+void inc(int *a) {
+  (*a)++;
+}
+}}}
+Here we have two memory accesses, load and store,
+but we need to instrument only the first one.
+
+Currently, we have very few optimizations implemented.
+Your suggestions are welcome.
+
+
+
+
