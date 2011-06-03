@@ -1,0 +1,1 @@
+#summary Compile-time optimizations for AddressSanitizer
