@@ -4,7 +4,7 @@
 
 =Short version=
 The run-time library replaces the `malloc` and `free` functions.
-The memory around malloc-ed regions (red zones) is poisoned. 
+The memory around malloc-ed regions (red zones) is poisoned.
 The `free`-ed memory is placed in quarantine and also poisoned.
 Every memory access in the program is transformed by the compiler in the following way:
 
@@ -21,6 +21,7 @@ if (IsPoisoned(address) {
 }}}
 
 The tricky part is how to implement `IsPoisoned` very fast and `ReportError` very compact.
+Also, instrumenting some of the accesses may be proved redundant. See CompileTimeOptimizations.
 
 
 =Memory mapping and Instrumentation=
