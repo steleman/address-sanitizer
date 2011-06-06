@@ -131,9 +131,14 @@ Also the compact mapping will not catch unaligned partially out-of-bound accesse
   *unaligned = 1;
 }}}
 
+For the compact mapping, `MemToShadow(ShadowAddr)` falls into the `ShadowGap` region
+which is unaddressible. So, if the program tries to directly access a memory location
+in the shadow region, it will crash.
+
 ===64-bit compact===
 || `[0x00007f0000000000, 0x00007fffffffffff]` || `HighMem`    ||
 || `[0x00001fe000000000, 0x00001fffffffffff]` || `HighShadow` ||
+|| `[                                      ]` || `ShadowGap`  ||
 || `[0x0000100000000000, 0x0000101000000000)` || `LowShadow`  ||
 || `[0x0000000000000000, 0x0000008000000000)` || `LowMem`     ||
 
@@ -147,6 +152,7 @@ Regular Linux 32-bit address space:
 
 || `[0x40000000, 0xffffffff]` || `HighMem`          ||
 || `[0x30000000, 0x3fffffff]` || `HighShadow`       ||
+|| `[                      ]` || `ShadowGap`        ||
 || `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
 || `[0x00000000, 0x1fffffff]` || `LowMem`           ||
 
@@ -154,6 +160,7 @@ CrOS (32-bit, uses `CONFIG_VMSPLIT_2G=y` kernel config option):
 
 || `[0x30000000, 0x7fffffff]` || `HighMem`          ||
 || `[0x26000000, 0x2fffffff]` || `HighShadow`       ||
+|| `[                      ]` || `ShadowGap`        ||
 || `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
 || `[0x00000000, 0x1fffffff]` || `LowMem`           ||
 
