@@ -225,7 +225,7 @@ e:    10 00 00
 }}}
 
 {{{
-// instrumenting a 16-bit store instruction (x86)
+// instrumenting a 16-bit store instruction (x86_64)
  0:	48 89 f8             	mov    %rdi,%rax
  3:	48 c1 e8 03          	shr    $0x3,%rax
  7:	48 b9 00 00 00 00 00 	mov    $0x100000000000,%rcx
@@ -244,6 +244,27 @@ e:    10 00 00
 2b:	59                   	pop    %rcx        << kAccessSize and kIsWrite encoded in the instruction
 2c:	66 c7 07 01 00       	movw   $0x1,(%rdi) << original store instruction
 31:	c3                   	retq   
+}}}
+
+
+{{{
+// instrumenting a 8-bit store instruction (x86_32)
+   0:   8b 44 24 04             mov    0x4(%esp),%eax
+   4:   89 c1                   mov    %eax,%ecx
+   6:   c1 e9 03                shr    $0x3,%ecx
+   9:   8a 89 00 00 00 20       mov    0x20000000(%ecx),%cl  << load shadow
+   f:   84 c9                   test   %cl,%cl
+  11:   74 0f                   je     22 
+  13:   89 c2                   mov    %eax,%edx   << SlowPathCheck
+  15:   83 e2 07                and    $0x7,%edx   << SlowPathCheck
+  18:   42                      inc    %edx        << SlowPathCheck
+  19:   38 ca                   cmp    %cl,%dl     << SlowPathCheck
+  1b:   7e 05                   jle    22 
+  1d:   89 c0                   mov    %eax,%eax    << save the address in %eax
+  1f:   0f 0b                   ud2a                << generate SIGILL
+  21:   58                      pop    %eax         << kAccessSize and kIsWrite encoded in the instruction
+  22:   c6 00 01                movb   $0x1,(%eax)
+  25:   c3                      ret    
 }}}
 
 = Run-time library =
