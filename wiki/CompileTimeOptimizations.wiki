@@ -13,8 +13,34 @@ Here we have two memory accesses, load and store,
 but we need to instrument only the first one.
 
 Currently, we have very few optimizations implemented.
+Some of the possible optimizations are listed below.
 Your suggestions are welcome.
 
+Instrument only the first access.
+{{{
+*a = ...
+if (...)
+  *a = ...
+}}}
 
+Instrument only the second access
+{{{
+if (...)
+  *a = ...
+*a = ...
+}}}
+
+Instrument only `a[0]` and `a[n-1]`
+{{{
+for (int i = 0; i < n; i++)
+  a[i] = ...;
+}}}
+
+Combine two accesses into one
+{{{
+struct { int a, b; } x;  ...
+x.a = ...;
+x.b = ...;
+}}}
 
 
