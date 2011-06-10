@@ -124,11 +124,11 @@ bool SlowPathCheck(shadow_value, address, kAccessSize) {
 
 The compact mapping uses less memory, but has more code on the slow path.
 Also the compact mapping will not catch unaligned partially out-of-bound accesses:
+
 {{{
-  int *x = new int;  // allocates 4 bytes:   [0,4).
-  int *unaligned = (int*)((char*)x + 2);
-  // This is an out-of-bound access of range [2-6),
-  *unaligned = 1;
+int *x = new int[2]; // 8 bytes: [0,7].
+int *u = (int*)((char*)x + 6);
+*u = 1;  // Access to range [6-9]
 }}}
 
 For the compact mapping, `MemToShadow(ShadowAddr)` falls into the `ShadowGap` region
