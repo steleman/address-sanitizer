@@ -24,7 +24,8 @@ See also:
   * ToDo -- if you want to help.
 
 =Getting AddressSanitizer=
-==Pre-built binaries==
+If you want to build AddressSanitizer yourself, refer to HowToBuild.
+
 We periodically update the AddressSanitizer binaries at the Chromium svn:
 {{{
 % svn co http://src.chromium.org/svn/trunk/deps/third_party/asan
@@ -49,29 +50,6 @@ freed by thread T0 here:
     #0 0x406f72 in free asan_rtl.cc:1462
     #1 0x40295b in main /tmp/asan/test.c:5
     ...
-}}}
-==Building AddressSanitizer==
-The following will build the modified `clang` binary and run tests.
-Getting and building LLVM/Clang will take some time.
-{{{
-svn checkout http://address-sanitizer.googlecode.com/svn/trunk/ address-sanitizer
-cd address-sanitizer
-./llvm/get_clang.sh      # Slow. Do it only for the first time.
-./llvm/unpatch_clang.sh  # Remove the previous patch, if you are building agan.
-./llvm/patch_clang.sh    # Patch the llvm/clang sources.
-./llvm/build_clang.sh    # Build clang
-cd asan                  
-make -j                  # Build libasan{32,64}.a and the tests
-./asan_test32 && ./asan_test64 && ./asan_test64full  # Run the tests
-# Build and run a tiny test
-../clang_build/Release+Asserts/bin/clang -O2 -g  -fasan use-after-free.c && ./a.out
-# Now you should see a report:
-# READ of size 1 at 0x00002000005778c8; shadow: 0x00001000002bbc64; mem: 0x00000000015de325 thread T0
-#     #0 0x402c77 in main /home/you/address-sanitizer/asan/use-after-free.c:5
-#     ...
-
-# Optional: copy all required files into ../asan_clang_Linux
-make install
 }}}
 
 So far, AddressSanitizer has been tested only on Linux Ubuntu 10.04, 64-bit
