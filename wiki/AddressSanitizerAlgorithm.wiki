@@ -21,7 +21,7 @@ if (IsPoisoned(address) {
 }}}
 
 The tricky part is how to implement `IsPoisoned` very fast and `ReportError` very compact.
-Also, instrumenting some of the accesses may be proved redundant. See CompileTimeOptimizations .
+Also, instrumenting some of the accesses may be [CompileTimeOptimizations proved redundant].
 
 
 =Memory mapping and Instrumentation=
