@@ -92,6 +92,43 @@ previously allocated by thread 0x787d4720 here:
     #3 0x401839 _start ??:0
 }}}
 
+=AddressSanitizer and gdb= 
+You can use [http://www.gnu.org/software/gdb/ gdb] with 
+binaries built by AddressSanitizer in a usual way.
+When AddressSanitizer finds a bug it generates `SIGILL` so gdb will 
+stop before AddressSanitizer prints a warning.
+On 64-bit binaries, AddressSanitizer generates multiple `SIGSEGV` as a normal
+part of operation, so you may want to ignore `SIGSEGV` in gdb using `handle SIGSEGV nostop` 
+and (optionally) `handle SIGSEGV noprint`. 
+On 32-bit binaries AddressSanitizer does not generate `SIGSEGV`.
+
+{{{
+% gdb -q ./a.out
+Reading symbols from a.out...done.
+(gdb) handle SIGSEGV nostop
+Signal        Stop      Print   Pass to program Description
+SIGSEGV       No        Yes     Yes             Segmentation fault
+(gdb) r
+Starting program: a.out
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/libthread_db.so.1".
+Program received signal SIGSEGV, Segmentation fault.
+Program received signal SIGSEGV, Segmentation fault.
+Program received signal SIGSEGV, Segmentation fault.
+Program received signal SIGILL, Illegal instruction.
+0x0000000000402ed7 in main () at ./use-after-free.c:5
+5         return x[5];
+(gdb) c
+Continuing.
+==19123== ERROR: AddressSanitizer crashed on address 0x000000000103a325 at pc 0x402ed7 bp 0x7fffffffe650 sp 0x7fffffffe640
+READ of size 1 at 0x000000000103a325 thread T0
+    #0 0x402ed7 in main use-after-free.c:5
+    #1 0x7ffff712cc4d in __libc_start_main ?:0
+    #2 0x402dc9 in _start ?:0
+...
+}}}
+
+
 =Flags=
 
 Compile-time flags are passed via clang flag `-mllvm <flag>`.
