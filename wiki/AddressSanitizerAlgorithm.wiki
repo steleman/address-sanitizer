@@ -27,10 +27,12 @@ Also, instrumenting some of the accesses may be proved redundant. See CompileTim
 =Memory mapping and Instrumentation=
 The virtual address space is divided into 2 disjoint classes:
   * Main application memory (`Mem`): this memory is used by the regular application code.
-  * Shadow memory (`Shadow`): this memory contains the shadow values (or metadata). There is a correspondence between the shadow and the main application memory. *Poisoning* a byte in the main memory means writing some special value into the corresponding shadow memory.
+  * Shadow memory (`Shadow`): this memory contains the shadow values (or metadata).
+There is a correspondence between the shadow and the main application memory.
+*Poisoning* a byte in the main memory means writing some special value into the corresponding shadow memory.
 
-These 2 classes of memory should be organized in such a way that
-`MemToShadow` is fast.
+These 2 classes of memory should be organized in such a way that computing the shadow memory
+(`MemToShadow`) is fast.
 
 The instrumentation performed by the compiler:
 {{{
@@ -40,67 +42,21 @@ if (ShadowIsPoisoned(shadow_address)) {
 }
 }}}
 
-==Full mapping==
-On 64-bit Linux, the virtual address space is usually divided into
-two parts, `LowMem` and `HighMem`. `LowMem` starts from 0. `HighMem` ends with `2^48`.
-We can also declare (almost arbitrary) upper bound for `LowMem` and lower bound for `HighMem`.
-|| `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
-|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
-
-The simplest mapping between `Mem` and `Shadow` is:
-{{{
-kLowShadowMask  = 0x0000040000000000;
-kHighShadowMask = 0x0000600000000000;
-Shadow = Mem | kLowShadowMask & ~kHighShadowMask;
-}}}
-
-This mapping ceates a byte-to-byte correspondence between the main and the shadow memory.
-|| `[0x00007f0000000000, 0x0000800000000000)` || `HighMem`    ||
-|| `[0x00001f0000000000, 0x0000200000000000)` || `HighShadow` ||
-|| `[0x0000040000000000, 0x0000080000000000)` || `LowShadow`  ||
-|| `[0x0000000000000000, 0x0000040000000000)` || `LowMem`     ||
-
-Poisoning a byte in main memory means writing a non-zero value into the
-corresponding shadow value. The instrumentation looks like this:
-{{{
-// BEFORE
-void write(int *a) {
-  *a = 0;
-}
-}}}
-{{{
-// AFTER (64 bit)
-void write(int *a) {
-  uintptr_t shadow_address = (uintptr_t)a;
-  shadow_address |=  0x0000040000000000;
-  shadow_address &= ~0x0000600000000000;
-  shadow_address += 64; // to avoid cache bank conflicts.
-  if (*(int*)(shadow_address)) {
-    ReportError(address, kAccessSize, kIsWrite);
-  }
-  *a = 0;
-}
-}}}
 
 
 ==Compact mapping==
-Byte-to-byte correspondence between the main and the shadow memory
-introduces 2x memory overhead. It is desirable to have more compact byte-to-bit correspondence
-or, in fact, *qword-to-byte correspondence* (i.e. one 8-byte qword of the main memory corresponds
-to one byte of shadow memory) because bits are not addressable and extracting bits might be slow.
-The 32-bit address space is scarce and full (byte-to-byte) mapping seems to be
-impossible.
+By default, AddressSanitizer uses a compact mapping, which maps 8 bytes of the application
+memory into 1 bytes of shadow memory.
 
-It should be noted, that there are only 9 different values for
-a shadow byte in qword-to-byte mapping:
+There are only 9 different values for any 8 bytes (aligned by 8):
   * All 8 bytes in qword are unpoisoned (i.e. addressible). The shadow value is 0.
-  * All 8 bytes in qword are poisoned (i.e. not addressible). The shadow value is 8 or any larger value.
-  * First `k` bytes are unpoisoned, the rest are poisoned. The shadow value is `k`.
-
+  * All 8 bytes in qword are poisoned (i.e. not addressible). The shadow value is -1.
+  * First `k` bytes are unpoisoned, the rest `8-k` are poisoned. The shadow value is `k`.
 This is guaranteed by the fact that `malloc` returns 8-byte aligned chunks of memory.
 The only case where different bytes of an aligned qword have different state is the tail of
 a malloc-ed region. For example, if we call `malloc(13)`, we will have one full unpoisoned
 qword and one qword where 5 first bytes are unpoisoned.
+
 
 For the compact mapping the instrumentation look like this:
 {{{
@@ -122,14 +78,6 @@ bool SlowPathCheck(shadow_value, address, kAccessSize) {
 }
 }}}
 
-The compact mapping uses less memory, but has more code on the slow path.
-Also the compact mapping will not catch unaligned partially out-of-bound accesses:
-
-{{{
-int *x = new int[2]; // 8 bytes: [0,7].
-int *u = (int*)((char*)x + 6);
-*u = 1;  // Access to range [6-9]
-}}}
 
 For the compact mapping, `MemToShadow(ShadowAddr)` falls into the `ShadowGap` region
 which is unaddressible. So, if the program tries to directly access a memory location
@@ -266,6 +214,23 @@ e:    10 00 00
   22:   c6 00 01                movb   $0x1,(%eax)
   25:   c3                      ret    
 }}}
+
+
+
+==Unaligned accesses==
+The compact mapping will not catch unaligned partially out-of-bound accesses:
+{{{
+int *x = new int[2]; // 8 bytes: [0,7].
+int *u = (int*)((char*)x + 6);
+*u = 1;  // Access to range [6-9]
+}}}
+
+Possible solutions: 
+  * Use byte-to-byte mapping (const: slower, uses more memory, seems to be available only on 64-bit arch)
+  * Add a run-time check to the instrumentation code: `if (addr & 7) slow_path_for_unaligned();`
+  * Ignore
+  * Forbid all unaligned accesses
+
 
 = Run-time library =
 ==Malloc==
