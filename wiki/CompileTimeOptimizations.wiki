@@ -43,4 +43,11 @@ x.a = ...;
 x.b = ...;
 }}}
 
+No point in instrumenting accesses to scalar globals
+{{{
+int glob;
+int get_glob() {
+  return glob;
+}
+}}}
 
