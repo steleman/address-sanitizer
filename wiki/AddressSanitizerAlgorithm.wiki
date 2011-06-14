@@ -115,8 +115,7 @@ It is possible to use just a single instruction (e.g. `ud2`), but this will requ
 to have a full disassembler in the run-time library (or some other hacks).
 
 ==Stack==
-In order to catch stack buffer overflow, AddressSanitizer instruments the code like this
-(using compact shadow mapping):
+In order to catch stack buffer overflow, AddressSanitizer instruments the code like this:
 
 Before:
 {{{
@@ -206,14 +205,14 @@ e:    10 00 00
 
 
 ==Unaligned accesses==
-The compact mapping will not catch unaligned partially out-of-bound accesses:
+The current compact mapping will not catch unaligned partially out-of-bound accesses:
 {{{
 int *x = new int[2]; // 8 bytes: [0,7].
 int *u = (int*)((char*)x + 6);
 *u = 1;  // Access to range [6-9]
 }}}
 
-Possible solutions: 
+Possible solutions:
   * Use byte-to-byte mapping (const: slower, uses more memory, seems to be available only on 64-bit arch)
   * Add a run-time check to the instrumentation code: `if (addr & 7) slow_path_for_unaligned();`
   * Ignore
