@@ -42,8 +42,8 @@ if (ShadowIsPoisoned(shadow_address)) {
 }
 }}}
 
-==Compact mapping==
-By default, AddressSanitizer uses a compact mapping, which maps 8 bytes of the application
+==Mapping==
+AddressSanitizer maps 8 bytes of the application
 memory into 1 byte of the shadow memory.
 
 There are only 9 different values for any aligned 8 bytes of the application memory:
@@ -56,7 +56,7 @@ a malloc-ed region. For example, if we call `malloc(13)`, we will have one full 
 qword and one qword where 5 first bytes are unpoisoned.
 
 
-For the compact mapping the instrumentation look like this:
+The instrumentation look like this:
 {{{
 byte *shadow_address = MemToShadow(address);
 byte shadow_value = *shadow_address;
@@ -77,24 +77,26 @@ bool SlowPathCheck(shadow_value, address, kAccessSize) {
 }}}
 
 
-For the compact mapping, `MemToShadow(ShadowAddr)` falls into the `ShadowGap` region
+`MemToShadow(ShadowAddr)` falls into the `ShadowGap` region
 which is unaddressible. So, if the program tries to directly access a memory location
 in the shadow region, it will crash.
 
-===64-bit compact===
-|| `[0x00007f0000000000, 0x00007fffffffffff]` || `HighMem`    ||
-|| `[0x00001fe000000000, 0x00001fffffffffff]` || `HighShadow` ||
-|| `[                                      ]` || `ShadowGap`  ||
-|| `[0x0000100000000000, 0x0000101000000000)` || `LowShadow`  ||
-|| `[0x0000000000000000, 0x0000008000000000)` || `LowMem`     ||
-
+===64-bit===
 {{{
 Shadow = (Mem >> 3) | 0x0000100000000000;
 }}}
+|| `[0x0000200000000000, 0x00007fffffffffff]` || HighMem    ||
+|| `[0x0000140000000000, 0x00001fffffffffff]` || HighShadow ||
+|| `[0x0000120000000000, 0x000013ffffffffff]` || ShadowGap ||
+|| `[0x0000100000000000, 0x000011ffffffffff]` || LowShadow  ||
+|| `[0x0000000000000000, 0x00000fffffffffff]` || LowMem     ||
 
 ===32 bit===
 
 Regular Linux 32-bit address space:
+{{{
+Shadow = (Mem >> 3) | 0x20000000;
+}}}
 
 || `[0x40000000, 0xffffffff]` || `HighMem`          ||
 || `[0x28000000, 0x3fffffff]` || `HighShadow`       ||
@@ -102,18 +104,6 @@ Regular Linux 32-bit address space:
 || `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
 || `[0x00000000, 0x1fffffff]` || `LowMem`           ||
 
-CrOS (32-bit, uses `CONFIG_VMSPLIT_2G=y` kernel config option):
-
-|| `[0x30000000, 0x7fffffff]` || `HighMem`          ||
-|| `[0x26000000, 0x2fffffff]` || `HighShadow`       ||
-|| `[0x24000000, 0x25ffffff]` || `ShadowGap`        ||
-|| `[0x20000000, 0x23ffffff]` || `LowShadow`        ||
-|| `[0x00000000, 0x1fffffff]` || `LowMem`           ||
-
-For both cases the shadow mapping is the same:
-{{{
-Shadow = (Mem >> 3) | 0x20000000;
-}}}
 
 ==Report Error==
 The `ReportError` could be implemented as a call, but there are many other,
