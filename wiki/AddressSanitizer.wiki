@@ -98,8 +98,8 @@ binaries built by AddressSanitizer in a usual way.
 When AddressSanitizer finds a bug it generates `SIGILL` so gdb will 
 stop before AddressSanitizer prints a warning.
 On 64-bit binaries, AddressSanitizer generates multiple `SIGSEGV` as a normal
-part of operation, so you may want to ignore `SIGSEGV` in gdb using `handle SIGSEGV nostop` 
-and (optionally) `handle SIGSEGV noprint`. 
+part of operation, so you may want to ignore `SIGSEGV` in gdb using *handle SIGSEGV nostop*
+and (optionally) *handle SIGSEGV noprint*.
 On 32-bit binaries AddressSanitizer does not generate `SIGSEGV`.
 
 {{{
