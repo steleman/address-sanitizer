@@ -217,7 +217,8 @@ Possible solutions:
   * Add a run-time check to the instrumentation code: `if (addr & 7) slow_path_for_unaligned();`
   * Ignore
   * Forbid all unaligned accesses
-  * Use even more compact mapping, e.g. `Shadow=Mem>>7+offset` (pros: even less memory; cons: slower code).
+  * Use even more compact mapping, e.g. `Shadow=Mem>>7+offset` (pros: even less memory; cons: slower code). This will catch some, but not all cases.
+  
 
 
 = Run-time library =
