@@ -14,7 +14,7 @@ Before:
 }}}
 After:
 {{{
-if (IsPoisoned(address) {
+if (IsPoisoned(address)) {
   ReportError(address, kAccessSize, kIsWrite);
 }
 *address = ...;  // or: ... = *address;
