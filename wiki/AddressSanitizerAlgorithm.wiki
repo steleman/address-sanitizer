@@ -234,3 +234,6 @@ into a quarantine queue (such that this chunk
 will not be returned again by malloc during some period of time).
 
 SIGILL handler extracts the failing address, access type/size and prints the error message.
+
+=Comments?=
+Send comments to address-sanitizer@googlegroups.com
