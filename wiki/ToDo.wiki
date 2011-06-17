@@ -3,11 +3,10 @@
 TODO items in no particular order:
 
   * Run-time:
-    * Port AddressSanitizer RTL to Mac.
+    * Port AddressSanitizer RTL to Mac (in flight).
     * implement our own malloc (instead of using libc's) to always get 64-byte alignment and/or to reuse the poisoned regions.
   * Instrumentation:
     * Implement GCC instrumentation pass.
-    * Implement compiler analysis to minimize instrumentation (i.e. do not instrument memory accesses which can be statically proven to be safe.
-    * Improve the clang driver support (make clang add the correct libraries automagically)
-    * Redzones for globals
+    * Implement CompileTimeOptimizations.
+    * Redzones for globals (in flight)
   * Set up a build bot
