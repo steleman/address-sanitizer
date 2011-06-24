@@ -60,14 +60,14 @@ We plan to support Mac as well (Mac variant worked at some point), but we are no
 In order to use AddressSanitizer you will need to build your program
 with the modified `clang` binary using the `-fasan` switch.
 {{{
-% cat use-after-free.c
+% cat tests/use-after-free.c
 #include <stdlib.h>
 int main() {
   char *x = (char*)malloc(10 * sizeof(char*));
   free(x);
   return x[5];
 }
-% ../clang_build/Release+Asserts/bin/clang -fasan -O2 -g   use-after-free.c
+% ../clang_build_Linux/Release+Asserts/bin/clang -fasan -O2 -g   tests/use-after-free.c
 }}}
 
 Now, run the executable.
