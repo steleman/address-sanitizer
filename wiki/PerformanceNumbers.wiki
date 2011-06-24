@@ -13,3 +13,11 @@ These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (int 
 
 `400.perlbench` and `483.xalancbmk` are very malloc-intensive and most of the slowdown comes from the replacement malloc, not from the instrumentation.
 This will be fixed.
+
+AddressSanitizer r471 (new allocator, not fully tuned):
+
+
+||                ||  400.perlbench||      401.bzip2||        403.gcc||        429.mcf||      445.gobmk||      456.hmmer||      458.sjeng|| 462.libquantum||    464.h264ref||    471.omnetpp||      473.astar||  483.xalancbmk||       433.milc||       444.namd||     450.soplex||     453.povray||        470.lbm||    482.sphinx3||
+||clang -O2       ||            492||            704||            436||            409||            586||            883||            652||            591||            800||            420||            562||            330||            522||            528||            300||            300||            453||            728||
+||clang -O2 -fasan||           1300||           1250||            713||            781||           1010||           1590||           1040||            683||           1150||            893||            981||           1090||            830||            885||            468||            598||            694||           1280||
+||slowdown        || *        2.64*|| *        1.78*|| *        1.64*|| *        1.91*|| *        1.72*|| *        1.80*|| *        1.60*|| *        1.16*|| *        1.44*|| *        2.13*|| *        1.75*|| *        3.30*|| *        1.59*|| *        1.68*|| *        1.56*|| *        1.99*|| *        1.53*|| *        1.76*||
