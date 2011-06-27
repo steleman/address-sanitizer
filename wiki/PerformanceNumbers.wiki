@@ -2,17 +2,8 @@
 
 = Spec CPU 2006 (int) =
 
-These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (int only) using AddressSanitizer r232. 
+These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (C/C++ only) using AddressSanitizer r471.
 
-
-||                ||  400.perlbench||      401.bzip2||        403.gcc||        429.mcf||      445.gobmk||      456.hmmer||      458.sjeng|| 462.libquantum||    464.h264ref||    471.omnetpp||      473.astar||  483.xalancbmk||
-||clang -O2       ||            494||            722||            435||            414||            586||            889||            668||            583||            817||            413||            557||            324||
-||clang -O2 -fasan||           1610||           1320||            835||            826||           1270||           1570||           1380||            791||           1570||            881||            978||            917||
-||slowdown        || *        3.26*|| *        1.83*|| *        1.92*|| *        2.00*|| *        2.17*|| *        1.77*|| *        2.07*|| *        1.36*|| *        1.92*|| *        2.13*|| *        1.76*|| *        2.83*||
-
-
-
-AddressSanitizer r471 (new allocator, not fully tuned):
 
 || benchmark number ||          400||            401||            403||            429||            445||            456||            458||            462||            464||            471||            473||            483||            433||            444|| 447   ||     450||     453||        470||    482||
 ||clang -O2       ||            492||            704||            436||            409||            586||            883||            652||            591||            800||            420||            562||            330||            522||            528|| 427   ||            300||            300||            453||            728||
