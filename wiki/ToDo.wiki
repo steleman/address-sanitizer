@@ -4,7 +4,6 @@ TODO items in no particular order:
 
   * Run-time:
     * Port AddressSanitizer RTL to Mac (in flight).
-    * implement our own malloc (instead of using libc's) to always get 64-byte alignment and/or to reuse the poisoned regions.
   * Instrumentation:
     * Implement GCC instrumentation pass.
     * Implement CompileTimeOptimizations.
