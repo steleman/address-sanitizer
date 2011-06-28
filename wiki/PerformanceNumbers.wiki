@@ -1,6 +1,6 @@
 #summary Slowdown introduced by AddressSanitizer
 
-= Spec CPU 2006 (int) =
+= Spec CPU 2006 (C/C++) =
 
 These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (C/C++ only) using AddressSanitizer r496.
 
