@@ -10,5 +10,3 @@ When only writes are instrumented (blue), the average slowdown is *1.26*.
 
 
 http://address-sanitizer.googlecode.com/svn/trunk/img/spec_r496.png 
-
-<wiki:gadget url="https://docs.google.com/a/google.com/spreadsheet/ccc?hl=en_US&key=tHvF_JuKwUw2D5mIV8YEVUA&hl=en_US#gid=4" width="310" height="566" />
