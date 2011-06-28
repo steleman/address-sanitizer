@@ -8,4 +8,5 @@ TODO items in no particular order:
     * Implement GCC instrumentation pass.
     * Implement CompileTimeOptimizations.
     * Redzones for globals (in flight)
+    * Instrument strlen/strcat/etc
   * Set up a build bot
