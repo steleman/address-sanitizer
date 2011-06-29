@@ -139,16 +139,13 @@ Compile-time flags are passed via clang flag `-mllvm <flag>`.
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
 {{{
-ASAN_OPTIONS=v=1:red_zone_words=24:symbolize=0 ./a.out
+ASAN_OPTIONS=v=1 ./a.out
 }}}
 
 || flag|| default || description ||
 || v  || 0 || Be more verbose (mostly for testing the tool itself) ||
-|| red_zone_words || 16 || Size of malloc redzones (in words)  ||
-|| malloc_context_size || 16 || Number of frames in `malloc`/`free` stack traces. Can not be greater than `red_zone_words`.||
+|| malloc_context_size || 16 || Number of frames in `malloc`/`free` stack traces. ||
 || fast_unwind || 1 || Use fast Unwind. See also [#Call_stack Call stack] ||
-|| symbolize|| 1  || Use builtin symbolizer based on libbfd. See also [#Call_stack Call stack]||
-|| demangle || 1 || Demangle function names (if symbolize=1) ||
 || || || ||
 
 =Call stack=
