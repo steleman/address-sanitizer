@@ -168,22 +168,23 @@ Given a PC, we need to print
 {{{
   #0xabcdf function_name file_name.cc:1234
 }}}
-By default, we use a built-in symboilzer based on `libbfd`.
-It may be very slow on large binaries due to [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue]. 
-You may want to disable the symbolizer (`symbolize=0`) and filter
-the log file through `scripts/asan_symbolize.py` to get the symbols.
+<wiki:comment>
+[http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue].
+</wiki:comment>
+Currently, AddressSanitizer does not have an in-process symbolizer.
+You will need to filter the log file through `scripts/asan_symbolize.py` to get the symbols.
 This script takes an optional parameter -- a file prefix.
 The substring `.*prefix` will be removed from the file names.
 {{{
-% ASAN_OPTIONS=symbolize=0 ./a.out
+% ./a.out
     ...
     #0 0x402c77 (/home/you/address-sanitizer/asan/a.out+0x402c77)
     ...
-% ASAN_OPTIONS=symbolize=0 ./a.out 2>&1  | ../scripts/asan_symbolize.py
+% ./a.out 2>&1  | ../scripts/asan_symbolize.py
    ...
    #0 0x402c77 in main /home/you/address-sanitizer/asan/use-after-free.c:5
    ...
-% ASAN_OPTIONS=symbolize=0 ./a.out 2>&1  | ../scripts/asan_symbolize.py /you/
+% ./a.out 2>&1  | ../scripts/asan_symbolize.py /you/
    ...
    #0 0x402c77 in main address-sanitizer/asan/use-after-free.c:5
    ...
