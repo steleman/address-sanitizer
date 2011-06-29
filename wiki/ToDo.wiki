@@ -4,7 +4,7 @@ TODO items in no particular order:
 
   * Run-time:
     * Port AddressSanitizer RTL to Mac (in flight).
-    * Compress 64-bit stack traces
+    * less locking in asan's allocator
   * Instrumentation:
     * Implement GCC instrumentation pass.
     * Implement CompileTimeOptimizations.
