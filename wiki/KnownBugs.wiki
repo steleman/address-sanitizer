@@ -1,0 +1,4 @@
+#summary Known bugs in AddressSanitizer
+
+=Globals=
+Globals (`-asan-globals=1`) may break if the program is a mix of PIC and non-PIC objects.
