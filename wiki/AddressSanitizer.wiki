@@ -122,7 +122,8 @@ READ of size 1 at 0x000000000103a325 thread T0
 
 Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
-|| -asan-stack || 1 || Enable stack poisoning (will find stack buffer overflow)  ||
+|| -asan-stack   || 1 || Detect overflow/underflow for stack objects ||
+|| -asan-globals || 1 || Detect overflow/underflow for global objects (see KnownBugs)   ||
 || -asan-black-list ||  || Pass an [#BlackList_file blacklist file] ||
 
 
