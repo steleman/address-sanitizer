@@ -124,7 +124,7 @@ Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
 || -asan-stack   || 1 || Detect overflow/underflow for stack objects ||
 || -asan-globals || 1 || Detect overflow/underflow for global objects (see [KnownBugs])   ||
-|| -asan-black-list ||  || Pass an [#BlackList_file blacklist file] ||
+|| -asan-black-list ||  || Pass a [#BlackList_file blacklist file] ||
 
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
