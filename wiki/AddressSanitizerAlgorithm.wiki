@@ -21,7 +21,7 @@ if (IsPoisoned(address)) {
 }}}
 
 The tricky part is how to implement `IsPoisoned` very fast and `ReportError` very compact.
-Also, instrumenting some of the accesses may be [CompileTimeOptimizations proved redundant].
+Also, instrumenting some of the accesses may be [CompileTimeOptimizations proven redundant].
 
 
 =Memory mapping and Instrumentation=
@@ -56,7 +56,7 @@ a malloc-ed region. For example, if we call `malloc(13)`, we will have one full 
 qword and one qword where 5 first bytes are unpoisoned.
 
 
-The instrumentation look like this:
+The instrumentation looks like this:
 {{{
 byte *shadow_address = MemToShadow(address);
 byte shadow_value = *shadow_address;
@@ -123,7 +123,7 @@ to have a full disassembler in the run-time library (or some other hacks).
 ==Stack==
 In order to catch stack buffer overflow, AddressSanitizer instruments the code like this:
 
-Before:
+Original code:
 {{{
 void foo() {
   char a[8];
@@ -131,7 +131,7 @@ void foo() {
   return;
 }
 }}}
-After:
+Instrumented code:
 {{{
 void foo() {
   char redzone1[32];  // 32-byte aligned
