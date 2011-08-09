@@ -124,7 +124,7 @@ Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
 || -asan-stack   || 1 || Detect overflow/underflow for stack objects ||
 || -asan-globals || 1 || Detect overflow/underflow for global objects (see [KnownBugs])   ||
-|| -asan-black-list ||  || Pass a [#BlackList_file blacklist file] ||
+|| -asan-blacklist ||  || Pass a [#BlackList_file blacklist file] ||
 
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
@@ -186,7 +186,7 @@ One of the reasons is speed (e.g. a hot function known to be correct).
 Another reason is to avoid reporting known problems.
 
 To ignore certain functions, create a file `my_ignores.txt` and pass it to AddressSanitizer
-at compile time using `-mllvm -asan-black-list=my_ignores.txt`:
+at compile time using `-mllvm -asan-blacklist=my_ignores.txt`:
 {{{
 # Ignore exactly this function (the names are mangled)
 fun:MyFooBar
