@@ -5,15 +5,15 @@ Getting and building LLVM/Clang will take some time.
 svn checkout http://address-sanitizer.googlecode.com/svn/trunk/ address-sanitizer
 cd address-sanitizer
 ./llvm/get_clang.sh      # Slow. Do it only for the first time.
-./llvm/unpatch_clang.sh  # Remove the previous patch, if you are building agan.
+./llvm/unpatch_clang.sh  # Only if you are building again: remove the previous patch.
 ./llvm/patch_clang.sh    # Patch the llvm/clang sources.
-./llvm/build_clang.sh    # Build clang
+./llvm/build_clang.sh    # Build clang.
 cd asan                  
-make -j                  # Build libasan{32,64}.a and the tests
-./bin_Linux/asan_test32 && ./bin_Linux/asan_test64  # Run the tests
+make -j                  # Build libasan{32,64}.a and the tests.
+./bin_Linux/asan_test32 && ./bin_Linux/asan_test64  # Run the tests.
 # Copy all required files into ../asan_clang_Linux
 make install
-# Build and run a tiny test
+# Build and run a tiny test.
 ../clang_build_Linux/Release+Asserts/bin/clang -O2 -g  -fasan tests/use-after-free.c && ./a.out
 # Now you should see a report:
 # READ of size 1 at 0x00002000005778c8; shadow: 0x00001000002bbc64; mem: 0x00000000015de325 thread T0
