@@ -1,8 +1,8 @@
 #summary Known bugs in AddressSanitizer
 
-=Out-of-bound access=
-  * Some partially out-of-bound accesses are not caught. (see [AddressSanitizerAlgorithm#Unaligned_accesses] and issue 4)
-
 =Globals=
   * Globals (`-asan-globals=1`) may break if the program is a mix of PIC and non-PIC objects. issue 3.
   * Globals are disabled on Mac (for now)
+
+=Unaligned accesses=
+There is a known [http://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm#Unaligned_accesses issue with unaligned accesses] (ASan may miss some rare bugs).
