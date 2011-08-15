@@ -174,7 +174,7 @@ e:    10 00 00
 11:	48 09 c1             	or     %rax,%rcx
 14:	8a 01                	mov    (%rcx),%al  << load shadow
 16:	84 c0                	test   %al,%al     << compare shadow with 0
-18:	74 12                	je     2c          << Jump to SlowPathCheck
+18:	74 12                	je     2c          << Jump to the original store
 1a:	89 f9                	mov    %edi,%ecx   << SlowPathCheck
 1c:	83 e1 07             	and    $0x7,%ecx   << SlowPathCheck
 1f:	83 c1 02             	add    $0x2,%ecx   << SlowPathCheck
