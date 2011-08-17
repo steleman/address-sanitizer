@@ -180,7 +180,7 @@ The substring `.*prefix` will be removed from the file names.
    ...
 }}}
 
-=BlackList file=
+=Blacklist file=
 In some cases a particular function should be ignored (not instrumented) by AddressSanitizer.
 One of the reasons is speed (e.g. a hot function known to be correct).
 Another reason is to avoid reporting known problems.
