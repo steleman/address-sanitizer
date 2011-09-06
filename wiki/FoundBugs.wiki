@@ -56,3 +56,21 @@ READ of size 4 mem: 0x00007fff516bd140 thread T0
 ...
 Address 0x00007fff516bd140 is inside T0's stack
 }}}
+
+Global buffer overflow in 464.h264ref:
+{{{
+context_ini.c:222:
+BIARI_CTX_INIT2 (NUM_BLOCK_TYPES, NUM_BCBP_CTX, tc->bcbp_contexts,    INIT_BCBP,      img->model_number);
+
+READ of size 4 at 0x00000000005ec1c0 thread T0
+    #0 0x4139cf in biari_init_context biariencode.c:334
+    #1 0x43f8f3 in init_contexts context_ini.c:222
+    #2 0x5a6f33 in start_slice slice.c:118
+    #3 0x5a93b7 in encode_one_slice slice.c:223
+    #4 0x466d7a in code_a_picture image.c:236
+    #5 0x4728c0 in frame_picture image.c:800
+    #6 0x4696ef in encode_one_frame image.c:411
+    #7 0x48167d in main lencod.c:413
+0x00000000005ec1c0 is located 0 bytes to the right of global variable 'INIT_BCBP_I' (0x5ec0c0) of size 256
+
+}}}
