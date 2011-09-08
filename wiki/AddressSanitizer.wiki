@@ -120,7 +120,7 @@ READ of size 1 at 0x000000000103a325 thread T0
 
 ==ulimit -v==
 The `ulimit -v` command can be used with ASan-ified binaries.
-However, you should remember that ASan consumes 16 terabytes for shadow memory and the `ulimit -v` value should be set accordingly.
+However, you should remember that ASan consumes 16 terabytes of virtual memory for shadow state and the `ulimit -v` value should be set accordingly.
 For example, the following script will may be used as a wrapper for `ulimit -v`:
 {{{
 #!/bin/bash
