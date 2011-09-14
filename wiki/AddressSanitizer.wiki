@@ -129,7 +129,7 @@ ASAN_OPTIONS=v=1 ./a.out
 }}}
 
 || flag|| default || description ||
-|| v  || 0 || Be more verbose (mostly for testing the tool itself) ||
+|| verbosity  || 0 || Be more verbose (mostly for testing the tool itself) ||
 || malloc_context_size || 16 || Number of frames in `malloc`/`free` stack traces. ||
 || fast_unwind || 1 || Use fast Unwind. See also [#Call_stack Call stack] ||
 || || || ||
