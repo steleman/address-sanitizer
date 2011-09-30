@@ -1,0 +1,45 @@
+#summary Example: UseAfterFree
+{{{
+int main(int argc, char **argv) {
+  int *array = new int[100];
+  delete [] array;
+  return array[argc + 100];  // BOOM
+}
+}}}
+{{{
+clang++ -O1 -fasan example_UseAfterFree.cc
+./a.out
+}}}
+{{{
+ASAN:SIGILL
+=================================================================
+HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
+==30244== ERROR: AddressSanitizer heap-use-after-free on address 0x7f9942173214 at pc 0x402216 bp 0x7fffdf762330 sp 0x7fffdf762320
+READ of size 4 at 0x7f9942173214 thread T0
+    #0 0x402216 in main example_UseAfterFree.cc:4
+    #1 0x7f99421b1c4d in __libc_start_main ??:0
+    #2 0x4020f9 in _start ??:0
+0x7f9942173214 is located 4 bytes to the right of 400-byte region [0x7f9942173080,0x7f9942173210)
+freed by thread T0 here:
+    #0 0x4029f2 in operator delete[](void*) _asan_rtl_
+    #1 0x4021e3 in main example_UseAfterFree.cc:4
+    #2 0x7f99421b1c4d in __libc_start_main ??:0
+previously allocated by thread T0 here:
+    #0 0x402dca in operator new[](unsigned long) _asan_rtl_
+    #1 0x4021d3 in main example_UseAfterFree.cc:2
+    #2 0x7f99421b1c4d in __libc_start_main ??:0
+==30244== ABORTING
+Shadow byte and word:
+  0x1ff32842e642: fd
+  0x1ff32842e640: fd fd fd fd fd fd fd fd
+More shadow bytes:
+  0x1ff32842e620: fd fd fd fd fd fd fd fd
+  0x1ff32842e628: fd fd fd fd fd fd fd fd
+  0x1ff32842e630: fd fd fd fd fd fd fd fd
+  0x1ff32842e638: fd fd fd fd fd fd fd fd
+=>0x1ff32842e640: fd fd fd fd fd fd fd fd
+  0x1ff32842e648: fd fd fd fd fd fd fd fd
+  0x1ff32842e650: fa fa fa fa fa fa fa fa
+  0x1ff32842e658: fa fa fa fa fa fa fa fa
+  0x1ff32842e660: fa fa fa fa fa fa fa fa
+}}}

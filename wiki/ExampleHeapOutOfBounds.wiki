@@ -15,28 +15,28 @@ clang++ -O1 -fasan example_HeapOutOfBounds.cc
 ASAN:SIGILL
 =================================================================
 HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==29992== ERROR: AddressSanitizer heap-buffer-overflow on address 0x7f8a907f0214 at pc 0x40221e bp 0x7fffa607d640 sp 0x7fffa607d630
-READ of size 4 at 0x7f8a907f0214 thread T0
+==30217== ERROR: AddressSanitizer heap-buffer-overflow on address 0x7f1858117214 at pc 0x40221e bp 0x7fffd6028ef0 sp 0x7fffd6028ee0
+READ of size 4 at 0x7f1858117214 thread T0
     #0 0x40221e in main example_HeapOutOfBounds.cc:3
-    #1 0x7f8a9082ec4d in __libc_start_main ??:0
+    #1 0x7f1858155c4d in __libc_start_main ??:0
     #2 0x4020f9 in _start ??:0
-0x7f8a907f0214 is located 4 bytes to the right of 400-byte region [0x7f8a907f0080,0x7f8a907f0210)
+0x7f1858117214 is located 4 bytes to the right of 400-byte region [0x7f1858117080,0x7f1858117210)
 allocated by thread T0 here:
     #0 0x402dda in operator new[](unsigned long) _asan_rtl_
     #1 0x4021d2 in main example_HeapOutOfBounds.cc:3
-    #2 0x7f8a9082ec4d in __libc_start_main ??:0
-==29992== ABORTING
+    #2 0x7f1858155c4d in __libc_start_main ??:0
+==30217== ABORTING
 Shadow byte and word:
-  0x1ff1520fe042: fb
-  0x1ff1520fe040: 00 00 fb fb fb fb fb fb
+  0x1fe30b022e42: fb
+  0x1fe30b022e40: 00 00 fb fb fb fb fb fb
 More shadow bytes:
-  0x1ff1520fe020: 00 00 00 00 00 00 00 00
-  0x1ff1520fe028: 00 00 00 00 00 00 00 00
-  0x1ff1520fe030: 00 00 00 00 00 00 00 00
-  0x1ff1520fe038: 00 00 00 00 00 00 00 00
-=>0x1ff1520fe040: 00 00 fb fb fb fb fb fb
-  0x1ff1520fe048: fb fb fb fb fb fb fb fb
-  0x1ff1520fe050: fa fa fa fa fa fa fa fa
-  0x1ff1520fe058: fa fa fa fa fa fa fa fa
-  0x1ff1520fe060: fa fa fa fa fa fa fa fa
+  0x1fe30b022e20: 00 00 00 00 00 00 00 00
+  0x1fe30b022e28: 00 00 00 00 00 00 00 00
+  0x1fe30b022e30: 00 00 00 00 00 00 00 00
+  0x1fe30b022e38: 00 00 00 00 00 00 00 00
+=>0x1fe30b022e40: 00 00 fb fb fb fb fb fb
+  0x1fe30b022e48: fb fb fb fb fb fb fb fb
+  0x1fe30b022e50: fa fa fa fa fa fa fa fa
+  0x1fe30b022e58: fa fa fa fa fa fa fa fa
+  0x1fe30b022e60: fa fa fa fa fa fa fa fa
 }}}
