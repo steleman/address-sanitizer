@@ -13,13 +13,13 @@ clang++ -O1 -fasan example_GlobalOutOfBounds.cc
 ASAN:SIGILL
 =================================================================
 HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==30976== ERROR: AddressSanitizer global-buffer-overflow on address 0x000000413374 at pc 0x402227 bp 0x0 sp 0x7fff76d3fd18
+==9737== ERROR: AddressSanitizer global-buffer-overflow on address 0x000000413374 at pc 0x402227 bp 0x0 sp 0x7fff3a5cba78
 READ of size 4 at 0x000000413374 thread T0
     #0 0x402227 in main example_GlobalOutOfBounds.cc:3
-    #1 0x7f783d292c4d in __libc_start_main ??:0
+    #1 0x7fccad496c4d in __libc_start_main ??:0
     #2 0x402129 in _start ??:0
 0x000000413374 is located 4 bytes to the right of global variable 'global_array' (0x4131e0) of size 400
-==30976== ABORTING
+==9737== ABORTING
 Shadow byte and word:
   0x10000008266e: f9
   0x100000082668: 00 00 00 00 00 00 f9 f9

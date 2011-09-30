@@ -1,0 +1,52 @@
+#summary Example: UseAfterReturn
+{{{
+// By default, AddressSanitizer does not try to detect
+// stack-use-after-return bugs.
+// It may still find such bugs occasionally
+// and report them as a hard-to-explain stack-buffer-overflow.
+
+// This test is compiled with experimental flag -asan-use-after-return=-1
+int *ptr;
+void FunctionThatEscapesLocalObject() {
+  int local[100];
+  ptr = &local[0];
+}
+
+int main(int argc, char **argv) {
+  FunctionThatEscapesLocalObject();
+  return ptr[argc];
+}
+}}}
+{{{
+clang++ -O1 -fasan example_UseAfterReturn.cc
+./a.out
+}}}
+{{{
+ASAN:SIGILL
+=================================================================
+HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
+==9835== ERROR: AddressSanitizer stack-use-after-return on address 0x7f681c5e9024 at pc 0x402346 bp 0x7fff72c615f0 sp 0x7fff72c615d0
+READ of size 4 at 0x7f681c5e9024 thread T0
+    #0 0x402346 in main example_UseAfterReturn.cc:15
+    #1 0x7f681d607c4d in __libc_start_main ??:0
+    #2 0x402169 in _start ??:0
+Address 0x7f681c5e9024 is located at offset 36 in frame <FunctionThatEscapesLocalObject()> of T0's stack:
+  This frame has 1 object(s):
+    [32, 432) 'local'
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism
+      (longjmp and C++ exceptions *are* supported)
+==9835== ABORTING
+Shadow byte and word:
+  0x1fed038bd204: f5
+  0x1fed038bd200: f5 f5 f5 f5 f5 f5 f5 f5
+More shadow bytes:
+  0x1fed038bd1e0: 00 00 00 00 00 00 00 00
+  0x1fed038bd1e8: 00 00 00 00 00 00 00 00
+  0x1fed038bd1f0: 00 00 00 00 00 00 00 00
+  0x1fed038bd1f8: 00 00 00 00 00 00 00 00
+=>0x1fed038bd200: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1fed038bd208: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1fed038bd210: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1fed038bd218: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1fed038bd220: f5 f5 f5 f5 f5 f5 f5 f5
+}}}

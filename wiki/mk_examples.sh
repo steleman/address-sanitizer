@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ASAN="../asan_clang_Linux/bin/clang++ -O1 -g -fasan"
+ASAN="../asan_clang_Linux/bin/clang++ -O1 -g -fasan -mllvm -asan-use-after-return=1"
 FILTER="../scripts/asan_symbolize.py /"
 
 for source in example_*.cc; do
