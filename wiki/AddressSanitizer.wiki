@@ -7,11 +7,11 @@
 
 AddressSanitizer (aka ASan) is a memory error detector for C/C++.
 It finds:
-  * [ExampleUseAfterFree.wiki Use after free]
+  * [ExampleUseAfterFree Use after free]
   * Out-of-bounds accesses to
     * [ExampleHeapOutOfBounds heap]
     * [ExampleStackOutOfBounds stack]
-    * [ExampleGlobalOutOfBounds.wiki globals]
+    * [ExampleGlobalOutOfBounds globals]
   * [ExampleUseAfterReturn Use after return]
 
 This tool is very fast. The average slowdown of the instrumented program is ~2x (see PerformanceNumbers).
