@@ -5,27 +5,26 @@
 
 =Introduction=
 
-Many tools for finding memory bugs exist. <BR>
-[http://www.valgrind.org Valgrind], [http://code.google.com/p/drmemory/ DrMemory],
-[http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap], 
-[http://en.wikipedia.org/wiki/Electric_Fence  Electric Fence], Purify, Intel Inspector are among them. 
-All these tools share the same problem -- they are slow. 
+AddressSanitizer (aka ASan) is a memory error detector for C/C++.
+It finds:
+  * [ExampleUseAfterFree.wiki Use after free]
+  * Out-of-bounds accesses to
+    * [ExampleHeapOutOfBounds heap]
+    * [ExampleStackOutOfBounds stack]
+    * [ExampleGlobalOutOfBounds.wiki globals]
+  * [ExampleUseAfterReturn Use after return]
 
-We propose a new tool called AddressSanitizer (*ASan*) which finds
-*out-of-bound* (for heap, stack and globals) and *use-after-free* bugs.
-The key advantage of this tool is that it is [PerformanceNumbers very fast] (~2x slowdown in most cases).
+This tool is very fast. The average slowdown of the instrumented program is ~2x (see PerformanceNumbers).
+
 The tool consists of a compiler instrumentation module (currently, an LLVM pass)
 and a run-time library which replaces the `malloc` function.
 
-The tool is still under development but it already can run the
-Chromium browser (on Linux and Mac) and find bugs in it.
+The tool works on x86 Linux and Mac.
 
 See also:
   * AddressSanitizerAlgorithm -- if you are curious how it works.
-  * ToDo -- if you want to help.
 
 =Getting !AddressSanitizer=
-If you want to build AddressSanitizer yourself, refer to HowToBuild.
 
 We periodically update the AddressSanitizer binaries at the Chromium svn:
 {{{
@@ -34,6 +33,8 @@ We periodically update the AddressSanitizer binaries at the Chromium svn:
 
 So far, AddressSanitizer has been tested only on Linux Ubuntu 10.04, 64-bit
 (it can run both 64- and 32-bit programs) and Mac 10.6.
+
+If you want to build AddressSanitizer yourself, refer to HowToBuild.
 
 = Using !AddressSanitizer =
 In order to use AddressSanitizer you will need to build your program
