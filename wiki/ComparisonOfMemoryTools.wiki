@@ -1,0 +1,10 @@
+#summary Comparison of various memory error detectors
+
+*TODO*
+
+||            || AddressSanitizer || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || [http://perens.com/FreeSoftware/ Electric fence] ||
+|| technology || CTI              || DBI               || DBI        || CTI     || library        ||
+
+
+*DBI*: dynamic binary instrumentation <BR>
+*CTI*: compile-time instrumentation
