@@ -1,19 +1,19 @@
 #summary Comparison of various memory error detectors
 
-*TODO*
+=Summary =
 
-||            || AddressSanitizer || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  ||
-|| technology || CTI              || DBI               || DBI            || CTI           || Library   ||
-|| ARCH       || x86,x86_64       || x86,x86_64,ARM,PPC|| x86,x86_64     || all (?)       || all(?)    ||
-|| OS         || Linux, Mac       || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   ||
-|| Slowdown   || 2x               || 20x               || 10x            || ?             || ?         ||
-|| Bugs:      ||                  ||                   ||                ||               ||           ||
-|| Heap OOB   || yes              || yes               || yes            || yes           || some      ||
-|| Stack OOB  || yes              || no                || no             || some          || no        ||
-|| Global OOB || yes              || no                || no             || ?             || no        ||
-|| UAF        || yes              || yes               || yes            || yes           || yes       ||
-|| UAR        || some             || no                || no             || no            || no        ||
-|| UMR        || no               || yes               || yes            || ?             || no        ||
+||                                         || AddressSanitizer || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  ||
+|| technology                              || CTI              || DBI               || DBI            || CTI           || Library   ||
+|| ARCH                                    || x86,x86_64       || x86,x86_64,ARM,PPC|| x86,x86_64     || all (?)       || all(?)    ||
+|| OS                                      || Linux, Mac       || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   ||
+|| Slowdown                                || *2x*             || 20x               || 10x            || 2x-40x        || ?         ||
+|| Detects:                                ||                  ||                   ||                ||               ||           ||
+|| [ExampleHeapOutOfBounds Heap OOB]       || *yes*            || yes               || yes            || yes           || some      ||
+|| [ExampleStackOutOfBounds Stack OOB]     || *yes*            || no                || no             || some          || no        ||
+|| [ExampleGlobalOutOfBounds Global OOB]   || *yes*            || no                || no             || ?             || no        ||
+|| [ExampleUseAfterFree UAF]               || *yes*            || yes               || yes            || yes           || yes       ||
+|| [ExampleUseAfterReturn UAR]             || *some*           || no                || no             || no            || no        ||
+|| UMR                                     || no               || yes               || yes            || ?             || no        ||
 
 
 *DBI*: dynamic binary instrumentation <BR>
@@ -21,8 +21,15 @@
 *UMR*: uninitialized memory reads <BR>
 *UAF*: use-after-free (aka dangling pointer)  <BR>
 *UAR*: use-after-return <BR>
+*OOB*: out-of-bounds  <BR>
 
 Variations of Guard Page memory error detectors are availabel on all major OSes:
-  * [http://perens.com/FreeSoftware/ Electric fence] on Linux
-  * PageHeap on Windows
-  * and GuardMalloc in Mac
+  * [http://perens.com/FreeSoftware/ Electric fence] or [http://duma.sourceforge.net/ DUMA] on Linux
+  * Page Heap on Windows
+  * and Guard Malloc in Mac
+
+=Performance numbers on SPEC cpu2006=
+  * AddressSanitizer: see PerformanceNumbers
+  * Valgrind/Memcheck and Dr. Memory: see [http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/pubs/archive/37274.pdf Dr. Memory paper]
+  * Mudflap: slowdown varies from 2x to 40x
+  * Page Heap: 2/3 cpu2006 benchmarks fail (tested using [http://duma.sourceforge.net/ DUMA] on a Linux box with 24G RAM)
