@@ -4,7 +4,7 @@
 
 ||                                         || AddressSanitizer || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  ||
 || technology                              || CTI              || DBI               || DBI            || CTI           || Library   ||
-|| ARCH                                    || x86,x86_64       || x86,x86_64,ARM,PPC|| x86,x86_64     || all (?)       || all(?)    ||
+|| ARCH                                    || x86              || x86,ARM,PPC       || x84            || all(?)        || all(?)    ||
 || OS                                      || Linux, Mac       || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   ||
 || Slowdown                                || *2x*             || 20x               || 10x            || 2x-40x        || ?         ||
 || Detects:                                ||                  ||                   ||                ||               ||           ||
@@ -22,6 +22,7 @@
 *UAF*: use-after-free (aka dangling pointer)  <BR>
 *UAR*: use-after-return <BR>
 *OOB*: out-of-bounds  <BR>
+*x86*: includes 32- and 64-bit. <BR>
 
 Variations of Guard Page memory error detectors are availabel on all major OSes:
   * [http://perens.com/FreeSoftware/ Electric fence] or [http://duma.sourceforge.net/ DUMA] on Linux
