@@ -33,4 +33,4 @@ Variations of Guard Page memory error detectors are availabel on all major OSes:
   * AddressSanitizer: see PerformanceNumbers
   * Valgrind/Memcheck and Dr. Memory: see [http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/pubs/archive/37274.pdf Dr. Memory paper]
   * Mudflap: slowdown varies from 2x to 40x
-  * Page Heap: 2/3 cpu2006 benchmarks fail (tested using [http://duma.sourceforge.net/ DUMA] on a Linux box with 24G RAM)
+  * Guard Page: 2/3 cpu2006 benchmarks fail (tested using [http://duma.sourceforge.net/ DUMA] on a Linux box with 24G RAM)
