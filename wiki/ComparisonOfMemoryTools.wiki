@@ -14,6 +14,7 @@
 || [ExampleUseAfterFree UAF]               || *yes*            || yes               || yes            || yes           || yes       ||
 || [ExampleUseAfterReturn UAR]             || *some*           || no                || no             || no            || no        ||
 || UMR                                     || no               || yes               || yes            || ?             || no        ||
+|| Leaks                                   || not yet          || yes               || yes            || ?             || no        ||
 
 
 *DBI*: dynamic binary instrumentation <BR>
@@ -27,7 +28,7 @@
 Variations of Guard Page memory error detectors are availabel on all major OSes:
   * [http://perens.com/FreeSoftware/ Electric fence] or [http://duma.sourceforge.net/ DUMA] on Linux
   * Page Heap on Windows
-  * and Guard Malloc in Mac
+  * Guard Malloc in Mac
 
 =Performance numbers on SPEC cpu2006=
   * AddressSanitizer: see PerformanceNumbers
