@@ -24,11 +24,7 @@
 *UAR*: use-after-return <BR>
 *OOB*: out-of-bounds  <BR>
 *x86*: includes 32- and 64-bit. <BR>
-
-Variations of Guard Page memory error detectors are availabel on all major OSes:
-  * [http://perens.com/FreeSoftware/ Electric fence] or [http://duma.sourceforge.net/ DUMA] on Linux
-  * Page Heap on Windows
-  * Guard Malloc in Mac
+*Guard Page*: a family of memory error detectors ([http://perens.com/FreeSoftware/ Electric fence] or [http://duma.sourceforge.net/ DUMA] on Linux, Page Heap on Windows, Guard Malloc in Mac)
 
 =Performance numbers on SPEC cpu2006=
   * AddressSanitizer: see PerformanceNumbers
