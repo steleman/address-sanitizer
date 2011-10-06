@@ -23,6 +23,7 @@ The tool works on x86 Linux and Mac.
 
 See also:
   * AddressSanitizerAlgorithm -- if you are curious how it works.
+  * ComparisonOfMemoryTools
 
 =Getting !AddressSanitizer=
 
