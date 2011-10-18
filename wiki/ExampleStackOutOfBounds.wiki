@@ -11,31 +11,29 @@ clang++ -O1 -fasan example_StackOutOfBounds.cc
 ./a.out
 }}}
 {{{
-ASAN:SIGILL
 =================================================================
-HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==9787== ERROR: AddressSanitizer stack-buffer-overflow on address 0x7f4f95bcb1b4 at pc 0x40229a bp 0x7fffb4f63bc0 sp 0x7fffb4f639c0
-READ of size 4 at 0x7f4f95bcb1b4 thread T0
-    #0 0x40229a in main example_StackOutOfBounds.cc:4
-    #1 0x7f4f96be9c4d in __libc_start_main ??:0
-    #2 0x4020f9 in _start ??:0
-Address 0x7f4f95bcb1b4 is located at offset 436 in frame <main> of T0's stack:
+==10589== ERROR: AddressSanitizer stack-buffer-overflow on address 0x7f5620d981b4 at pc 0x4024e8 bp 0x7fff101cbc90 sp 0x7fff101cbc88
+READ of size 4 at 0x7f5620d981b4 thread T0
+    #0 0x4024e8 in main example_StackOutOfBounds.cc:4
+    #1 0x7f5621db6c4d in __libc_start_main ??:0
+    #2 0x402349 in _start ??:0
+Address 0x7f5620d981b4 is located at offset 436 in frame <main> of T0's stack:
   This frame has 1 object(s):
     [32, 432) 'stack_array'
 HINT: this may be a false positive if your program uses some custom stack unwind mechanism
       (longjmp and C++ exceptions *are* supported)
-==9787== ABORTING
+==10589== ABORTING
 Shadow byte and word:
-  0x1fe9f2b79636: f4
-  0x1fe9f2b79630: 00 00 00 00 00 00 f4 f4
+  0x1feac41b3036: f4
+  0x1feac41b3030: 00 00 00 00 00 00 f4 f4
 More shadow bytes:
-  0x1fe9f2b79610: 00 00 00 00 00 00 00 00
-  0x1fe9f2b79618: 00 00 00 00 00 00 00 00
-  0x1fe9f2b79620: 00 00 00 00 00 00 00 00
-  0x1fe9f2b79628: 00 00 00 00 00 00 00 00
-=>0x1fe9f2b79630: 00 00 00 00 00 00 f4 f4
-  0x1fe9f2b79638: f3 f3 f3 f3 00 00 00 00
-  0x1fe9f2b79640: 00 00 00 00 00 00 00 00
-  0x1fe9f2b79648: 00 00 00 00 00 00 00 00
-  0x1fe9f2b79650: 00 00 00 00 00 00 00 00
+  0x1feac41b3010: 00 00 00 00 00 00 00 00
+  0x1feac41b3018: 00 00 00 00 00 00 00 00
+  0x1feac41b3020: 00 00 00 00 00 00 00 00
+  0x1feac41b3028: 00 00 00 00 00 00 00 00
+=>0x1feac41b3030: 00 00 00 00 00 00 f4 f4
+  0x1feac41b3038: f3 f3 f3 f3 00 00 00 00
+  0x1feac41b3040: 00 00 00 00 00 00 00 00
+  0x1feac41b3048: 00 00 00 00 00 00 00 00
+  0x1feac41b3050: 00 00 00 00 00 00 00 00
 }}}

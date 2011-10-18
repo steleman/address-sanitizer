@@ -12,31 +12,29 @@ clang++ -O1 -fasan example_HeapOutOfBounds.cc
 ./a.out
 }}}
 {{{
-ASAN:SIGILL
 =================================================================
-HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==9763== ERROR: AddressSanitizer heap-buffer-overflow on address 0x7f14c10e6214 at pc 0x40221e bp 0x7fff7cbf2490 sp 0x7fff7cbf2480
-READ of size 4 at 0x7f14c10e6214 thread T0
-    #0 0x40221e in main example_HeapOutOfBounds.cc:3
-    #1 0x7f14c1124c4d in __libc_start_main ??:0
-    #2 0x4020f9 in _start ??:0
-0x7f14c10e6214 is located 4 bytes to the right of 400-byte region [0x7f14c10e6080,0x7f14c10e6210)
+==10565== ERROR: AddressSanitizer heap-buffer-overflow on address 0x7fe4b0c76214 at pc 0x40246f bp 0x7fffb4c46b70 sp 0x7fffb4c46b68
+READ of size 4 at 0x7fe4b0c76214 thread T0
+    #0 0x40246f in main example_HeapOutOfBounds.cc:3
+    #1 0x7fe4b0cb4c4d in __libc_start_main ??:0
+    #2 0x402349 in _start ??:0
+0x7fe4b0c76214 is located 4 bytes to the right of 400-byte region [0x7fe4b0c76080,0x7fe4b0c76210)
 allocated by thread T0 here:
-    #0 0x402dda in operator new[](unsigned long) _asan_rtl_
-    #1 0x4021d2 in main example_HeapOutOfBounds.cc:3
-    #2 0x7f14c1124c4d in __libc_start_main ??:0
-==9763== ABORTING
+    #0 0x402c36 in operator new[](unsigned long) _asan_rtl_
+    #1 0x402422 in main example_HeapOutOfBounds.cc:3
+    #2 0x7fe4b0cb4c4d in __libc_start_main ??:0
+==10565== ABORTING
 Shadow byte and word:
-  0x1fe29821cc42: fb
-  0x1fe29821cc40: 00 00 fb fb fb fb fb fb
+  0x1ffc9618ec42: fb
+  0x1ffc9618ec40: 00 00 fb fb fb fb fb fb
 More shadow bytes:
-  0x1fe29821cc20: 00 00 00 00 00 00 00 00
-  0x1fe29821cc28: 00 00 00 00 00 00 00 00
-  0x1fe29821cc30: 00 00 00 00 00 00 00 00
-  0x1fe29821cc38: 00 00 00 00 00 00 00 00
-=>0x1fe29821cc40: 00 00 fb fb fb fb fb fb
-  0x1fe29821cc48: fb fb fb fb fb fb fb fb
-  0x1fe29821cc50: fa fa fa fa fa fa fa fa
-  0x1fe29821cc58: fa fa fa fa fa fa fa fa
-  0x1fe29821cc60: fa fa fa fa fa fa fa fa
+  0x1ffc9618ec20: 00 00 00 00 00 00 00 00
+  0x1ffc9618ec28: 00 00 00 00 00 00 00 00
+  0x1ffc9618ec30: 00 00 00 00 00 00 00 00
+  0x1ffc9618ec38: 00 00 00 00 00 00 00 00
+=>0x1ffc9618ec40: 00 00 fb fb fb fb fb fb
+  0x1ffc9618ec48: fb fb fb fb fb fb fb fb
+  0x1ffc9618ec50: fa fa fa fa fa fa fa fa
+  0x1ffc9618ec58: fa fa fa fa fa fa fa fa
+  0x1ffc9618ec60: fa fa fa fa fa fa fa fa
 }}}

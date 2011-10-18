@@ -10,27 +10,25 @@ clang++ -O1 -fasan example_GlobalOutOfBounds.cc
 ./a.out
 }}}
 {{{
-ASAN:SIGILL
 =================================================================
-HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==9737== ERROR: AddressSanitizer global-buffer-overflow on address 0x000000413374 at pc 0x402227 bp 0x0 sp 0x7fff3a5cba78
-READ of size 4 at 0x000000413374 thread T0
-    #0 0x402227 in main example_GlobalOutOfBounds.cc:3
-    #1 0x7fccad496c4d in __libc_start_main ??:0
-    #2 0x402129 in _start ??:0
-0x000000413374 is located 4 bytes to the right of global variable 'global_array' (0x4131e0) of size 400
-==9737== ABORTING
+==10538== ERROR: AddressSanitizer global-buffer-overflow on address 0x000000415354 at pc 0x402481 bp 0x7ffffabe2450 sp 0x7ffffabe2448
+READ of size 4 at 0x000000415354 thread T0
+    #0 0x402481 in main example_GlobalOutOfBounds.cc:3
+    #1 0x7f0a1c295c4d in __libc_start_main ??:0
+    #2 0x402379 in _start ??:0
+0x000000415354 is located 4 bytes to the right of global variable 'global_array' (0x4151c0) of size 400
+==10538== ABORTING
 Shadow byte and word:
-  0x10000008266e: f9
-  0x100000082668: 00 00 00 00 00 00 f9 f9
+  0x100000082a6a: f9
+  0x100000082a68: 00 00 f9 f9 f9 f9 f9 f9
 More shadow bytes:
-  0x100000082648: 00 00 00 00 00 00 00 00
-  0x100000082650: 00 00 00 00 00 00 00 00
-  0x100000082658: 00 00 00 00 00 00 00 00
-  0x100000082660: 00 00 00 00 00 00 00 00
-=>0x100000082668: 00 00 00 00 00 00 f9 f9
-  0x100000082670: f9 f9 f9 f9 00 00 00 00
-  0x100000082678: 00 00 00 00 00 00 00 00
-  0x100000082680: 00 00 00 00 00 00 00 00
-  0x100000082688: 00 00 00 00 00 00 00 00
+  0x100000082a48: 00 00 00 00 00 00 00 00
+  0x100000082a50: 00 00 00 00 00 00 00 00
+  0x100000082a58: 00 00 00 00 00 00 00 00
+  0x100000082a60: 00 00 00 00 00 00 00 00
+=>0x100000082a68: 00 00 f9 f9 f9 f9 f9 f9
+  0x100000082a70: 00 00 00 00 00 00 00 00
+  0x100000082a78: 00 00 00 00 00 00 00 00
+  0x100000082a80: 00 00 00 00 00 00 00 00
+  0x100000082a88: 00 00 00 00 00 00 00 00
 }}}

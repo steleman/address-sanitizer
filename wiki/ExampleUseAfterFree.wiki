@@ -11,35 +11,33 @@ clang++ -O1 -fasan example_UseAfterFree.cc
 ./a.out
 }}}
 {{{
-ASAN:SIGILL
 =================================================================
-HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==9811== ERROR: AddressSanitizer heap-use-after-free on address 0x7f84883a7214 at pc 0x402216 bp 0x7fffd615d830 sp 0x7fffd615d820
-READ of size 4 at 0x7f84883a7214 thread T0
-    #0 0x402216 in main example_UseAfterFree.cc:4
-    #1 0x7f84883e5c4d in __libc_start_main ??:0
-    #2 0x4020f9 in _start ??:0
-0x7f84883a7214 is located 4 bytes to the right of 400-byte region [0x7f84883a7080,0x7f84883a7210)
+==10613== ERROR: AddressSanitizer heap-use-after-free on address 0x7fe8740a6214 at pc 0x40246f bp 0x7fffe5e463e0 sp 0x7fffe5e463d8
+READ of size 4 at 0x7fe8740a6214 thread T0
+    #0 0x40246f in main example_UseAfterFree.cc:4
+    #1 0x7fe8740e4c4d in __libc_start_main ??:0
+    #2 0x402349 in _start ??:0
+0x7fe8740a6214 is located 4 bytes to the right of 400-byte region [0x7fe8740a6080,0x7fe8740a6210)
 freed by thread T0 here:
-    #0 0x4029f2 in operator delete[](void*) _asan_rtl_
-    #1 0x4021e3 in main example_UseAfterFree.cc:4
-    #2 0x7f84883e5c4d in __libc_start_main ??:0
+    #0 0x4028f4 in operator delete[](void*) _asan_rtl_
+    #1 0x402433 in main example_UseAfterFree.cc:4
+    #2 0x7fe8740e4c4d in __libc_start_main ??:0
 previously allocated by thread T0 here:
-    #0 0x402dca in operator new[](unsigned long) _asan_rtl_
-    #1 0x4021d3 in main example_UseAfterFree.cc:2
-    #2 0x7f84883e5c4d in __libc_start_main ??:0
-==9811== ABORTING
+    #0 0x402c36 in operator new[](unsigned long) _asan_rtl_
+    #1 0x402423 in main example_UseAfterFree.cc:2
+    #2 0x7fe8740e4c4d in __libc_start_main ??:0
+==10613== ABORTING
 Shadow byte and word:
-  0x1ff091074e42: fd
-  0x1ff091074e40: fd fd fd fd fd fd fd fd
+  0x1ffd0e814c42: fd
+  0x1ffd0e814c40: fd fd fd fd fd fd fd fd
 More shadow bytes:
-  0x1ff091074e20: fd fd fd fd fd fd fd fd
-  0x1ff091074e28: fd fd fd fd fd fd fd fd
-  0x1ff091074e30: fd fd fd fd fd fd fd fd
-  0x1ff091074e38: fd fd fd fd fd fd fd fd
-=>0x1ff091074e40: fd fd fd fd fd fd fd fd
-  0x1ff091074e48: fd fd fd fd fd fd fd fd
-  0x1ff091074e50: fa fa fa fa fa fa fa fa
-  0x1ff091074e58: fa fa fa fa fa fa fa fa
-  0x1ff091074e60: fa fa fa fa fa fa fa fa
+  0x1ffd0e814c20: fd fd fd fd fd fd fd fd
+  0x1ffd0e814c28: fd fd fd fd fd fd fd fd
+  0x1ffd0e814c30: fd fd fd fd fd fd fd fd
+  0x1ffd0e814c38: fd fd fd fd fd fd fd fd
+=>0x1ffd0e814c40: fd fd fd fd fd fd fd fd
+  0x1ffd0e814c48: fd fd fd fd fd fd fd fd
+  0x1ffd0e814c50: fa fa fa fa fa fa fa fa
+  0x1ffd0e814c58: fa fa fa fa fa fa fa fa
+  0x1ffd0e814c60: fa fa fa fa fa fa fa fa
 }}}

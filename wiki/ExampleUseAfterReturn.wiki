@@ -22,31 +22,29 @@ clang++ -O1 -fasan example_UseAfterReturn.cc
 ./a.out
 }}}
 {{{
-ASAN:SIGILL
 =================================================================
-HINT: if your stack trace looks short or garbled, use ASAN_OPTIONS=fast_unwind=0
-==9835== ERROR: AddressSanitizer stack-use-after-return on address 0x7f681c5e9024 at pc 0x402346 bp 0x7fff72c615f0 sp 0x7fff72c615d0
-READ of size 4 at 0x7f681c5e9024 thread T0
-    #0 0x402346 in main example_UseAfterReturn.cc:15
-    #1 0x7f681d607c4d in __libc_start_main ??:0
-    #2 0x402169 in _start ??:0
-Address 0x7f681c5e9024 is located at offset 36 in frame <FunctionThatEscapesLocalObject()> of T0's stack:
+==10638== ERROR: AddressSanitizer stack-use-after-return on address 0x7f9211380024 at pc 0x402594 bp 0x7fffa6cbd7b0 sp 0x7fffa6cbd7a8
+READ of size 4 at 0x7f9211380024 thread T0
+    #0 0x402594 in main example_UseAfterReturn.cc:15
+    #1 0x7f921239ec4d in __libc_start_main ??:0
+    #2 0x4023b9 in _start ??:0
+Address 0x7f9211380024 is located at offset 36 in frame <FunctionThatEscapesLocalObject()> of T0's stack:
   This frame has 1 object(s):
     [32, 432) 'local'
 HINT: this may be a false positive if your program uses some custom stack unwind mechanism
       (longjmp and C++ exceptions *are* supported)
-==9835== ABORTING
+==10638== ABORTING
 Shadow byte and word:
-  0x1fed038bd204: f5
-  0x1fed038bd200: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1ff242270004: f5
+  0x1ff242270000: f5 f5 f5 f5 f5 f5 f5 f5
 More shadow bytes:
-  0x1fed038bd1e0: 00 00 00 00 00 00 00 00
-  0x1fed038bd1e8: 00 00 00 00 00 00 00 00
-  0x1fed038bd1f0: 00 00 00 00 00 00 00 00
-  0x1fed038bd1f8: 00 00 00 00 00 00 00 00
-=>0x1fed038bd200: f5 f5 f5 f5 f5 f5 f5 f5
-  0x1fed038bd208: f5 f5 f5 f5 f5 f5 f5 f5
-  0x1fed038bd210: f5 f5 f5 f5 f5 f5 f5 f5
-  0x1fed038bd218: f5 f5 f5 f5 f5 f5 f5 f5
-  0x1fed038bd220: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1ff24226ffe0: 00 00 00 00 00 00 00 00
+  0x1ff24226ffe8: 00 00 00 00 00 00 00 00
+  0x1ff24226fff0: 00 00 00 00 00 00 00 00
+  0x1ff24226fff8: 00 00 00 00 00 00 00 00
+=>0x1ff242270000: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1ff242270008: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1ff242270010: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1ff242270018: f5 f5 f5 f5 f5 f5 f5 f5
+  0x1ff242270020: f5 f5 f5 f5 f5 f5 f5 f5
 }}}
