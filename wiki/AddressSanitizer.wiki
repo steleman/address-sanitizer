@@ -76,29 +76,11 @@ previously allocated by thread 0x787d4720 here:
 
 =Interaction with other tools=
 ==gdb==
-You can use [http://www.gnu.org/software/gdb/ gdb] with 
+You can use [http://www.gnu.org/software/gdb/ gdb] with
 binaries built by AddressSanitizer in a usual way.
-When AddressSanitizer finds a bug it generates `SIGILL` so gdb will 
-stop before AddressSanitizer prints a warning.
-
-{{{
-% gdb -q ./a.out
-Reading symbols from a.out...done.
-(gdb) r
-Starting program: a.out
-[Thread debugging using libthread_db enabled]
-Using host libthread_db library "/lib/libthread_db.so.1".
-0x0000000000402ed7 in main () at ./use-after-free.c:5
-5         return x[5];
-(gdb) c
-Continuing.
-==19123== ERROR: AddressSanitizer crashed on address 0x000000000103a325 at pc 0x402ed7 bp 0x7fffffffe650 sp 0x7fffffffe640
-READ of size 1 at 0x000000000103a325 thread T0
-    #0 0x402ed7 in main use-after-free.c:5
-    #1 0x7ffff712cc4d in __libc_start_main ?:0
-    #2 0x402dc9 in _start ?:0
-...
-}}}
+When AddressSanitizer finds a bug it calls one of the functions `__asan_report_{load,store}{1,2,4,8,16}`
+which in turn calls `asan_report_error`.
+If you want gdb to stop before asan reports an error, set a breakpoint on `asan_report_error`.
 
 ==ulimit -v==
 The `ulimit -v` command can be used with ASan-ified binaries.

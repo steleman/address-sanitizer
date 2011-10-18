@@ -109,9 +109,9 @@ Shadow = (Mem >> 7) | kOffset;
 Experiments are in flight.
 
 ==Report Error==
-The `ReportError` could be implemented as a call, but there are many other,
-more efficient and/or compact solutions.
-Currently, we do the following:
+The `ReportError` could be implemented as a call (this is the default now),
+but there are some other, slightly more efficient and/or more compact solutions.
+At some point the default behaviour was:
   * copy the failure address to `%rax` (`%eax`).
   * execute `ud2` (generates SIGILL)
   * Encode access type and size in a one-byte instruction which follows `ud2`.
@@ -150,64 +150,53 @@ void foo() {
 
 == Examples of instrumented code ==
 {{{
-// instrumenting a 64-bit store instruction (x86_64)
-0:    48 89 f9                mov    %rdi,%rcx
-3:    48 c1 e9 03             shr    $0x3,%rcx
-7:    48 b8 00 00 00 00 00    mov    $0x100000000000,%rax
-e:    10 00 00
-11:   48 09 c8                or     %rcx,%rax
-14:   80 38 00                cmpb   $0x0,(%rax)  << load shadow
-17:   75 08                   jne    21
-19:   48 c7 07 01 00 00 00    movq   $0x1,(%rdi)  << original store instruction
-20:   c3                      retq
-21:   48 89 f8                mov    %rdi,%rax    << save the address in %rax
-24:   0f 0b                   ud2a                << generate SIGILL
-26:   5b                      pop    %rbx         << kAccessSize and kIsWrite encoded in the instruction
+void write64(long long *a) {
+  *a = 0;
+}
+void write16(short *a) {
+  *a = 0;
+}
 }}}
 
 {{{
-// instrumenting a 16-bit store instruction (x86_64)
- 0:	48 89 f8             	mov    %rdi,%rax
- 3:	48 c1 e8 03          	shr    $0x3,%rax
- 7:	48 b9 00 00 00 00 00 	mov    $0x100000000000,%rcx
- e:	10 00 00 
-11:	48 09 c1             	or     %rax,%rcx
-14:	8a 01                	mov    (%rcx),%al  << load shadow
-16:	84 c0                	test   %al,%al     << compare shadow with 0
-18:	74 12                	je     2c          << Jump to the original store
-1a:	89 f9                	mov    %edi,%ecx   << SlowPathCheck
-1c:	83 e1 07             	and    $0x7,%ecx   << SlowPathCheck
-1f:	83 c1 02             	add    $0x2,%ecx   << SlowPathCheck
-22:	38 c1                	cmp    %al,%cl     << SlowPathCheck
-24:	7e 06                	jle    2c
-26:	48 89 f8             	mov    %rdi,%rax   << save the address in %eax
-29:	0f 0b                	ud2a               << generate SIGILL
-2b:	59                   	pop    %rcx        << kAccessSize and kIsWrite encoded in the instruction
-2c:	66 c7 07 01 00       	movw   $0x1,(%rdi) << original store instruction
-31:	c3                   	retq   
+0000000000402460 <write64>:
+  402460:	push   %rbp           << stack frame
+  402461:	mov    %rsp,%rbp    
+  402464:	mov    %rdi,%rax
+  402467:	shr    $0x3,%rax      << shift by 3
+  40246b:	mov    $0x100000000000,%rcx
+  402472:
+  402475:	or     %rax,%rcx      << add offset
+  402478:	cmpb   $0x0,(%rcx)    << compare shadow with 0
+  40247b:	jne    402486 <write64+0x26>
+  40247d:	movq   $0x0,(%rdi)    << original store
+  402484:	pop    %rbp           
+  402485:	retq   
+  402486:	callq  405e10 <__asan_report_store8>  << report error
+  40248b:	nopl   0x0(%rax,%rax,1)
+
+0000000000402490 <write16>:
+  402490:	push   %rbp
+  402491:	mov    %rsp,%rbp
+  402494:	mov    %rdi,%rax
+  402497:	shr    $0x3,%rax
+  40249b:	mov    $0x100000000000,%rcx
+  4024a2:
+  4024a5:	or     %rax,%rcx
+  4024a8:	mov    (%rcx),%al
+  4024aa:	test   %al,%al
+  4024ac:	je     4024b9 <write16+0x29>
+  4024ae:	mov    %edi,%ecx
+  4024b0:	and    $0x7,%ecx
+  4024b3:	inc    %ecx
+  4024b5:	cmp    %al,%cl
+  4024b7:	jge    4024c0 <write16+0x30>
+  4024b9:	movw   $0x0,(%rdi)
+  4024be:	pop    %rbp
+  4024bf:	retq   
+  4024c0:	callq  405e70 <__asan_report_store2>
+  4024c5:	nopw   %cs:0x0(%rax,%rax,1)
 }}}
-
-
-{{{
-// instrumenting a 8-bit store instruction (x86_32)
-   0:   8b 44 24 04             mov    0x4(%esp),%eax
-   4:   89 c1                   mov    %eax,%ecx
-   6:   c1 e9 03                shr    $0x3,%ecx
-   9:   8a 89 00 00 00 20       mov    0x20000000(%ecx),%cl  << load shadow
-   f:   84 c9                   test   %cl,%cl
-  11:   74 0f                   je     22 
-  13:   89 c2                   mov    %eax,%edx   << SlowPathCheck
-  15:   83 e2 07                and    $0x7,%edx   << SlowPathCheck
-  18:   42                      inc    %edx        << SlowPathCheck
-  19:   38 ca                   cmp    %cl,%dl     << SlowPathCheck
-  1b:   7e 05                   jle    22 
-  1d:   89 c0                   mov    %eax,%eax    << save the address in %eax
-  1f:   0f 0b                   ud2a                << generate SIGILL
-  21:   58                      pop    %eax         << kAccessSize and kIsWrite encoded in the instruction
-  22:   c6 00 01                movb   $0x1,(%eax)
-  25:   c3                      ret    
-}}}
-
 
 
 ==Unaligned accesses==
@@ -228,7 +217,7 @@ Possible solutions:
 
 = Run-time library =
 ==Malloc==
-The run-time library replaces `malloc`, `free` and similar functions and sets SIGILL handler.
+The run-time library replaces `malloc`/`free` and provides error reporting functions like `__asan_report_load8`.
 
 `malloc` allocates the requested amount of memory with redzones around it.
 The shadow values corresponding to the redzones are poisoned
@@ -237,8 +226,6 @@ and the shadow values for the main memory region are cleared.
 `free` poisons shadow values for the entire region and puts the chunk of memory
 into a quarantine queue (such that this chunk
 will not be returned again by malloc during some period of time).
-
-SIGILL handler extracts the failing address, access type/size and prints the error message.
 
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com
