@@ -71,8 +71,8 @@ if (shadow_value) {
 // Check the cases where we access first k bytes of the qword
 // and these k bytes are unpoisoned.
 bool SlowPathCheck(shadow_value, address, kAccessSize) {
-  last_addressed_byte = (address & 7) + kAccessSize;
-  return last_addressed_byte > shadow_value);
+  last_accessed_byte = (address & 7) + kAccessSize - 1;
+  return last_accessed_byte >= shadow_value);
 }
 }}}
 
