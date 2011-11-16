@@ -1,0 +1,7 @@
+#summary AddressSanitizer logo
+
+
+We need a logo for AddressSanitizer. 
+
+Here is the prototype (a Pheasant eating a Bug).
+http://address-sanitizer.googlecode.com/svn/trunk/img/fasan_logo.jpg
