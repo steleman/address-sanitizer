@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 }
 }}}
 {{{
-clang++ -O1 -fasan example_UseAfterReturn.cc
+clang++ -O1 -faddress-sanitizer example_UseAfterReturn.cc
 ./a.out
 }}}
 {{{

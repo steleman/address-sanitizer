@@ -14,7 +14,7 @@ make -j                  # Build libasan{32,64}.a and the tests.
 # Copy all required files into ../asan_clang_Linux
 make install
 # Build and run a tiny test.
-../clang_build_Linux/Release+Asserts/bin/clang -O2 -g  -fasan tests/use-after-free.c && ./a.out
+../clang_build_Linux/Release+Asserts/bin/clang -O2 -g  -faddress-sanitizer tests/use-after-free.c && ./a.out
 # Now you should see a report:
 # READ of size 1 at 0x00002000005778c8; shadow: 0x00001000002bbc64; mem: 0x00000000015de325 thread T0
 #     #0 0x402c77 in main /home/you/address-sanitizer/asan/use-after-free.c:5

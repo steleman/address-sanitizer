@@ -6,7 +6,7 @@ int main(int argc, char **argv) {
 }
 }}}
 {{{
-clang++ -O1 -fasan example_GlobalOutOfBounds.cc
+clang++ -O1 -faddress-sanitizer example_GlobalOutOfBounds.cc
 ./a.out
 }}}
 {{{

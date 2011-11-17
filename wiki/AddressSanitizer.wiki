@@ -39,7 +39,7 @@ If you want to build AddressSanitizer yourself, refer to HowToBuild.
 
 = Using !AddressSanitizer =
 In order to use AddressSanitizer you will need to build your program
-with the modified `clang` binary using the `-fasan` switch.
+with the modified `clang` binary using the `-faddress-sanitizer` switch.
 You also need to use `-O1` or higher optimization level.
 {{{
 % cat tests/use-after-free.c
@@ -49,7 +49,7 @@ int main() {
   free(x);
   return x[5];
 }
-% ../clang_build_Linux/Release+Asserts/bin/clang -fasan -O2 -g   tests/use-after-free.c
+% ../clang_build_Linux/Release+Asserts/bin/clang -faddress-sanitizer -O2 -g   tests/use-after-free.c
 }}}
 
 Now, run the executable.

@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
 }
 }}}
 {{{
-clang++ -O1 -fasan example_UseAfterFree.cc
+clang++ -O1 -faddress-sanitizer example_UseAfterFree.cc
 ./a.out
 }}}
 {{{

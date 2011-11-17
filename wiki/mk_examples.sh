@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ASAN="../asan_clang_Linux/bin/clang++ -O1 -g -fasan -mllvm -asan-use-after-return=1"
+ASAN="../asan_clang_Linux/bin/clang++ -O1 -g -faddress-sanitizer -mllvm -asan-use-after-return=1"
 FILTER="../scripts/asan_symbolize.py /"
 
 for source in example_*.cc; do
@@ -14,7 +14,7 @@ for source in example_*.cc; do
   printf "}}}\n"                     >> $wiki
 
   printf "{{{\n"                     >> $wiki
-  printf "clang++ -O1 -fasan $source\n" >> $wiki
+  printf "clang++ -O1 -faddress-sanitizer $source\n" >> $wiki
   printf "./a.out\n"                 >> $wiki
   printf "}}}\n"                     >> $wiki
 
