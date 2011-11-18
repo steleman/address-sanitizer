@@ -1,0 +1,6 @@
+This is an experimental mode when shadow memory starts at zero offset.
+
+To enable this mode, change asan/Makefile:
+ASAN_OFFSET=0
+ASAN_FLEXIBLE_MAPPING_AND_OFFSET=1
+ASAN_PIE=1
