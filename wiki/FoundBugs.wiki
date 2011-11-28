@@ -1,6 +1,6 @@
 #summary Some of the bugs found by AddressSanitizer
 
-=Chromium and WebKit= 
+=Chromium and !WebKit= 
 Quite a few bugs in Chromium and !WebKit:
   * http://googlechromereleases.blogspot.com/2011/10/chrome-stable-release.html
   * http://googlechromereleases.blogspot.com/2011/11/stable-channel-update.html
