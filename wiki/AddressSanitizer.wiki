@@ -80,8 +80,8 @@ previously allocated by thread 0x787d4720 here:
 You can use [http://www.gnu.org/software/gdb/ gdb] with
 binaries built by AddressSanitizer in a usual way.
 When AddressSanitizer finds a bug it calls one of the functions `__asan_report_{load,store}{1,2,4,8,16}`
-which in turn calls `asan_report_error`.
-If you want gdb to stop before asan reports an error, set a breakpoint on `asan_report_error`.
+which in turn calls `__asan_report_error`.
+If you want gdb to stop before asan reports an error, set a breakpoint on `__asan_report_error`.
 
 ==ulimit -v==
 The `ulimit -v` command can be used with ASan-ified binaries.
