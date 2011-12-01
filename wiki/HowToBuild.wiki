@@ -1,7 +1,7 @@
 #summary Build Instructions for AddressSanitizer
 
-*Warning*: we are in the process of integrating AddressSanitizer with [http://llvm.org LLVM]. 
-These temporary build instructions may or may not work. 
+*Warning*: we are in the process of integrating AddressSanitizer with [http://llvm.org LLVM].
+These temporary build instructions may or may not work.
 If you need something stable come back later, or grab the prebuilt binaries (see AddressSanitizer page)
 
 {{{
@@ -9,17 +9,17 @@ If you need something stable come back later, or grab the prebuilt binaries (see
 # Get llvm, clang and compiler-rt, build it all
 svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
 cd llvm
-R=$(svn info | grep Revision: | awk '{print $2}') 
+R=$(svn info | grep Revision: | awk '{print $2}')
 (cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
 (cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
 
 mkdir build
 (cd build && ../configure --enable-optimized && make -j 10)
-                                                                                                                                              
+
 # Build and test asan run-time library
 cd projects/compiler-rt/lib/asan/
 make -f Makefile.old get_third_party
 make -f Makefile.old test -j 10
 # Install clang and asan run-time into a separate directory ../asan_clang_linux
-make -f Makefile.old install 
+make -f Makefile.old install
 }}}
