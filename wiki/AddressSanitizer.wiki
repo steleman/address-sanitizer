@@ -2,7 +2,8 @@
 
 <wiki:toc max_depth="2" />
 
-*New*: [http://goo.gl/bCqK3 Presentation] for the [http://llvm.org/devmtg/2011-11/ 2011 LLVM Developers' Meeting]
+*New*: [http://goo.gl/bCqK3 Presentation] for the [http://llvm.org/devmtg/2011-11/ 2011 LLVM Developers' Meeting]<BR>
+*New*: We are in the process of [http://clang.llvm.org/docs/AddressSanitizer.html integrating AddressSanitizer] with the [http://llvm.org LLVM] mainline.
 
 =Introduction=
 
