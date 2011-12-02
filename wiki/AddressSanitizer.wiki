@@ -116,7 +116,6 @@ ASAN_OPTIONS=verbosity=1 ./a.out
 || flag|| default || description ||
 || verbosity  || 0 || Be more verbose (mostly for testing the tool itself) ||
 || malloc_context_size || 16 || Number of frames in `malloc`/`free` stack traces. ||
-|| fast_unwind || 1 || Use fast Unwind. See also [#Call_stack Call stack] ||
 || || || ||
 
 =Call stack=
@@ -126,13 +125,10 @@ AddressSanitizer collects call stacks on the following events:
   * failure
 
 `malloc` and `free` happen relatively frequently and it is important to unwind the call stack fast.
-By default, a fast and somewhat unreliable unwinder based on frame pointers is used.
-If you see short or garbled call stacks, disable the fast unwinder (`fast_unwind=0`).
-The slow unwinder uses `libunwind` and is ... really slow.
+AddressSanitizer uses a simple unwinder that relies on frame pointers.
 
 If you don't care about `malloc`/`free` call stacks, simply disable the unwinder completely
 (`malloc_context_size=0`).
-For infrequent events (thread creation, failure) we always use the slow unwinder.
 
 Each stack frame needs to be symbolized (of course, if the binary is compiled with debug info).
 Given a PC, we need to print
