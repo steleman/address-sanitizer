@@ -3,7 +3,7 @@
 = Spec CPU 2006 (C/C++) =
 
 These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (C/C++ only) using AddressSanitizer r496
-with `malloc_context_size=1` (i.e. no inwinding).
+with `malloc_context_size=1` (i.e. no unwinding).
 
 The baseline is `clang -O2`. <BR>
 The average slowdown introduced by full instrumentation (red) is *1.73*.<BR>
