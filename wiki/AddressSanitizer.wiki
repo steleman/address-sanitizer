@@ -176,6 +176,6 @@ fun:*MyFooBar*
 
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com 
-or [https://plus.google.com/117014197169958493500 talk to us] in Google+.
+or [https://plus.google.com/117014197169958493500 in Google+].
 
 <g:plusone></g:plusone>
