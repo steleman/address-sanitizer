@@ -23,3 +23,9 @@ make -f Makefile.old test -j 10
 # Install clang and asan run-time into a separate directory ../asan_clang_linux
 make -f Makefile.old install
 }}}
+
+*Note*: if you're hacking the runtime library, you'll need to run:
+{{{
+(cd build && make -j 10)
+}}}
+to rebuild it.
