@@ -20,6 +20,9 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
 =perl=
 https://rt.cpan.org/Ticket/Display.html?id=72700
 
+=vim=
+http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
+
 =Spec CPU 2006 =
 Use-after-free in 400.perlbench (a pointer is used after it is passed to `realloc`).
 {{{
