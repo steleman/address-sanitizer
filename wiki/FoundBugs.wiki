@@ -4,6 +4,7 @@
 Quite a few bugs in Chromium and !WebKit:
   * http://googlechromereleases.blogspot.com/2011/10/chrome-stable-release.html
   * http://googlechromereleases.blogspot.com/2011/11/stable-channel-update.html
+  * http://googlechromereleases.blogspot.com/2011/12/stable-channel-update.html
   * http://support.apple.com/kb/HT5000
 
 Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
