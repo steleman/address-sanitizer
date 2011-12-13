@@ -8,6 +8,12 @@ Quite a few bugs in Chromium and !WebKit:
 
 Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
 
+=Mozilla=
+https://bugzilla.mozilla.org/show_bug.cgi?id=709483 <BR>
+https://bugzilla.mozilla.org/show_bug.cgi?id=709580 <BR>
+
+See also https://developer.mozilla.org/en/Building_Firefox_with_Address_Sanitizer
+
 =ffmpeg=
 Some (but not all) bugs found in [http://ffmpeg.org/ ffmpeg]: 
   * http://git.videolan.org/?p=ffmpeg.git;a=commit;h=1149fbc7631a8c2258386f9aa247806715493b10
