@@ -42,7 +42,9 @@ If you want to build AddressSanitizer yourself, refer to HowToBuild.
 = Using !AddressSanitizer =
 In order to use AddressSanitizer you will need to build your program
 with the modified `clang` binary using the `-faddress-sanitizer` switch.
-You also need to use `-O1` or higher optimization level.
+To get a reasonable performance add `-O1` or higher. <B>
+To get nicer stack traces in error messages add `-fno-omit-frame-pointer`.
+
 {{{
 % cat tests/use-after-free.c
 #include <stdlib.h>
