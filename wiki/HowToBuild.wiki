@@ -24,11 +24,20 @@ make -f Makefile.old test -j 10
 make -f Makefile.old install
 }}}
 
+To update an existing checkout:
+{{{
+cd llvm
+svn up
+R=$(svn info | grep Revision: | awk '{print $2}')
+(cd tools && svn up -r $R  clang)
+(cd projects && svn up -r $R compiler-rt)
+}}}
+
 *Note*: if you're hacking the runtime library, you'll need to run:
 {{{
 (cd build && make -j 10)
 }}}
-to rebuild it.
+to rebuild it. Just running `make` in the `asan` subdirectory does not work.
 
 To switch your checkout to read-write mode:
 {{{
