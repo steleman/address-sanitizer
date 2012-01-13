@@ -32,8 +32,8 @@ to rebuild it.
 
 To switch your checkout to read-write mode:
 {{{
-cd llvm
 CNAME=your_name_here
+cd llvm
 svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://CNAME@llvm.org/svn/llvm-project/llvm/trunk
 (cd tools && svn switch --relocate http://llvm.org/svn/llvm-project/cfe/trunk https://$CNAME@llvm.org/svn/llvm-project/cfe/trunk clang
 (cd projects && svn switch --relocate http://llvm.org/svn/llvm-project/compiler-rt/trunk https://$CNAME@llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
