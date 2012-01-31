@@ -119,6 +119,7 @@ ASAN_OPTIONS=verbosity=1 ./a.out
 || flag|| default || description ||
 || verbosity  || 0 || Be more verbose (mostly for testing the tool itself) ||
 || malloc_context_size || 16 || Number of frames in `malloc`/`free` stack traces. ||
+|| sleep_before_dying || 0 || Sleep for this number of seconds before exiting the process on failure. ||
 || || || ||
 
 =Call stack=
