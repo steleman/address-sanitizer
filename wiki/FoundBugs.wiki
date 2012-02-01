@@ -15,7 +15,7 @@ Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
 https://bugzilla.mozilla.org/show_bug.cgi?id=709483 <BR>
 https://bugzilla.mozilla.org/show_bug.cgi?id=709580 <BR>
 
-See also https://developer.mozilla.org/en/Building_Firefox_with_Address_Sanitizer
+See also http://blog.mozilla.com/decoder/2012/01/27/trying-new-code-analysis-techniques/#more-14
 
 =ffmpeg=
 Some (but not all) bugs found in [http://ffmpeg.org/ ffmpeg]: 
