@@ -33,7 +33,9 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
 http://code.google.com/p/webrtc/issues/detail?id=281
 
 =perl=
-https://rt.cpan.org/Ticket/Display.html?id=72700
+  * https://rt.cpan.org/Ticket/Display.html?id=72700
+  * https://rt.perl.org/rt3/Ticket/Display.html?id=111594
+  * https://rt.perl.org/rt3/Ticket/Display.html?id=111586
 
 =vim=
 http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
