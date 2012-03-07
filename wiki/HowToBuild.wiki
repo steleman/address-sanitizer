@@ -15,14 +15,26 @@ R=$(svn info | grep Revision: | awk '{print $2}')
 
 mkdir build
 (cd build && ../configure --enable-optimized && make -j 10)
+}}}
 
-# Build and test asan run-time library
+Build AddressSanitizer tests:
+{{{
 cd projects/compiler-rt/lib/asan/
 make -f Makefile.old get_third_party
 make -f Makefile.old test -j 10
 # Install clang and asan run-time into a separate directory ../asan_clang_linux
 make -f Makefile.old install
 }}}
+
+To build Clang/LLVM using AddressSanitizer (bootstrap)
+{{{
+# Build fresh clang with AddressSanitizer as explained above
+LLVM=/path/to/llvm/;
+CLANG="$LLVM/build/Release+Asserts/bin/clang";
+CC="$CLANG -faddress-sanitizer" CXX="$CLANG++ -faddress-sanitizer  " $LLVM/configure --enable-optimized
+make -j10 TOOL_NO_EXPORTS=
+}}}
+
 
 To update an existing checkout:
 {{{
