@@ -28,9 +28,8 @@ To update an existing checkout:
 {{{
 cd llvm
 svn up
-R=$(svn info | grep Revision: | awk '{print $2}')
-(cd tools && svn up -r $R  clang)
-(cd projects && svn up -r $R compiler-rt)
+REV=$(svn info | grep Revision: | awk '{print $2}')
+svn up -r $REV tools/clang projects/compiler-rt
 }}}
 
 *Note*: if you're hacking the runtime library, you'll need to run:
