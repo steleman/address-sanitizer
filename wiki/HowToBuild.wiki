@@ -26,10 +26,8 @@ make -f Makefile.old install
 
 To update an existing checkout:
 {{{
-cd llvm
-svn up
-REV=$(svn info | grep Revision: | awk '{print $2}')
-svn up -r $REV tools/clang projects/compiler-rt
+cd llvm/build
+make update
 }}}
 
 *Note*: if you're hacking the runtime library, you'll need to run:
