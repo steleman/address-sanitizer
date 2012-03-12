@@ -1,0 +1,22 @@
+#summary How to build and run AddressSanitizer on Android
+
+WARNING: these instructions rely on a change that has not made it into AOSP yet. Wait for updates.
+
+
+The current build process, roughly, looks like this:
+ * Checkout AOSP
+ * Checkout http://code.google.com/p/address-sanitizer-android inside AOSP tree as external/asan
+ * Build and flash Android
+ * Build Clang on the side (just the default build, nothing Android-specific here)
+ * export CLANG_BIN to the directory where clang binary is
+ * mmm external/asan && adb sync
+ * Build your code with external/asan/clang-scripts/clang.sh, deploy to the device
+
+Running:
+ * To run a standalone native binary, prefix it with asanwrapper:
+  /system/bin/asanwrapper _path_to_your_binary_ _options_
+ * To run an app from an APK, do
+  setprop wrap._name_ "logwrapper asanwrapper"
+  , where _name_ is the name of your app as seen in "adb shell ps"
+
+NOTE: if you get an assertion failure about INTERCEPT(index), this means ASan interceptors have not kicked in. Verify that you are running the program with asanwrapper.
