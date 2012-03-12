@@ -41,6 +41,10 @@ http://code.google.com/p/webrtc/issues/detail?id=281
 =vim=
 http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
 
+=LLVM=
+  * http://llvm.org/bugs/show_bug.cgi?id=12245
+(and some more)
+
 =Spec CPU 2006 =
 Use-after-free in 400.perlbench (a pointer is used after it is passed to `realloc`).
 {{{
