@@ -1,7 +1,7 @@
 #summary The status of the Windows ASan port
 
 ==Short summary==
-C-only apps seem to work, except for th the stacks missing file/lineno in the reports (see [http://llvm.org/bugs/show_bug.cgi?id=12283 bug]), only function+offset info is available.
+C-only apps seem to work, except for the stacks missing file/lineno in the reports (see [http://llvm.org/bugs/show_bug.cgi?id=12283 bug]), only function+offset info is available.
 
 The ASan runtime library builds using MSVC `cl` just fine.
 
