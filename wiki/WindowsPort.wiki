@@ -56,3 +56,9 @@ ASan has found the same UAF in perlbench and stack OOB on h264ref [http://code.g
 The global OOB on h264ref was not detected - since this feature is not implemented yet on Windows.
 
 It has also found one more OOB access on h264ref which needs to be investigated.
+
+== Chromium ==
+The plan is to try Chromium tests with runtime but no instrumentation first,
+then add instrumentation of C code, then ...
+
+Stay tuned!
