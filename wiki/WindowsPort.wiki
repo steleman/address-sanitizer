@@ -55,9 +55,7 @@ The C++ tests were not run.
 
 ASan has found the same UAF in perlbench and stack OOB on h264ref [http://code.google.com/p/address-sanitizer/wiki/FoundBugs seen on Linux].
 
-The global OOB on h264ref was not detected - since this feature is not implemented yet on Windows.
-
-It has also found one more OOB access on h264ref which needs to be investigated.
+The global OOB on h264ref was not detected - since this feature is not implemented yet on Windows.<br/>However, it has found one similar heap-OOB access on h264ref which needs to be investigated. See issue 50 for the details.
 
 == Chromium ==
 The plan is to try Chromium tests with runtime but no instrumentation first,
