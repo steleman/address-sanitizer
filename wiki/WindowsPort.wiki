@@ -1,13 +1,15 @@
 #summary The status of the Windows ASan port
 
 ==Short summary==
-C-only apps seem to work, except for the stacks missing file/lineno in the reports (see [http://llvm.org/bugs/show_bug.cgi?id=12283 bug]), only function+offset info is available.
+Pure C apps seem to work fine, except for the stacks missing file/lineno in the reports (see [http://llvm.org/bugs/show_bug.cgi?id=12283 bug] - only function+offset info is available).
 
 The ASan runtime library builds using MSVC `cl` just fine.
 
 One has to use MSVC's `link` to link the Clang-generated `.o` files and the runtime.
 
 C++ support is blocked by the unfinished clang++/Win implementation.
+
+Most likely it's possible to mix `cl`-built non-instrumented C++ code with `clang`-built instrumented C code.
 
 =Try it=
 _For up-to-date instructions, see the [http://code.google.com/p/address-sanitizer/source/browse/trunk/build/scripts/slave/buildbot_standard.bat build steps] our internal buildbot is performing to test._
