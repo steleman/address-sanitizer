@@ -28,9 +28,15 @@ See also:
 
 =Getting !AddressSanitizer=
 
-We periodically update the AddressSanitizer binaries at the Chromium svn:
+The Chromium team periodically updates LLVM/Clang binaries, which now include AddressSanitizer support. 
+Simply execute the following:
 {{{
-% svn co http://src.chromium.org/svn/trunk/deps/third_party/asan
+mkdir -p tools/clang
+cd tools/clang
+svn co http://src.chromium.org/svn/trunk/src/tools/clang/scripts
+cd ../../
+tools/clang/scripts/update.sh
+# Now use third_party/llvm-build/Release+Asserts/bin/{clang,clang++}
 }}}
 
 So far, AddressSanitizer has been tested only on Linux Ubuntu 10.04, 64-bit
