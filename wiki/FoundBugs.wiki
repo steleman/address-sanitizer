@@ -46,6 +46,7 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
   * http://llvm.org/bugs/show_bug.cgi?id=12245
   * http://llvm.org/bugs/show_bug.cgi?id=12267
   * http://llvm.org/bugs/show_bug.cgi?id=12284
+  * http://llvm.org/bugs/show_bug.cgi?id=12305
   * http://llvm.org/viewvc/llvm-project?view=rev&revision=140427
   * http://llvm.org/viewvc/llvm-project?view=rev&revision=152738
 (and some more)
