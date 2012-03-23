@@ -7,7 +7,7 @@ The ASan runtime library builds using MSVC `cl` just fine.
 
 One has to use MSVC's `link` to link the Clang-generated `.o` files and the runtime.
 
-C++ support is blocked by the unfinished clang++/Win implementation.
+C++ support is blocked by the unfinished clang++/Win implementation [see bug 58].
 
 Most likely it's possible to mix `cl`-built non-instrumented C++ code with `clang`-built instrumented C code.
 
