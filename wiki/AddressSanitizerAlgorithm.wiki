@@ -111,7 +111,7 @@ Experiments are in flight.
 ==Report Error==
 The `ReportError` could be implemented as a call (this is the default now),
 but there are some other, slightly more efficient and/or more compact solutions.
-At some point the default behaviour was:
+At some point the default behaviour *was*:
   * copy the failure address to `%rax` (`%eax`).
   * execute `ud2` (generates SIGILL)
   * Encode access type and size in a one-byte instruction which follows `ud2`.
