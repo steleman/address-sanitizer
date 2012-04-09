@@ -50,7 +50,7 @@ cd ..
 
 echo @@@BUILD_STEP asan test@@@
 cd win_tests
-C:\cygwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebuFLAGS="-faddress-sanitizer -g"ess-sanitizer EXTRA_OBJ=../asan_rtl/asan_rtl.lib || goto :DIE
+C:\cygwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebuFLAGS="-faddress-sanitizer -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer EXTRA_OBJ=../asan_rtl/asan_rtl.lib || goto :DIE
 cd ..
 
 :: TODO(timurrrr) echo @@@BUILD_STEP asan test64@@@
