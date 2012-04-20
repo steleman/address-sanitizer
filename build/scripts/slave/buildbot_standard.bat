@@ -31,6 +31,7 @@ cd llvm-build
 cmake ..\llvm || goto :DIE
 echo @@@BUILD_STEP build llvm@@@
 devenv LLVM.sln /Build Debug /Project clang || goto :DIE
+devenv LLVM.sln /Build Debug /Project FileCheck || goto :DIE
 cd ..
 
 :: TODO(timurrrr) echo @@@BUILD_STEP test llvm@@@
@@ -50,7 +51,7 @@ cd ..
 
 echo @@@BUILD_STEP asan test@@@
 cd win_tests
-C:\cygwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebuFLAGS="-faddress-sanitizer -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer EXTRA_OBJ=../asan_rtl/asan_rtl.lib || goto :DIE
+C:\cygwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebFILECHECK=../llvm-build/bin/Debug/FileCheckn/DebuFLAGS="-faddress-sanitizer -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer EXTRA_OBJ=../asan_rtl/asan_rtl.lib || goto :DIE
 cd ..
 
 :: TODO(timurrrr) echo @@@BUILD_STEP asan test64@@@
