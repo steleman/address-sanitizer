@@ -33,6 +33,9 @@ Some (but not all) bugs found in [http://ffmpeg.org/ ffmpeg]:
 
 ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
 
+=FreeType=
+  * http://savannah.nongnu.org/search/?words=AddressSanitizer&type_of_search=bugs&Search=Search&exact=1#options (20+ bugs)
+
 =webrtc=
 http://code.google.com/p/webrtc/issues/detail?id=281
 
