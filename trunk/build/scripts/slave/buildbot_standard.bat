@@ -19,7 +19,7 @@ if NOT "%BUILDBOT_REVISION%" == "" set REV_ARG="-r%BUILDBOT_REVISION%"
 :: call -> because "svn" might be a batch script, ouch
 call svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm %REV_ARG% || goto :DIE
 call svn co http://llvm.org/svn/llvm-project/cfe/trunk llvm/tools/clang %REV_ARG% || goto :DIE
-call svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib/asan asan_rtl %REV_ARG% || goto :DIE
+call svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib rtl %REV_ARG% || goto :DIE
 call svn co http://address-sanitizer.googlecode.com/svn/trunk/win/tests win_tests || goto :DIE
 
 mkdir llvm-build
@@ -37,7 +37,7 @@ cd ..
 :: TODO(timurrrr) echo @@@BUILD_STEP test llvm@@@
 
 echo @@@BUILD_STEP build asan RTL@@@
-cd asan_rtl
+cd rtl\asan || goto :DIE
 :: This only compiles, not links.
 del *.pdb *.obj *.lib || goto :DIE
 
@@ -45,12 +45,12 @@ del *.pdb *.obj *.lib || goto :DIE
 :: /MT <- Multi-Threaded CRT with static linking
 :: /Zi <- generate debug info
 cl /nologo /MP /MT /Zi /I.. /c *.cc ../P="" /c *.cc interception/*.cc || goto :DIE
-lib /nologo /OUT:asan_rtl.lib *.obj || goto :DIE
-cd ..
+lib /nologo /OUT:asan_rtl.lib *.obj || got\..
 
 echo @@@BUILD_STEP asan test@@@
+cd win_tests || goto :DIE
 cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebFILECHECK=../llvm-build/bin/Debug/FileCheckn/DebuFLAGS="-faddress-sanitizer -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer EXTRA_OBJ=../asan_rtl/asan_rtl.lib || goto :DIE
+C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebFILECHECK=../llvm-build/bin/Debug/FileCheckn/DebuFLAGS="-faddress-sanitizer -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer rtl/asanJ=../asan_rtl/asan_rtl.lib || goto :DIE
 cd ..
 
 :: TODO(timurrrr) echo @@@BUILD_STEP asan test64@@@
