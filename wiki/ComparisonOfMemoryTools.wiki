@@ -4,7 +4,7 @@
 
 ||                                         || AddressSanitizer || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  ||
 || technology                              || CTI              || DBI               || DBI            || CTI           || Library   ||
-|| ARCH                                    || x86              || x86,ARM,PPC       || x84            || all(?)        || all(?)    ||
+|| ARCH                                    || x86              || x86,ARM,PPC       || x86            || all(?)        || all(?)    ||
 || OS                                      || Linux, Mac       || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   ||
 || Slowdown                                || *2x*             || 20x               || 10x            || 2x-40x        || ?         ||
 || Detects:                                ||                  ||                   ||                ||               ||           ||
