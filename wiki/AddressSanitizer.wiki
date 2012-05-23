@@ -2,8 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
+*New*: AddressSanitizer [http://llvm.org/releases/3.1/docs/ReleaseNotes.html#whatsnew is released] as part of [http://llvm.org LLVM] 3.1. <BR>
 *New*: Watch the presentation from the [http://llvm.org/devmtg/2011-11/ LLVM Developer's meeting] (Nov 18, 2011): [http://www.youtube.com/watch?v=CPnRS1nv3_s Video], [http://llvm.org/devmtg/2011-11/Serebryany_FindingRacesMemoryErrors.pdf slides].<BR>
-*New*: We are in the process of [http://clang.llvm.org/docs/AddressSanitizer.html integrating AddressSanitizer] with the [http://llvm.org LLVM] mainline.
+
 
 =Introduction=
 
