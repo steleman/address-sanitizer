@@ -7,7 +7,7 @@ https://github.com/otinn/llvm
 
 = Status =
 
-Working on tests that should verify that the common instrumentation passes work.
+Working on tests that check whether the instrumentation passes create the pool registration calls.
 
 Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
