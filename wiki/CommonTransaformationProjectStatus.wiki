@@ -7,7 +7,7 @@ https://github.com/otinn/llvm
 
 = Status =
 
-Working on tests that check whether the instrumentation passes create the pool registration calls.
+Working on creating tests that feature checks that could be optimized away.
 
 Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
@@ -21,53 +21,33 @@ void fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
 void storecheck(void *ptr, size_t size);
 void faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
 
-void load_store_example(void) {
-  int test[50] = {};
-  loadcheck(&test[3], sizeof(test[3])); // similarly for storecheck
-  faststorecheck(&test[3], sizeof(test[3]), test, sizeof(test)); // similarly for fastloadcheck
-}
-
-
-// added after every gep
-void gepcheck(void *src, void *dest);
-void fastgepcheck(void *src, void *dest, void *obj, size_t obj_size);
-
-void gep_example(void) {
-  int test[50][50] = {};
-  gepcheck(test, &test[3]);
-  fastgepcheck(test, &test[3], test, sizeof(test));
-}
-
+// added after every gep; retuns a checked dest pointer (possibly a trap address)
+void* gepcheck(void *src, void *dest);
+void* fastgepcheck(void *src, void *dest, void *obj, size_t obj_size);
 
 // added before every call through a function pointer
 void funccheck(void *func);
 
-void func_example(void) {
-  funccheck(0);
-  funccheck((void*)funccheck);
-}
-
-
 // added before every free
 void freecheck(void *ptr);
-
-void free_example(void) {
-  freecheck(0);
-}
-
 
 // added after every alloca instruction (or the whole stack if they are in a super-alloca)
 void pool_register_stack(void *obj, size_t obj_size);
 // added before every return from a function for every existing pool_register_stack
 void pool_unregister_stack(void *obj);
 
-// added after every allocation on the heap (e.g. malloc, realloc, etc.)
-void pool_register_heap(void *obj, size_t obj_size);
-// added after the deallocation of every a heap object
-void pool_unregister_heap(void *obj);
+// there are no existing tests for anything past this point
 
 // added as the first global constructor, registers all globals and their sizes
 void pool_register_global_array(void **obj_array, size_t *obj_size_array, size_t size);
 // added as the last global destructor
 void pool_unregister_global_array(void **obj_array, size_t size);
+
+// added after every allocation on the heap (for example malloc)
+void pool_register_heap(void *obj, size_t obj_size);
+// added after the deallocation of every a heap object
+void pool_unregister_heap(void *obj);
+
+// added after every realloc-like allocation on the heap
+void pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
 }}}
