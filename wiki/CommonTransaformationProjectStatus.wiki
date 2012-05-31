@@ -7,7 +7,7 @@ https://github.com/otinn/llvm
 
 = Status =
 
-Working on creating tests that feature checks that could be optimized away.
+Creating a partitioning (and the tests) for load/store checks that are always independently unnecessary.
 
 Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
