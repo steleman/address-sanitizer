@@ -14,55 +14,55 @@ Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafe
 = Interface =
 {{{
 // added before every load
-void loadcheck(void *ptr, size_t size);
-void fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
+void __loadcheck(void *ptr, size_t size);
+void __fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
 
 // added before every store
-void storecheck(void *ptr, size_t size);
-void faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
+void __storecheck(void *ptr, size_t size);
+void __faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
 
 // added after every gep; retuns a checked dest pointer (possibly a trap address)
-void* gepcheck(void *src, void *dest);
-void* fastgepcheck(void *src, void *dest, void *obj, size_t obj_size);
+void* __gepcheck(void *src, void *dest);
+void* __fastgepcheck(void *src, void *dest, void *obj, size_t obj_size);
 
 // added before every call through a function pointer
-void funccheck(void *func);
+void __funccheck(void *func);
 
 // added before every free
-void freecheck(void *ptr);
+void __freecheck(void *ptr);
 
 // added after every alloca instruction (or the whole stack if they are in a super-alloca)
-void pool_register_stack(void *obj, size_t obj_size);
-// added before every return from a function for every existing pool_register_stack
-void pool_unregister_stack(void *obj);
+void __pool_register_stack(void *obj, size_t obj_size);
+// added before every return from a function for every existing __pool_register_stack
+void __pool_unregister_stack(void *obj);
 
 // there are no existing tests for anything past this point
 
 // added as the first global constructor, registers all globals and their sizes
-void pool_register_global_array(void **obj_array, size_t *obj_size_array, size_t size);
+void __pool_register_global_array(void **obj_array, size_t *obj_size_array, size_t size);
 // added as the last global destructor
-void pool_unregister_global_array(void **obj_array, size_t size);
+void __pool_unregister_global_array(void **obj_array, size_t size);
 
 // added after every allocation on the heap (for example malloc)
-void pool_register_heap(void *obj, size_t obj_size);
+void __pool_register_heap(void *obj, size_t obj_size);
 // added after the deallocation of every a heap object
-void pool_unregister_heap(void *obj);
+void __pool_unregister_heap(void *obj);
 
 // added after every realloc-like allocation on the heap
-void pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
+void __pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
 }}}
 
 = Independently unnecessary load/store checks partitions = 
 {{{
-1. problem type
-1.1. no problem
+1. index problem
+1.1. none
 1.2. access starts before the object
 1.3. access ends after the object
 
 2. allocation problem
 2.1. none
+2.2. possibly null
 2.3. possibly freed
-2.4. possibly null or freed
 
 3. index type
 3.1. constant
@@ -91,4 +91,9 @@ void pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
 8.2. select
 8.3. phi
 8.4. mixed
+
+9. loop structure
+9.1. none
+9.2. single loop
+9.3. multiple loops
 }}}
