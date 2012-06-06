@@ -7,7 +7,7 @@ https://github.com/otinn/llvm
 
 = Status =
 
-Creating the tests for load/store checks that are always independently unnecessary.
+Creating a partitioning and the tests for load/store checks that are always covered by a previous load/store check (try to keep the first one).
 
 Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
@@ -61,8 +61,8 @@ void __pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
 
 2. allocation problem
 2.1. none
-2.2. possibly null
-2.3. possibly freed
+2.2. possibly freed
+2.3. unknown allocation
 
 3. index type
 3.1. constant
