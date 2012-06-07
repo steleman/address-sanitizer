@@ -23,7 +23,12 @@ Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
   * https://bugzilla.mozilla.org/show_bug.cgi?id=709483
   * https://bugzilla.mozilla.org/show_bug.cgi?id=709580
   * http://www.mozilla.org/security/announce/2012/mfsa2012-14.html
+  * http://www.mozilla.org/security/announce/2012/mfsa2012-21.html
+  * http://www.mozilla.org/security/announce/2012/mfsa2012-22.html
+  * http://www.mozilla.org/security/announce/2012/mfsa2012-23.html
   * http://www.mozilla.org/security/announce/2012/mfsa2012-31.html
+  * http://www.mozilla.org/security/announce/2012/mfsa2012-38.html
+  * http://www.mozilla.org/security/announce/2012/mfsa2012-40.html
 
 See also http://blog.mozilla.com/decoder/2012/01/27/trying-new-code-analysis-techniques/#more-14
 
