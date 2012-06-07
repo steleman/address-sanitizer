@@ -7,7 +7,7 @@ https://github.com/otinn/llvm
 
 = Status =
 
-Creating a partitioning and the tests for load/store checks that are always covered by a previous load/store check (try to keep the first one).
+Creating the tests for load/store checks that are always implied by a previous load/store check (try to keep the first one).
 
 Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
@@ -96,4 +96,35 @@ void __pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
 9.1. none
 9.2. single loop
 9.3. multiple loops
+}}}
+
+= Partitions for load/store checks that may be implied by other such checks =
+{{{
+1. index problem 
+1.1. none
+1.2. off in the same direction
+1.3. off in different directions
+
+2. allocation problem
+2.1. none
+2.2. free may be called between the checks
+
+3. boundary expression type
+3.1. constant
+3.2. simple expression (which limitations apply?)
+3.3. anything else
+
+4. memory object type
+4.1. second check not on a heap object
+4.2. other
+
+5. CFG structure
+5.1. same basic block
+5.2. single connecting path
+5.3. multiple connecting paths
+
+6. loop structure
+6.1. none
+6.2. checks in the same loop
+6.3. checks in different loops / one not in a loop
 }}}
