@@ -22,7 +22,7 @@ set REV=-r HEAD
 svn co %REV% http://llvm.org/svn/llvm-project/llvm/trunk llvm
 cd llvm
 svn co %REV% http://llvm.org/svn/llvm-project/cfe/trunk tools/clang
-svn co %REV% http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib/asan asan_rtl
+svn co %REV% http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib rtl
 mkdir BUILD
 cd BUILD 
 cmake -G"Visual Studio 9 2008" .. && devenv LLVM.sln /Build Release /Project clang
@@ -31,10 +31,10 @@ cd ..
 
 Now, build the runtime library:
 {{{
-cd asan_rtl
-cl /nologo /MP /MT /Zi /c *.cc interception/*.cc
+cd rtl\asan
+cl /nologo /MP /MT /Zi /I.. /c *.cc ../interception/*.cc ../sanitizer_common/*.cc
 lib /nologo /out:asan_rtl.lib *.obj
-cd ..
+cd ..\..
 }}}
 
 Try to build your app with Clang:
