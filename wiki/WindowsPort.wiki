@@ -40,7 +40,7 @@ cd ..\..
 Try to build your app with Clang:
 {{{
 path-to-checkout\llvm\BUIlD\bin\Release\clang.exe -faddress-sanitizer -g -c <your_files>
-link /debug /incremental:no /out:myprogname.exe /nologo <your_obj_files> path-to-checkout\asan_rt\asan_rtl.lib
+link /debug /incremental:no /out:myprogname.exe /nologo <your_obj_files> path-to-checkout\asan_rt\asan_rtl.lib /defaultlib:libcmt
 myprogname.exe
 }}}
 
