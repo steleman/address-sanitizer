@@ -7,7 +7,7 @@ https://github.com/otinn/llvm
 
 = Status =
 
-Creating the tests for load/store checks that are always implied by a previous load/store check (try to keep the first one).
+Creating the instrumentation passes.
 
 Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
