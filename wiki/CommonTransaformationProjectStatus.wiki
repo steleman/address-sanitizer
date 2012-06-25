@@ -6,13 +6,10 @@ https://github.com/otinn/llvm
 
 
 = Status =
+Creating a simple pass to convert load/store checks into their fast versions.
 
-The load/store/gep/func check creation works. The stack variable (un)registration works as it does in SAFECode (superset of what works in ASan).
+The repository: https://github.com/otinn/llvm
 
-Working on the global variable instrumentation pass.
-
-
-Tests: https://github.com/otinn/llvm/tree/master/test/Instrumentation/MemorySafety
 
 = Interface =
 {{{
