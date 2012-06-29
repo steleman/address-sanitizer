@@ -30,6 +30,7 @@ cd llvm-build
 :: If devenv takes too much time and you observe "Function.cpp" near the end of the output,
 :: please LLVM.sln and disable optimizations for LLVMCore/Function.cpp in the Release build.
 cmake -G"Visual Studio 9 2008" ..\llvm && devenv LLVM.sln /Build Release /Project clang
+
 cd ..
 }}}
 
