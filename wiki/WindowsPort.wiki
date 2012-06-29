@@ -18,12 +18,10 @@ First, you’ll need to have Clang built:
 {{{
 set REV=-r HEAD
 :: Replace “HEAD” with a revision number if you want
-
 svn co %REV% http://llvm.org/svn/llvm-project/llvm/trunk llvm
-cd llvm
-svn co %REV% http://llvm.org/svn/llvm-project/cfe/trunk tools/clang
+svn co %REV% http://llvm.org/svn/llvm-project/cfe/trunk llvm/tools/clang
 svn co %REV% http://llvm.org/svn/llvm-project/compiler-rt/trunk/lib rtl
-cd ..
+
 mkdir llvm-build
 cd llvm-build
 
@@ -45,7 +43,7 @@ cd ..\..
 Try to build your app with Clang:
 {{{
 path-to\llvm-build\bin\Release\clang.exe -faddress-sanitizer -g -c <your_files>
-link /debug /incremental:no /out:myprogname.exe /nologo <your_obj_files> path-to-checkout\asan_rt\asan_rtl.lib /defaultlib:libcmt
+link /debug /incremental:no /out:myprogname.exe /nologo <your_obj_files> path-to\rtl\asan_rtl.lib /defaultlib:libcmt
 myprogname.exe
 }}}
 
