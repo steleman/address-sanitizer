@@ -6,7 +6,7 @@ https://github.com/otinn/llvm
 
 
 = Status =
-Working on the heap registration calls.
+Working on a pass to remove obviously correct load/store checks.
 
 The repository: https://github.com/otinn/llvm
 
@@ -36,14 +36,10 @@ void __pool_register_stack(void *obj, size_t obj_size);
 // added before every return from a function for every existing __pool_register_stack
 void __pool_unregister_stack(void *obj);
 
-// there are no existing tests for anything past this point
+// added for every global in a special function, registers all globals and their sizes
+void __pool_register_global(void *obj, size_t obj_size);
 
-// added as the first global constructor, registers all globals and their sizes
-void __pool_register_global_array(void **obj_array, size_t *obj_size_array, size_t size);
-// added as the last global destructor
-void __pool_unregister_global_array(void **obj_array, size_t size);
-
-// added after every allocation on the heap (for example malloc)
+// added after every allocation on the heap (for example malloc); excludes realloc-like allocation
 void __pool_register_heap(void *obj, size_t obj_size);
 // added after the deallocation of every a heap object
 void __pool_unregister_heap(void *obj);
