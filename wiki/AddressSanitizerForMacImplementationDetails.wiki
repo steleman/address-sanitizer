@@ -32,12 +32,12 @@ Some comparison of existing memory tools is done at http://code.google.com/p/add
 
 === Valgrind Memcheck ===
 
-Memcheck is based on Valgrind, a binary instrumentation framework, so all the advantages and disadvantages of DBI apply to it. It does not require code recompilation and is able to find the memory errors in the shared libraries and JITted code as well as in the main executable. On the other hand, it is unable to find bugs on global and stack variables. Memcheck is also quite slow, mainly because of the translation/instrumentation overhead and the program threads being serialized.
+[http://valgrind.org/docs/manual/mc-manual.html Memcheck] is based on [http://valgrind.org/ Valgrind], a binary instrumentation framework, so all the advantages and disadvantages of DBI apply to it. It does not require code recompilation and is able to find the memory errors in the shared libraries and JITted code as well as in the main executable. On the other hand, it is unable to find bugs on global and stack variables. Memcheck is also quite slow, mainly because of the translation/instrumentation overhead and the program threads being serialized.
 Memcheck also allows the user to detect problems related to uninitialized values, which requires a more complex shadow state and is not the goal of AddressSanitizer.
 
 === libgmalloc ===
 
-Some people compare AddressSanitizer to libgmalloc. These two tools are a bit similar, but they may find different bugs. libgmalloc places each heap allocation on its own virtual memory page, which is unmapped when the allocated memory chunk is freed. This allows libgmalloc to easily detect use-after-free bugs without instrumenting the program or the system libraries, but at the same time page-level granularity does not allow to catch the accesses right behind the array bounds.
+Some people compare AddressSanitizer to [https://developer.apple.com/library/mac/#documentation/darwin/reference/manpages/man3/libgmalloc.3.html `libgmalloc`]. These two tools are a bit similar, but they may find different bugs. libgmalloc places each heap allocation on its own virtual memory page, which is unmapped when the allocated memory chunk is freed. This allows libgmalloc to easily detect use-after-free bugs without instrumenting the program or the system libraries, but at the same time page-level granularity does not allow to catch the accesses right behind the array bounds.
 libgmalloc does not manage stack memory and the globals, thus it can’t detect stack and global buffer overflows.
 
 == Clang and compile-time stuff ==
