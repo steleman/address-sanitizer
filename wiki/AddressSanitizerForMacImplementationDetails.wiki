@@ -143,8 +143,7 @@ AddressSanitizer wraps `memcpy()` and `memmove()` in order to check that the mem
 It turns out that on Mac OS 10.7 `memcpy()` and `memmove()` are the same function (see http://code.google.com/p/address-sanitizer/issues/detail?id=34), so wrapping both of them makes us do the checks twice and report overlapping parameters for `memmove()` as well.
 To avoid this, we wrap only `memmove()` on non-Snow Leopard systems (http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/asan_mac.cc?view=markup).
 
-==== address space layout randomization (ASLR) ====
-
+==== Address space layout randomization (ASLR) ====
 
 Address space layout randomization is a security method that prevents attacks relying on a particular addresses of the application and library segments. Because the application is loaded before `__asan_init()` is called, any of its segments may intersect with the shadow memory ranges, which is likely to result in incorrect behavior (the `mmap()` and `mprotect()` calls setting up the memory will corrupt the data or the code of the app). Because AddressSanitizer is intended to be used by software developers, it should be safe to disable ASLR for the program built with AddressSanitizer.
 
