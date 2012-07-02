@@ -46,7 +46,7 @@ libgmalloc does not manage stack memory and the globals, thus it can’t detect 
 
 Mac-specific bits of the ASan instrumentation pass (http://llvm.org/viewvc/llvm-project/llvm/trunk/lib/Transforms/Instrumentation/AddressSanitizer.cpp?view=markup) are related to handling ObjC variables and functions.
 
-`.cstring` section. All the globals put into this section are compressed at link time: the linker removes all the spare \0 symbols after the string terminator, thus breaking the redzones. We do not instrument these globals.
+*`.cstring` section.* All the globals put into this section are compressed at link time: the linker removes all the spare \0 symbols after the string terminator, thus breaking the redzones. We do not instrument these globals.
 
 *`__OBJC` section and `__DATA,_objc_` segment.* The ObjC runtime assumes that the global objects from these places conform to /usr/include/objc/runtime.h, so we can’t add redzones to them either.
 
@@ -59,20 +59,20 @@ Generally speaking, it’s possible to compile ObjC code on Linux, so there is n
 
 === Compiling and linking ===
 
-In the case when `-faddress-sanitizer` is passed to the linker when building an executable binary, we link it with libclang_rt.asan_osx.a, the ASan runtime library (a fat binary containing both 32- and 64-bit versions of our runtime), and the CoreFoundation framework, on which the runtime library depends (see http://llvm.org/viewvc/llvm-project/cfe/trunk/lib/Driver/ToolChains.cpp?view=markup).
-If one links dynamic libraries or Mach-O bundles (selected by the -dynamiclib and -bundle command line flags), the resulting binary will probably lack the symbols provided by the runtime library (at least there’ll be no `__asan_init()`). We mark those symbols as dynamic_lookup, so that the linking succeeds (see http://llvm.org/viewvc/llvm-project/cfe/trunk/lib/Driver/Tools.cpp?view=markup). This may result in hiding problems with unresolved symbols in other libraries, but those will be detected at runtime or when doing a regular build without ASan.
+In the case when `-faddress-sanitizer` is passed to the linker when building an executable binary, we link it with `libclang_rt.asan_osx.a`, the ASan runtime library (a fat binary containing both 32- and 64-bit versions of our runtime), and the CoreFoundation framework, on which the runtime library depends (see http://llvm.org/viewvc/llvm-project/cfe/trunk/lib/Driver/ToolChains.cpp?view=markup).
+If one links dynamic libraries or Mach-O bundles (selected by the `-dynamiclib` and `-bundle` command line flags), the resulting binary will probably lack the symbols provided by the runtime library (at least there’ll be no `__asan_init()`). We mark those symbols as dynamic_lookup, so that the linking succeeds (see http://llvm.org/viewvc/llvm-project/cfe/trunk/lib/Driver/Tools.cpp?view=markup). This may result in hiding problems with unresolved symbols in other libraries, but those will be detected at runtime or when doing a regular build without ASan.
 
 == Runtime library ==
 
 === Early initialization ===
 
-Unlike ld.so, dyld on Mac OS does not support the .preinit_array section (the way we’re calling `__asan_init()` before any of the static constructors is invoked on Android).
+Unlike `ld.so`, `dyld` on Mac OS does not support the .preinit_array section (the way we’re calling `__asan_init()` before any of the static constructors is invoked on Android).
 For the sake of user experience, we deliberately do not want to use any wrappers and preloaded libraries to jump in early, so the only remaining option is to instrument each static constructors’ section (see above).
 Another approach worth to consider is to patch the resulting executable after it has been linked. This may work, but will certainly complicate the tool usage.
 
 === Overriding functions ===
 
-Because of the two-level namespaces used by many applications, it is generally impossible to reliably intercept the functions by providing replacements for them and obtaining the original function pointers via dlsym(). This is why we’re using function patching based on the mach_star framework (https://github.com/rentzsch/mach_star/tree/master/mach_override).
+Because of the two-level namespaces used by many applications, it is generally impossible to reliably intercept the functions by providing replacements for them and obtaining the original function pointers via `dlsym()`. This is why we’re using function patching based on the mach_star framework (https://github.com/rentzsch/mach_star/tree/master/mach_override).
 We had to make some changes to the `mach_override.{c,h}` in order to make it fit to our needs:
 externalize the functions that allocate and deallocate the branch islands, because AddressSanitizer adds some limitations on their placement (e.g. they should not overlap with the shadow regions or be more than 2 Gb far from the functions being intercepted). This has sped up the program execution significantly, because previously the library used to probe the virtual memory space looking for a free page, which resulted in 3M calls to `vm_allocate()` per program run (http://code.google.com/p/address-sanitizer/issues/detail?id=24);
 add a number of instructions unsupported by the trunk mach_override, including support for short jump instructions, ja and je (http://code.google.com/p/address-sanitizer/issues/detail?id=53);
@@ -123,7 +123,7 @@ For every thread an `AsanThreadSummary` object is created.
 
 For historical reasons (because Clang did not support the `__thread` keyword on Mac OS prior to 10.7), we are using thread-specific data (TSD) provided by libpthread. In order to minimize the differences between ASan on Linux and Mac we’re using TSD on Linux as well. This approach has a drawback: data in the TSD is destroyed when the thread is exited, and the order of destruction of the different TSD pieces is undefined. Previously we’ve used to ensure our destructor was the very last one, but now we’re deliberately leaking the corresponding AsanThreadSummary object on all the platforms to guarantee that it outlives its thread.
 
-Starting at OS X 10.6 Apple introduced Grand Central Dispatch, a mechanism for running parallel tasks on a thread pool. The threads in that pool are created by bsdthread_create, the same system call used by pthread_create(). But intercepting a system call is harder than intercepting a function, so we choose to wrap a number of libdispatch API functions instead of that. This allows us to hijack the callbacks sent to the worker threads and tell the runtime library that a new thread has appeared.
+Starting at OS X 10.6 Apple introduced Grand Central Dispatch, a mechanism for running parallel tasks on a thread pool. The threads in that pool are created by bsdthread_create, the same system call used by `pthread_create()`. But intercepting a system call is harder than intercepting a function, so we choose to wrap a number of libdispatch API functions instead of that. This allows us to hijack the callbacks sent to the worker threads and tell the runtime library that a new thread has appeared.
 
 === File mappings and symbolization ===
 
@@ -157,5 +157,5 @@ We’ve reported the bug to Apple, see http://openradar.appspot.com/10699643.
 
 ==== CFStringCreateCopy ====
 
-`CFStringCreateCopy()` is a function for copying CFString instances. Normally it does not copy constant strings (http://opensource.apple.com/source/CF/CF-476.19/CFString.c), but if the default CoreFoundation allocator is replaced using CFAllocatorSetDefault(), it starts to. We believe this is incorrect (Apple Radar bug 11164715 filed, see also http://openradar.appspot.com/11164715), but since AddressSanitizer replaces the default allocator, we still have to deal with it (http://code.google.com/p/address-sanitizer/issues/detail?id=10)
+`CFStringCreateCopy()` is a function for copying CFString instances. Normally it does not copy constant strings (http://opensource.apple.com/source/CF/CF-476.19/CFString.c), but if the default CoreFoundation allocator is replaced using `CFAllocatorSetDefault()`, it starts to. We believe this is incorrect (Apple Radar bug 11164715 filed, see also http://openradar.appspot.com/11164715), but since AddressSanitizer replaces the default allocator, we still have to deal with it (http://code.google.com/p/address-sanitizer/issues/detail?id=10)
 We wrap `CFStringCreateCopy()` in the ASan runtime library and check if its second argument is a constant string. If it is, we return it as is, otherwise the original `CFStringCreateCopy()` is called.
