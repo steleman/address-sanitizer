@@ -66,7 +66,7 @@ If one links dynamic libraries or Mach-O bundles (selected by the `-dynamiclib` 
 
 === Early initialization ===
 
-Unlike `ld.so`, `dyld` on Mac OS does not support the .preinit_array section (the way we’re calling `__asan_init()` before any of the static constructors is invoked on Android).
+Unlike `ld.so`, `dyld` on Mac OS does not support the `.preinit_array` section (the way we’re calling `__asan_init()` before any of the static constructors is invoked on Android).
 For the sake of user experience, we deliberately do not want to use any wrappers and preloaded libraries to jump in early, so the only remaining option is to instrument each static constructors’ section (see above).
 Another approach worth to consider is to patch the resulting executable after it has been linked. This may work, but will certainly complicate the tool usage.
 
