@@ -24,7 +24,7 @@ We’ve added the `-faddress-sanitizer` flag to Clang, the LLVM front-end for C 
 the modules keep their binary compatibility with each other (and the system libraries), otherwise something may crash at startup;
 code from non-instrumented modules that is executed before `__asan_init()` cannot call code from the instrumented modules, otherwise a segmentation violation will occur while trying to access the shadow memory. In fact it is almost impossible to ensure this at compile time, so the best option is to instrument the whole program.
 
-An important design decision taken in the early days of AddressSanitizer is that it should be as transparent to the user as possible. Therefore it’s usually enough to pass -faddress-sanitizer to clang/clang++ in order to compile and link the instrumented program, and the resulting binary should just work as it would normally do, and report memory errors in the case they occur. We try to minimize the use of any additional options needed to run the instrumented program, because it usually complicates the deployment process and thwart the users.
+An important design decision taken in the early days of AddressSanitizer is that it should be as transparent to the user as possible. Therefore it’s usually enough to pass `-faddress-sanitizer` to `clang`/`clang++` in order to compile and link the instrumented program, and the resulting binary should just work as it would normally do, and report memory errors in the case they occur. We try to minimize the use of any additional options needed to run the instrumented program, because it usually complicates the deployment process and thwart the users.
 
 == AddressSanitizer and other memory tools ==
 
