@@ -138,8 +138,8 @@ Currently AddressSanitizer uses out-of-process symbolization performed by a Pyth
 === Runtime flags ===
 
 Runtime flags that affect ASan behavior can be passed via the `ASAN_OPTIONS` env var, e.g. `ASAN_OPTIONS=verbosity=1 ./program_name`. Mac OS-specific flags are listed below.
-`replace_cfallocator` (bool, default=1): replace the default CFAllocator. Since doing this correctly is rather complicated (see “Various problems”), new bugs in ASan can be sometimes worked around by setting `replace_cfallocator=0`;
-`mac_ignore_invalid_free` (bool, default=0): when an invalid pointer is being freed (currently via CFAllocatorDeallocate() or malloc_zone_free() only), print a warning instead of crashing. This also may be useful to work around newer bugs.
+  * `replace_cfallocator` (bool, default=1): replace the default CFAllocator. Since doing this correctly is rather complicated (see “Various problems”), new bugs in ASan can be sometimes worked around by setting `replace_cfallocator=0`;
+  * `mac_ignore_invalid_free` (bool, default=0): when an invalid pointer is being freed (currently via CFAllocatorDeallocate() or malloc_zone_free() only), print a warning instead of crashing. This also may be useful to work around newer bugs.
 
 === Various problems ===
 
