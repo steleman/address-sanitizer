@@ -21,6 +21,10 @@ void __fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
 void __storecheck(void *ptr, size_t size);
 void __faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
 
+// called when a fast load/store check has been inlined and fails
+void __fail_fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
+void __fail_faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
+
 // added after every gep; retuns a checked dest pointer (possibly a trap address)
 void* __gepcheck(void *src, void *dest);
 void* __fastgepcheck(void *src, void *dest, void *obj, size_t obj_size);
@@ -141,6 +145,7 @@ void __pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
 2. allocation problem
 2.1. none
 2.2. possibly freed
+2.3. possible to override global variable's size
 
 3. object size type
 3.1. constant
