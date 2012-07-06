@@ -131,9 +131,15 @@ AddressSanitizer sometimes needs to know the list of memory mappings in the proc
 
 Initially we had been using an interface class from gperftools (http://code.google.com/p/gperftools/) that queried /proc/self/maps on Linux and emulated the same behaviour on Mac using the dyld API (_dyld_get_image_{name,header,vmaddr_slide}()). This means we can only get the list of images mapped by the process, not all the existing mappings. However this hadn’t been an issue, because the mappings that do not correspond to binary images typically do not contain program code (ASan can’t symbolize JITted code), and there are no such mappings at program startup.
 
-We’ve rewritten the gperftools code heavily now (http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/asan_procmaps.h?view=markup), but it is still using the same API.
+We've rewritten the gperftools code heavily now (http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/asan_procmaps.h?view=markup), but it is still using the same API.
 
 Currently AddressSanitizer uses out-of-process symbolization performed by a Python script, asan_symbolize.py, which looks for object+offset pairs in the crash logs and replaces them with symbol:file:line triples obtained from addr2line on Linux or atos on Mac OS. Because the report may contain stacks of memory allocation/deallocation that had happened in the past, it sometimes may be impossible to find the binary that contains a particular address (e.g. if it was in a library that had already been unloaded). We are aware of this problem and know how to fix it, but it hadn’t been noticed in the wild yet.
+
+=== Runtime flags ===
+
+Runtime flags that affect ASan behavior can be passed via the `ASAN_OPTIONS` env var, e.g. `ASAN_OPTIONS=verbosity=1 ./program_name`. Mac OS-specific flags are listed below.
+`replace_cfallocator` (bool, default=1): replace the default CFAllocator. Since doing this correctly is rather complicated (see “Various problems”), new bugs in ASan can be sometimes worked around by setting `replace_cfallocator=0`;
+`mac_ignore_invalid_free` (bool, default=0): when an invalid pointer is being freed (currently via CFAllocatorDeallocate() or malloc_zone_free() only), print a warning instead of crashing. This also may be useful to work around newer bugs.
 
 === Various problems ===
 
