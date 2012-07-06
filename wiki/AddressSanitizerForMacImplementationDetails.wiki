@@ -164,3 +164,9 @@ We’ve reported the bug to Apple, see http://openradar.appspot.com/10699643.
 
 `CFStringCreateCopy()` is a function for copying CFString instances. Normally it does not copy constant strings (http://opensource.apple.com/source/CF/CF-476.19/CFString.c), but if the default CoreFoundation allocator is replaced using `CFAllocatorSetDefault()`, it starts to. We believe this is incorrect (Apple Radar bug 11164715 filed, see also http://openradar.appspot.com/11164715), but since AddressSanitizer replaces the default allocator, we still have to deal with it (http://code.google.com/p/address-sanitizer/issues/detail?id=10)
 We wrap `CFStringCreateCopy()` in the ASan runtime library and check if its second argument is a constant string. If it is, we return it as is, otherwise the original `CFStringCreateCopy()` is called.
+
+==== Wrapping __CFInitialize ====
+
+For some applications (e.g. Chromium built in the shared library mode) either `CFAllocatorSetDefault()` (on Snow Leopard) or `CFAllocatorCreate()` (on Lion) called from `__asan_init()` may crash because the default system allocator hasn’t been initialized properly. To avoid this, we have to replace the default CFAllocator strictly after `__CFInitialize()` has been called already. We wrap `__CFInitialize()` and check whether `kCFAllocatorSystemDefault` is initialized in `__asan_init()`. If it is, the default allocator is replaced in `__asan_init()`, otherwise it’s done in the `__CFInitialize()` wrapper.
+
+See http://code.google.com/p/address-sanitizer/issues/detail?id=87 for more details.
