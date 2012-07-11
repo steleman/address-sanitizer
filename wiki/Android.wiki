@@ -1,22 +1,40 @@
 #summary How to build and run AddressSanitizer on Android
 
-WARNING: these instructions rely on a change that has not made it into AOSP yet. Wait for updates.
+AddressSanitizer is fully supported in AOSP starting with JellyBean release. To run applications built with ASan you'll need an -eng build of Android.
 
-
-The current build process, roughly, looks like this:
- * Checkout AOSP
- * Checkout http://code.google.com/p/address-sanitizer-android inside AOSP tree as external/asan
- * Build and flash Android
- * Build Clang on the side (just the default build, nothing Android-specific here)
- * export CLANG_BIN to the directory where clang binary is
- * mmm external/asan && adb sync
- * Build your code with external/asan/clang-scripts/clang.sh, deploy to the device
+To build any part of Android system with ASan, add LOCAL_ADDRESS_SANITIZER:=true to the appropriate Android.mk.
 
 Running:
- * To run a standalone native binary, prefix it with asanwrapper:
-  /system/bin/asanwrapper _path_to_your_binary_ _options_
- * To run an app from an APK, do
-  setprop wrap._name_ "logwrapper asanwrapper"
-  , where _name_ is the name of your app as seen in "adb shell ps"
+ * To run a standalone native binary, prefix it with asanwrapper: `/system/bin/asanwrapper _path_to_your_binary_ _options_`
+ * To run an app from an APK, do `setprop wrap._name_ "logwrapper asanwrapper"` , where _name_ is the name of your app as seen in "adb shell ps"
 
-NOTE: if you get an assertion failure about INTERCEPT(index), this means ASan interceptors have not kicked in. Verify that you are running the program with asanwrapper.
+NOTE: if you get an assertion failure about INTERCEPT(something), this means ASan interceptors have not kicked in. Verify that you are running the program with asanwrapper.
+
+
+== Building NDK applications with ASan ==
+
+First, you need to get a Clang-based NDK toolchain.
+
+  * Grab the NDK at http://developer.android.com/sdk/ndk/index.html and unpack it.
+  * Build Clang ToT with --target=arm-linux-androideabi.
+  * Find the GCC-based ARM toolchain in `<ndk>/toolchains/arm-linux-androideabi-4.4.3`, and copy Clang build over it:
+{{{
+cp Release+Asserts/bin/clang $TOOLCHAIN/prebuilt/linux-x86/bin/
+cp -r Release+Asserts/lib/clang $TOOLCHAIN/prebuilt/linux-x86/lib/
+ln -sf clang $TOOLCHAIN/prebuilt/linux-x86/bin/arm-linux-androideabi-gcc
+ln -sf clang $TOOLCHAIN/prebuilt/linux-x86/bin/arm-linux-androideabi-g++
+}}}
+  * Find libasan_preload.so in your AOSP build and copy it where it can be found by ndk-build: either in a toolchain lib directory, or somewhere under ndk/platforms/android-XX.
+
+And that's all! Now ndk-build will use Clang for "armeabi" and
+"armeabi-v7a" platforms.
+
+If you choose to keep the original toolchain, ndk-build has a handy
+switch NDK_TOOLCHAIN= (ex., NDK_TOOLCHAIN=arm-linux-androideabi-4.4.3)
+to pick one or the other.
+
+With Clang-based toolchain, add the following to your Android.mk to enable ASan:
+{{{
+LOCAL_CFLAGS += -faddress-sanitizer
+LOCAL_LDFLAGS += -faddress-sanitizer
+}}}
