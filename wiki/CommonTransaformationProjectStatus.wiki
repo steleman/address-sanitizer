@@ -1,15 +1,15 @@
 #summary The status of the common transformation project.
 
-= Temporary repository =
+= Temporary repositories =
 
 https://github.com/otinn/llvm
 
+https://github.com/otinn/clang
+
+https://github.com/otinn/memory-safety-testing-utils
 
 = Status =
 Working on a pass to remove load/store checks implied by other checks.
-
-The repository: https://github.com/otinn/llvm
-
 
 = Interface =
 {{{
