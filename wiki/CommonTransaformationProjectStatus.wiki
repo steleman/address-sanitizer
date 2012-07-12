@@ -6,7 +6,7 @@ https://github.com/otinn/llvm
 
 
 = Status =
-Working on a pass to remove obviously correct load/store checks.
+Working on a pass to remove load/store checks implied by other checks.
 
 The repository: https://github.com/otinn/llvm
 
