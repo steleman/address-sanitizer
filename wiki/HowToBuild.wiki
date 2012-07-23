@@ -56,3 +56,35 @@ svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://$CNAME
 (cd tools && svn switch --relocate http://llvm.org/svn/llvm-project/cfe/trunk https://$CNAME@llvm.org/svn/llvm-project/cfe/trunk clang)
 (cd projects && svn switch --relocate http://llvm.org/svn/llvm-project/compiler-rt/trunk https://$CNAME@llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
 }}}
+
+==Building AddressSanitizer with CMake==
+  # Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need the latest version - CMake 2.8.8).
+  # Checkout llvm, clang and compiler-rt
+{{{
+# Get llvm, clang and compiler-rt, build it all
+svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
+cd llvm
+R=$(svn info | grep Revision: | awk '{print $2}')
+(cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
+(cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
+cd ..
+}}}
+  # Set configuration and build LLVM.
+{{{
+mkdir llvm_cmake_build
+cd llvm_cmake_build
+export LLVM_CHECKOUT=/path/to/llvm/checkout
+# Choose build type from {Debug, Release},
+# and build 32-bit LLVM libs if you want to test 32-bit ASan runtime.
+export CMAKE_DEFINES="-DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_32_BITS=ON"
+# Set host compilers.
+export CC=/usr/bin/gcc
+export CXX=/usr/bin/g++
+cmake $CMAKE_DEFINES $LLVM_CHECKOUT
+}}}
+  # Run ASan unit tests
+{{{
+cd projects/compiler-rt/lib/asan/tests
+./Release/AsanTest  # or ./Debug/AsanTest
+}}}
+  # Output tests are not supported for now.
