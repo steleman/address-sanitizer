@@ -57,7 +57,7 @@ svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://$CNAME
 (cd projects && svn switch --relocate http://llvm.org/svn/llvm-project/compiler-rt/trunk https://$CNAME@llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
 }}}
 
-==Building AddressSanitizer with CMake==
+==Building AddressSanitizer unit tests with CMake==
   # Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need the latest version - CMake 2.8.8).
   # Checkout llvm, clang and compiler-rt
 {{{
