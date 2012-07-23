@@ -67,7 +67,21 @@ cd llvm
 R=$(svn info | grep Revision: | awk '{print $2}')
 (cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
 (cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
-cd ..
+}}}
+  # Apply the following patch
+{{{
+--- projects/CMakeLists.txt	(revision 160622)
++++ projects/CMakeLists.txt	(working copy)
+@@ -4,8 +4,7 @@
+ file(GLOB entries *)
+ foreach(entry ${entries})
+   if(IS_DIRECTORY ${entry} AND EXISTS ${entry}/CMakeLists.txt)
+-    if((NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/compiler-rt) AND
+-       (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libcxx))
++    if(NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libcxx)
+       add_subdirectory(${entry})
+     endif()
+   endif()
 }}}
   # Set configuration and build LLVM.
 {{{
