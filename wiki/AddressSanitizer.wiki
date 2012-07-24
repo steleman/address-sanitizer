@@ -187,6 +187,10 @@ fun:_Z8MyFooBarv
 fun:*MyFooBar*
 }}}
 
+=FAQ=
+  * Q: Can AddressSanitizer continue running after reporting first error? 
+  * A: No, sorry. AddressSanitizer errors are fatal. This design choice allows the tool to be faster and simpler. 
+
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com 
 or [https://plus.google.com/117014197169958493500 in Google+].
