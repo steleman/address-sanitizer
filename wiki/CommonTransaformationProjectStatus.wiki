@@ -9,10 +9,10 @@ https://github.com/otinn/clang
 https://github.com/otinn/memory-safety-testing-utils
 
 = Initial results =
-|| || initial || optimized away || final || compile time optimized || initial run time || final run time || run time optimized ||
-|| load || 60977 || 12763 || 48214 || 20.93% || 66853985830 || 48538923973	|| 27.39% ||
-|| store || 23249 || 8416 || 14833 || 36.19% || 17875151159 || 10420123897 || 41.70% ||
-|| total || 84226 || 21179 || 63047 || 25.14% || 84729136989 || 58959047870 || 30.41% ||
+|| || initial checks || optimized away || final checks || % checks removed || initial runtime checks || final runtime checks || % runtime checks avoided ||
+|| load checks || 60977 || 12763 || 48214 || 20.93% || 66853985830 || 48538923973	|| 27.39% ||
+|| store checks || 23249 || 8416 || 14833 || 36.19% || 17875151159 || 10420123897 || 41.70% ||
+|| all load/store checks || 84226 || 21179 || 63047 || 25.14% || 84729136989 || 58959047870 || 30.41% ||
 
 
 = Interface =
