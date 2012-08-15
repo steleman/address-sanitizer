@@ -207,13 +207,7 @@ int *u = (int*)((char*)x + 6);
 *u = 1;  // Access to range [6-9]
 }}}
 
-Possible solutions:
-  * (probably the best) http://code.google.com/p/address-sanitizer/issues/detail?id=100
-  * Use byte-to-byte mapping (cons: slower, uses more memory, seems to be available only on 64-bit arch)
-  * Add a run-time check to the instrumentation code: `if (addr & 7) slow_path_for_unaligned();`
-  * Ignore
-  * Use even more compact mapping, e.g. `Shadow=Mem>>7+offset` (pros: even less memory; cons: slower code). This will catch some, but not all cases.
-  
+A viable solution is described in http://code.google.com/p/address-sanitizer/issues/detail?id=100 but it comes at a performance cost. 
 
 
 = Run-time library =
