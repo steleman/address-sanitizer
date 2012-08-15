@@ -9,10 +9,33 @@ https://github.com/otinn/clang
 https://github.com/otinn/memory-safety-testing-utils
 
 = Initial results =
-|| || initial checks || optimized away || final checks || % checks removed || initial runtime checks || final runtime checks || % runtime checks avoided ||
-|| load checks || 60977 || 12763 || 48214 || 20.93% || 66853985830 || 48538923973	|| 27.39% ||
-|| store checks || 23249 || 8416 || 14833 || 36.19% || 17875151159 || 10420123897 || 41.70% ||
-|| all load/store checks || 84226 || 21179 || 63047 || 25.14% || 84729136989 || 58959047870 || 30.41% ||
+|| bench          || num loads/stores || num optimized by opt1 || num optimized by opt2 || num optimized by opt3 || num optimized total || run-time checks before opt || run-time checks after opt ||
+|| 401.bzip2      || 4157             || 167 (4%)              || 1334 (32%)            || 30 (1%)               || 1531 (37%)          || 10526244748                || 5011960521 (48%) ||
+|| 429.mcf        || 559              || 38 (7%)               || 61 (11%)              || 2 (0%)                || 101 (18%)           || 1458123364                 || 1221035071 (84%) ||
+|| 433.milc       || 4550             || 666 (15%)             || 338 (7%)              || 0 (0%)                || 1004 (22%)          || 13522033249                || 10435430504 (77%) ||
+|| 445.gobmk      || 23876            || 4357 (18%)            || 3155 (13%)            || 411 (2%)              || 7923 (33%)          || 19325263713                || 11119370649 (58%) ||
+|| 456.hmmer      || 12391            || 1146 (9%)             || 1456 (12%)            || 27 (0%)               || 2629 (21%)          || 4904909455                 || 4683797769 (95%) ||
+|| 458.sjeng      || 5051             || 852 (17%)             || 399 (8%)              || 21 (0%)               || 1272 (25%)          || 3811134741                 || 3215936871 (84%) ||
+|| 462.libquantum || 1029             || 418 (41%)             || 51 (5%)               || 0 (0%)                || 469 (46%)           || 1616295534                 || 1321916564 (82%) ||
+|| 464.h264ref    || 32248            || 3098 (10%)            || 2960 (9%)             || 133 (0%)              || 6191 (19%)          || 28132170266                || 20806199810 (74%) ||
+|| 470.lbm        || 365              || 35 (10%)              || 24 (7%)               || 0 (0%)                || 59 (16%)            || 1432961919                 || 1143400111 (80%) ||
+|| all            || 84226            || 10777 (13%)           || 9778 (12%)            || 624 (1%)              || 21179 (25%)         || 84729136989                || 58959047870 (70%) ||
+
+== opt1 (optimize-fast-memory-checks) ==
+This pass removes fast load/store checks (ones where the memory object is known and valid at the time of the check) if it can prove that the access is entirely inside the memory object.
+
+== opt2 (optimize-identical-ls-checks) ==
+This pass removes identical load/store checks that appear in the same basic block.
+It works by iterating over the calls in a basic block.
+If any call is encountered then one of three things happens:
+1) It is a load/store check with a previously unseen access pointer and size pair. The pair is added to the known accesses cache.
+2) It is a load/store check with a previously seen access pointer and size pair. The check is removed.
+3) It is another call that is not in a whitelist of functions known to not deallocate memory. The known access cache is cleared.
+
+== opt3 (optimize-implied-fast-ls-checks) ==
+This pass removes fast load/store checks that are implied by other fast load/store checks.
+It works by traversing a dominator tree to find out which checks must always happen before other checks.
+It removes fast load/store checks that are dominated by another fast load/store check with the same access offset and size pair.
 
 
 = Interface =
