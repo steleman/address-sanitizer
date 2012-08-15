@@ -103,7 +103,7 @@ make -j12 check-asan
 {{{
 cd projects/compiler-rt/lib/asan/tests
 make -j12 AsanUnitTests
-./Release/AsanTest  # or ./DebugAsanTest
+./Release/AsanTest  # or ./Debug/AsanTest
 }}}
   # To build ASan static runtime libraries:
 {{{
