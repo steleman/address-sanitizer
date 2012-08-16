@@ -140,6 +140,46 @@ If any call is encountered then one of three things happens:
 2) It is a load/store check with a previously seen access pointer and size pair. The check is removed.
 3) It is another call that is not in a whitelist of functions known to not deallocate memory. The known access cache is cleared.
 
+{{{
+; Code from 401.bzip2/src/spec.c: ran
+; This file shows an example of optimize-identical-ls-checks being applied.
+
+target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+@seedi = common global i64 0, align 8
+
+declare void @__loadcheck(i8*, i64)
+
+declare void @__storecheck(i8*, i64)
+
+define double @ran() nounwind uwtable {
+entry:
+
+
+; OPT2: this check is identical to the store check except that this is a load check and the other is a store check.
+  call void @__loadcheck(i8* bitcast (i64* @seedi to i8*), i64 8) nounwind
+  %0 = load i64* @seedi, align 8
+  %div = sdiv i64 %0, 127773
+  %rem = srem i64 %0, 127773
+  %mul = mul nsw i64 %rem, 16807
+  %1 = mul i64 %div, -2836
+  %sub = add i64 %mul, %1
+  %cmp = icmp sgt i64 %sub, 0
+  %add = add nsw i64 %sub, 2147483647
+  %storemerge = select i1 %cmp, i64 %sub, i64 %add
+
+
+; OPT2: this check will be removed by optimize-identical-ls-checks because it can fail only if the load check does.
+  call void @__storecheck(i8* bitcast (i64* @seedi to i8*), i64 8) nounwind
+  store i64 %storemerge, i64* @seedi, align 8
+  %conv = sitofp i64 %storemerge to float
+  %div2 = fmul float %conv, 0x3E00000000000000
+  %conv3 = fpext float %div2 to double
+  ret double %conv3
+}
+}}}
+
 == opt3 (optimize-implied-fast-ls-checks) ==
 This pass removes fast load/store checks that are implied by other fast load/store checks.
 It works by traversing a dominator tree to find out which checks must always happen before other checks.
