@@ -25,111 +25,48 @@ https://github.com/otinn/memory-safety-testing-utils
 This pass removes fast load/store checks (ones where the memory object is known and valid at the time of the check) if it can prove that the access is entirely inside the memory object.
 
 {{{
-; Code from 456.hmmer/src/mathsupport.c: ILogsum and init_ilogsum (inlined)
-; This file shows examples of optimize-fast-memory-checks being applied.
+// This file shows examples of optimize-fast-memory-checks being applied.
+// The code is from 456.hmmer/src/mathsupport.c with the define statements from
+// the corresponding config.h
+#include "math.h"
 
-target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128"
-target triple = "x86_64-unknown-linux-gnu"
+#define INTSCALE    1000.0   /* scaling constant for floats to integer scores */
+#define LOGSUM_TBL  20000    /* controls precision of ILogsum()               */
 
-@ILogsum.firsttime.b = internal unnamed_addr global i1 false
-@ilogsum_lookup = internal unnamed_addr global [20000 x i32] zeroinitializer, align 16
-
-declare void @__fastloadcheck(i8*, i64, i8*, i64)
-
-declare void @__faststorecheck(i8*, i64, i8*, i64)
-
-declare double @exp(double) nounwind
-
-declare double @log(double) nounwind
-
-define i32 @ILogsum(i32 %p1, i32 %p2) nounwind uwtable {
-entry:
-
-
-; OPT1 first instance: this check will be removed by optimize-fast-memory-checks because it is obviously in bounds.
-; In the C code this access corresponds to the load from "static int firsttime".
-  call void @__fastloadcheck(i8* bitcast (i1* @ILogsum.firsttime.b to i8*), i64 1, i8* bitcast (i1* @ILogsum.firsttime.b to i8*), i64 1) nounwind
-  %.b = load i1* @ILogsum.firsttime.b, align 1
-  br i1 %.b, label %if.end, label %for.body.i
-
-for.body.i:                                       ; preds = %entry, %for.body.i
-  %indvars.iv.i = phi i64 [ %indvars.iv.next.i, %for.body.i ], [ 0, %entry ]
-  %0 = sub nsw i64 0, %indvars.iv.i
-  %1 = trunc i64 %0 to i32
-  %conv.i = sitofp i32 %1 to float
-  %conv1.i = fpext float %conv.i to double
-  %mul.i = fmul double %conv1.i, 0x3FE62E42FEAD449C
-  %div.i = fdiv double %mul.i, 1.000000e+03
-  %call.i = tail call double @exp(double %div.i) nounwind
-  %add.i = fadd double %call.i, 1.000000e+00
-  %call2.i = tail call double @log(double %add.i) nounwind
-  %mul3.i = fmul double %call2.i, 0x40968AC7B890D5A6
-  %conv4.i = fptosi double %mul3.i to i32
-  %arrayidx.i = getelementptr inbounds [20000 x i32]* @ilogsum_lookup, i64 0, i64 %indvars.iv.i
-  %2 = bitcast i32* %arrayidx.i to i8*
-
-
-; OPT1 second instance: this check will be removed by optimize-fast-memory-checks because each of the accesses is in the global variable ilogsum_lookup.
-; In the C code this corresponds to the stores to ilogsum_lookup in the init_ilogsum function (inlined into ILogsum).
-  call void @__faststorecheck(i8* %2, i64 4, i8* bitcast ([20000 x i32]* @ilogsum_lookup to i8*), i64 80000) nounwind
-  store i32 %conv4.i, i32* %arrayidx.i, align 4
-  %indvars.iv.next.i = add i64 %indvars.iv.i, 1
-  %lftr.wideiv = trunc i64 %indvars.iv.next.i to i32
-  %exitcond = icmp eq i32 %lftr.wideiv, 20000
-  br i1 %exitcond, label %init_ilogsum.exit, label %for.body.i
-
-init_ilogsum.exit:                                ; preds = %for.body.i
-
-
-; OPT1 third instance: this is similar to the first instance but on the first run path.
-  call void @__faststorecheck(i8* bitcast (i1* @ILogsum.firsttime.b to i8*), i64 1, i8* bitcast (i1* @ILogsum.firsttime.b to i8*), i64 1) nounwind
-  store i1 true, i1* @ILogsum.firsttime.b, align 1
-  br label %if.end
-
-if.end:                                           ; preds = %entry, %init_ilogsum.exit
-  %sub = sub nsw i32 %p1, %p2
-  %cmp = icmp sgt i32 %sub, 19999
-  br i1 %cmp, label %return, label %if.else
-
-if.else:                                          ; preds = %if.end
-  %cmp2 = icmp slt i32 %sub, -19999
-  br i1 %cmp2, label %return, label %if.else4
-
-if.else4:                                         ; preds = %if.else
-  %cmp5 = icmp sgt i32 %sub, 0
-  br i1 %cmp5, label %if.then6, label %if.else7
-
-if.then6:                                         ; preds = %if.else4
-  %idxprom = sext i32 %sub to i64
-  %arrayidx = getelementptr inbounds [20000 x i32]* @ilogsum_lookup, i64 0, i64 %idxprom
-  %3 = bitcast i32* %arrayidx to i8*
-
-
-; This check will not be optimized away by any of the current load/store check optimizations.
-; In the C code this corresponds to the load from ilogsum_lookup[diff].
-  call void @__fastloadcheck(i8* %3, i64 4, i8* bitcast ([20000 x i32]* @ilogsum_lookup to i8*), i64 80000) nounwind
-  %4 = load i32* %arrayidx, align 4
-  %add = add nsw i32 %4, %p1
-  br label %return
-
-if.else7:                                         ; preds = %if.else4
-  %sub8 = sub nsw i32 0, %sub
-  %idxprom9 = sext i32 %sub8 to i64
-  %arrayidx10 = getelementptr inbounds [20000 x i32]* @ilogsum_lookup, i64 0, i64 %idxprom9
-  %5 = bitcast i32* %arrayidx10 to i8*
-
-
-; This check will not be optimized away by any of the current load/store check optimizations.
-; In the C code this corresponds to the load from ilogsum_lookup[-diff].
-  call void @__fastloadcheck(i8* %5, i64 4, i8* bitcast ([20000 x i32]* @ilogsum_lookup to i8*), i64 80000) nounwind
-  %6 = load i32* %arrayidx10, align 4
-  %add11 = add nsw i32 %6, %p2
-  br label %return
-
-return:                                           ; preds = %if.else, %if.end, %if.else7, %if.then6
-  %retval.0 = phi i32 [ %add, %if.then6 ], [ %add11, %if.else7 ], [ %p1, %if.end ], [ %p2, %if.else ]
-  ret i32 %retval.0
+static int ilogsum_lookup[LOGSUM_TBL];
+static void 
+init_ilogsum(void)
+{
+  int i;
+  // The fast load check into ilogsum_lookup will be optimized away by
+  // optimize-fast-memory-checks because it can prove that all of the accesses
+  // in the loop are always in bounds.
+  for (i = 0; i < LOGSUM_TBL; i++) 
+    ilogsum_lookup[i] = (int) (INTSCALE * 1.44269504 * 
+           (log(1.+exp(0.69314718 * (float) -i/INTSCALE))));
 }
+int 
+ILogsum(int p1, int p2)
+{
+  int    diff;
+  static int firsttime = 1;
+  // The firsttime variable will become a global variable and get a fast load
+  // check for the if-condition and a fast store check for the later assignment.
+  // Both of the checks will be optimized away by optimize-fast-memory-checks
+  // because they are obviously in bounds.
+  if (firsttime) { init_ilogsum(); firsttime = 0; }
+
+  diff = p1-p2;
+  if      (diff >=  LOGSUM_TBL) return p1;
+  else if (diff <= -LOGSUM_TBL) return p2;
+  else if (diff > 0)            return p1 + ilogsum_lookup[diff];
+  else                          return p2 + ilogsum_lookup[-diff];
+  // The preceding two loads from ilogsum_lookup get fast load checks because
+  // the underlying memory object is easily identifiable.
+  // The checks are currently not optimized away because the analysis passes
+  // can't prove that they will always be in bounds.
+}
+
 }}}
 
 == opt2 (optimize-identical-ls-checks) ==
@@ -141,42 +78,42 @@ If any call is encountered then one of three things happens:
 3) It is another call that is not in a whitelist of functions known to not deallocate memory. The known access cache is cleared.
 
 {{{
-; Code from 401.bzip2/src/spec.c: ran
-; This file shows an example of optimize-identical-ls-checks being applied.
+// This file shows an example of optimize-identical-ls-checks being applied.
+// The code is from 401.bzip2/src/spec.c.
 
-target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128"
-target triple = "x86_64-unknown-linux-gnu"
+long int seedi;
+double ran()
+/* See "Random Number Generators: Good Ones Are Hard To Find", */
+/*     Park & Miller, CACM 31#10 October 1988 pages 1192-1201. */
+/***********************************************************/
+/* THIS IMPLEMENTATION REQUIRES AT LEAST 32 BIT INTEGERS ! */
+/***********************************************************/
+#define _A_MULTIPLIER  16807L
+#define _M_MODULUS     2147483647L /* (2**31)-1 */
+#define _Q_QUOTIENT    127773L     /* 2147483647 / 16807 */
+#define _R_REMAINDER   2836L       /* 2147483647 % 16807 */
+{
+  long lo;
+  long hi;
+  long test;
 
-@seedi = common global i64 0, align 8
+  // A load check will be inserted before the load from seedi.
+  // It will not be converted into a fast check because it has common linkage.
+  // Thus the check here will not be optimized away.
+  hi = seedi / _Q_QUOTIENT;
+  lo = seedi % _Q_QUOTIENT;
+  test = _A_MULTIPLIER * lo - _R_REMAINDER * hi;
 
-declare void @__loadcheck(i8*, i64)
-
-declare void @__storecheck(i8*, i64)
-
-define double @ran() nounwind uwtable {
-entry:
-
-
-; OPT2: this check is identical to the store check except that this is a load check and the other is a store check.
-  call void @__loadcheck(i8* bitcast (i64* @seedi to i8*), i64 8) nounwind
-  %0 = load i64* @seedi, align 8
-  %div = sdiv i64 %0, 127773
-  %rem = srem i64 %0, 127773
-  %mul = mul nsw i64 %rem, 16807
-  %1 = mul i64 %div, -2836
-  %sub = add i64 %mul, %1
-  %cmp = icmp sgt i64 %sub, 0
-  %add = add nsw i64 %sub, 2147483647
-  %storemerge = select i1 %cmp, i64 %sub, i64 %add
-
-
-; OPT2: this check will be removed by optimize-identical-ls-checks because it can fail only if the load check does.
-  call void @__storecheck(i8* bitcast (i64* @seedi to i8*), i64 8) nounwind
-  store i64 %storemerge, i64* @seedi, align 8
-  %conv = sitofp i64 %storemerge to float
-  %div2 = fmul float %conv, 0x3E00000000000000
-  %conv3 = fpext float %div2 to double
-  ret double %conv3
+  // A store check will be inserted before the store into seedi.
+  // It will not become a fast check for the same reason as the load check.
+  // It will be optimized away by optimize-identical-ls-checks because it can
+  // fail only if the load check does.
+  if (test > 0) {
+    seedi = test;
+  } else {
+    seedi = test + _M_MODULUS;
+  }
+  return ( (float) seedi / _M_MODULUS);
 }
 }}}
 
@@ -186,132 +123,112 @@ It works by traversing a dominator tree to find out which checks must always hap
 It removes fast load/store checks that are dominated by another fast load/store check with the same access offset, access size, and object size triple.
 
 {{{
-; Code from 429.mcf/src/pbeampp.c: sort_basket
-; This file shows examples of optimize-implied-fast-ls-checks being applied.
-; 
-; The dominator tree below may help understand why the optimization applies.
-; [4] %while.cond {3,20} (first implication)
-;   [5] %while.cond3 {4,19} (second implication)
-;     [6] %while.end8 {5,18}
-;       [7] %if.then {6,7} (both removed checks)
+// This file shows an example of optimize-implied-fast-ls-checks being applied.
+// The code is from 429.mcf/src/pbeampp.c with some definitions from the
+// corresponding defines.h
 
-target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128"
-target triple = "x86_64-unknown-linux-gnu"
+typedef long flow_t;
+typedef long cost_t;
 
-%struct.basket = type { %struct.arc*, i64, i64 }
-%struct.arc = type { i64, %struct.node*, %struct.node*, i32, %struct.arc*, %struct.arc*, i64, i64 }
-%struct.node = type { i64, i32, %struct.node*, %struct.node*, %struct.node*, %struct.node*, %struct.arc*, %struct.arc*, %struct.arc*, %struct.arc*, i64, i64, i32, i32 }
+typedef struct node *node_p;
 
-@perm = internal unnamed_addr global [351 x %struct.basket*] zeroinitializer, align 16
+typedef struct arc arc_t;
+typedef struct arc *arc_p;
 
-declare void @__loadcheck(i8*, i64)
+struct node
+{
+  cost_t potential; 
+  int orientation;
+  node_p child;
+  node_p pred;
+  node_p sibling;
+  node_p sibling_prev;     
+  arc_p basic_arc; 
+  arc_p firstout, firstin;
+  arc_p arc_tmp;
+  flow_t flow;
+  long depth; 
+  int number;
+  int time;
+};
 
-declare void @__fastloadcheck(i8*, i64, i8*, i64)
+struct arc
+{
+  cost_t cost;
+  node_p tail, head;
+  int ident;
+  arc_p nextout, nextin;
+  flow_t flow;
+  cost_t org_cost;
+};
 
-declare void @__faststorecheck(i8*, i64, i8*, i64)
+#define K 300
+#define B  50
 
-define void @sort_basket(i64 %min, i64 %max) nounwind uwtable {
-entry:
-  br label %tailrecurse
+typedef struct basket
+{
+    arc_t *a;
+    cost_t cost;
+    cost_t abs_cost;
+} BASKET;
 
-tailrecurse:                                      ; preds = %if.end22, %entry
-  %min.tr = phi i64 [ %min, %entry ], [ %l.0.inc, %if.end22 ]
-  %add = add nsw i64 %min.tr, %max
-  %div = sdiv i64 %add, 2
-  %arrayidx = getelementptr inbounds [351 x %struct.basket*]* @perm, i64 0, i64 %div
-  %0 = bitcast %struct.basket** %arrayidx to i8*
-  call void @__fastloadcheck(i8* %0, i64 8, i8* bitcast ([351 x %struct.basket*]* @perm to i8*), i64 2808) nounwind
-  %1 = load %struct.basket** %arrayidx, align 8
-  %abs_cost = getelementptr inbounds %struct.basket* %1, i64 0, i32 2
-  %2 = bitcast i64* %abs_cost to i8*
-  call void @__loadcheck(i8* %2, i64 8) nounwind
-  %3 = load i64* %abs_cost, align 8
-  br label %while.cond.outer
+static long basket_size;
+static BASKET basket[B+K+1];
+static BASKET *perm[B+K+1];
 
-while.cond.outer:                                 ; preds = %if.end, %tailrecurse
-  %l.0.ph = phi i64 [ %min.tr, %tailrecurse ], [ %l.0.inc, %if.end ]
-  %r.0.ph = phi i64 [ %max, %tailrecurse ], [ %r.1.dec, %if.end ]
-  br label %while.cond
+#ifdef _PROTO_
+void sort_basket( long min, long max )
+#else
+void sort_basket( min, max )
+    long min, max;
+#endif
+{
+    long l, r;
+    cost_t cut;
+    BASKET *xchange;
 
+    l = min; r = max;
 
-; This is the condition block in the first while loop of the function.
-while.cond:                                       ; preds = %while.cond, %while.cond.outer
-  %l.0 = phi i64 [ %inc, %while.cond ], [ %l.0.ph, %while.cond.outer ]
-  %arrayidx1 = getelementptr inbounds [351 x %struct.basket*]* @perm, i64 0, i64 %l.0
-  %4 = bitcast %struct.basket** %arrayidx1 to i8*
+    // The array access will get a fast load check that can't be optimized away
+    // because the function could be called with parameters that would make this
+    // check fail.
+    // The load from the BASKET element will get a load check. It will not be
+    // converted into a fast check because it will depend on the previous load.
+    cut = perm[ (long)( (l+r) / 2 ) ]->abs_cost;
 
+    do
+    {
+        // Both of the loops will get a similar check pair as the previous case.
+        while( perm[l]->abs_cost > cut )
+            l++;
+        while( cut > perm[r]->abs_cost )
+            r--;
+            
+        if( l < r )
+        {
+            // The loads on the right side will be avoided by reusing the data
+            // from the while loops so there will be no load checks here.
+            xchange = perm[l];
+            // This array access will get a fast store check that will be
+            // optimized away by optimize-implied-fast-ls-checks because it can
+            // only fail if the fast load check in the first while loop fails.
+            perm[l] = perm[r];
+            // Same as the previous check except that it is caused by the fast
+            // load check in the second while loop.
+            perm[r] = xchange;
+        }
+        if( l <= r )
+        {
+            l++; r--;
+        }
 
-; OPT3 instance 1: this check is identical to the first removed check except that this is a fast load check and the other is a fast store check.
-  call void @__fastloadcheck(i8* %4, i64 8, i8* bitcast ([351 x %struct.basket*]* @perm to i8*), i64 2808) nounwind
-  %5 = load %struct.basket** %arrayidx1, align 8
-  %abs_cost2 = getelementptr inbounds %struct.basket* %5, i64 0, i32 2
-  %6 = bitcast i64* %abs_cost2 to i8*
-  call void @__loadcheck(i8* %6, i64 8) nounwind
-  %7 = load i64* %abs_cost2, align 8
-  %cmp = icmp sgt i64 %7, %3
-  %inc = add nsw i64 %l.0, 1
-  br i1 %cmp, label %while.cond, label %while.cond3
+    }
+    while( l <= r );
 
-; This is the condition block of the second while loop in the function.
-while.cond3:                                      ; preds = %while.cond, %while.cond3
-  %r.1 = phi i64 [ %dec, %while.cond3 ], [ %r.0.ph, %while.cond ]
-  %arrayidx4 = getelementptr inbounds [351 x %struct.basket*]* @perm, i64 0, i64 %r.1
-  %8 = bitcast %struct.basket** %arrayidx4 to i8*
-
-
-; OPT3 instance 2: this check is identical to the second removed check except that this is a fast load check and the other is a fast store check.
-  call void @__fastloadcheck(i8* %8, i64 8, i8* bitcast ([351 x %struct.basket*]* @perm to i8*), i64 2808) nounwind
-  %9 = load %struct.basket** %arrayidx4, align 8
-  %abs_cost5 = getelementptr inbounds %struct.basket* %9, i64 0, i32 2
-  %10 = bitcast i64* %abs_cost5 to i8*
-  call void @__loadcheck(i8* %10, i64 8) nounwind
-  %11 = load i64* %abs_cost5, align 8
-  %cmp6 = icmp sgt i64 %3, %11
-  %dec = add nsw i64 %r.1, -1
-  br i1 %cmp6, label %while.cond3, label %while.end8
-
-while.end8:                                       ; preds = %while.cond3
-  %cmp9 = icmp slt i64 %l.0, %r.1
-  br i1 %cmp9, label %if.then, label %if.end
-
-
-; This is the first if-then block of the function.
-if.then:                                          ; preds = %while.end8
-
-
-; OPT3 instance 1: this check is removed by optimize-implied-fast-ls-checks because it is implied by the fast load check in while.cond.
-  call void @__faststorecheck(i8* %4, i64 8, i8* bitcast ([351 x %struct.basket*]* @perm to i8*), i64 2808) nounwind
-  store %struct.basket* %9, %struct.basket** %arrayidx1, align 8
-
-
-; OPT3 instance 2: this check is removed by optimize-implied-fast-ls-checks because it is implied by the fast load check in while.cond3.
-  call void @__faststorecheck(i8* %8, i64 8, i8* bitcast ([351 x %struct.basket*]* @perm to i8*), i64 2808) nounwind
-  store %struct.basket* %5, %struct.basket** %arrayidx4, align 8
-  br label %if.end
-
-if.end:                                           ; preds = %if.then, %while.end8
-  %cmp14 = icmp sgt i64 %l.0, %r.1
-  %l.0.inc = select i1 %cmp14, i64 %l.0, i64 %inc
-  %r.1.dec = select i1 %cmp14, i64 %r.1, i64 %dec
-  %cmp19 = icmp sgt i64 %l.0.inc, %r.1.dec
-  br i1 %cmp19, label %do.end, label %while.cond.outer
-
-do.end:                                           ; preds = %if.end
-  %cmp20 = icmp sgt i64 %r.1.dec, %min.tr
-  br i1 %cmp20, label %if.then21, label %if.end22
-
-if.then21:                                        ; preds = %do.end
-  tail call void @sort_basket(i64 %min.tr, i64 %r.1.dec)
-  br label %if.end22
-
-if.end22:                                         ; preds = %if.then21, %do.end
-  %cmp23 = icmp slt i64 %l.0.inc, %max
-  %cmp24 = icmp slt i64 %l.0.inc, 51
-  %or.cond = and i1 %cmp23, %cmp24
-  br i1 %or.cond, label %tailrecurse, label %if.end26
-
-if.end26:                                         ; preds = %if.end22
-  ret void
+    if( min < r )
+        sort_basket( min, r );
+    if( l < max && l <= B )
+        sort_basket( l, max ); 
 }
 }}}
 
