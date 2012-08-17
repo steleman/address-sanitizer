@@ -1,14 +1,15 @@
-#summary The status of the common transformation project.
+#summary The common memory safety instrumentation/optimization project.
 
-= Temporary repositories =
+<wiki:toc max_depth="2" />
 
-https://github.com/otinn/llvm
+The goal of this project was to create memory safety instrumentation and optimization passes that could be used by different memory error detection systems. The general idea is to add checks before operations that may cause invalid memory accesses. Passes were also added to register memory objects becoming valid/invalid.
 
-https://github.com/otinn/clang
+Having similar checks and registration calls makes it possible to use the same optimization passes to avoid unnecessary checks and variable registrations at run-time. The important ones for ASan are the following:
+  * Load and store checks. These are inserted before all load/store instructions and other memory accessing intrinsics.
+  * Fast load and store checks. These are load/store checks where the memory object is known and it is only necessary to compare the access boundaries to the object boundaries to know whether it is valid. They are useful because it is easier to optimize them away.
+  * Global and stack variable registration calls. Knowing that it will not be necessary to know about some of these memory objects to find out whether the load/store checks are valid makes it possible for ASan to avoid poisoning the memory around them.
 
-https://github.com/otinn/memory-safety-testing-utils
-
-= Initial results =
+= Results =
 || bench          || num loads/stores || num optimized by opt1 || num optimized by opt2 || num optimized by opt3 || num optimized total || run-time checks before opt || run-time checks avoided ||
 || 401.bzip2      || 4157             || 167 (4%)              || 1334 (32%)            || 30 (1%)               || 1531 (37%)          || 10526244748                || 5514284227 (52%) ||
 || 429.mcf        || 559              || 38 (7%)               || 61 (11%)              || 2 (0%)                || 101 (18%)           || 1458123364                 || 237088293 (16%) ||
@@ -21,8 +22,14 @@ https://github.com/otinn/memory-safety-testing-utils
 || 470.lbm        || 365              || 35 (10%)              || 24 (7%)               || 0 (0%)                || 59 (16%)            || 1432961919                 || 289561808 (20%) ||
 || all            || 84226            || 10777 (13%)           || 9778 (12%)            || 624 (1%)              || 21179 (25%)         || 84729136989                || 25770089119 (30%) ||
 
+= Load/store Check Optimizations =
 == opt1 (optimize-fast-memory-checks) ==
-This pass removes fast load/store checks (ones where the memory object is known and valid at the time of the check) if it can prove that the access is entirely inside the memory object.
+This pass removes fast load/store checks (ones where the memory object is known and valid at the time of the check) if it can prove that the access is entirely inside the memory object. It uses the array bounds analysis group to do so.
+
+This pass can handle the following:
+  * Cases where a gep indexes into an object using constant indices (this subsumes the ASan global scalar optimization).
+  * Some cases where the previous case is complicated by the select and/or phi instructions that select the gep to use.
+  * Some cases where the gep depends on loop induction variables. [https://github.com/otinn/llvm/blob/master/test/Instrumentation/MemorySafety/optimization/always_valid/0039.ll (example)]
 
 {{{
 // This file shows examples of optimize-fast-memory-checks being applied.
@@ -76,6 +83,8 @@ If any call is encountered then one of three things happens:
 1) It is a load/store check with a previously unseen access pointer and size pair. The pair is added to the known accesses cache.
 2) It is a load/store check with a previously seen access pointer and size pair. The check is removed.
 3) It is another call that is not in a whitelist of functions known to not deallocate memory. The known access cache is cleared.
+
+The same behaviour already exists in ASan.
 
 {{{
 // This file shows an example of optimize-identical-ls-checks being applied.
@@ -232,173 +241,16 @@ void sort_basket( min, max )
 }
 }}}
 
+= The Code =
 
-= Interface =
-{{{
-// added before every load
-void __loadcheck(void *ptr, size_t size);
-void __fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
+The code is available in the modified LLVM and Clang repositories linked below. It works with unmodified compiler-rt.
 
-// added before every store
-void __storecheck(void *ptr, size_t size);
-void __faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
+https://github.com/otinn/llvm
 
-// called when a fast load/store check has been inlined and fails
-void __fail_fastloadcheck(void *ptr, size_t size, void *obj, size_t obj_size);
-void __fail_faststorecheck(void *ptr, size_t size, void *obj, size_t obj_size);
+https://github.com/otinn/clang
 
-// added after every gep; retuns a checked dest pointer (possibly a trap address)
-void* __gepcheck(void *src, void *dest);
-void* __fastgepcheck(void *src, void *dest, void *obj, size_t obj_size);
+https://github.com/otinn/compiler-rt (unmodified but should always contain a version that works with the modified LLVM and Clang)
 
-// added before every call through a function pointer
-void __funccheck(void *func);
+Some testing utilities are in this repository:
 
-// added before every free
-void __freecheck(void *ptr);
-
-// added after every alloca instruction (or the whole stack if they are in a super-alloca)
-void __pool_register_stack(void *obj, size_t obj_size);
-// added before every return from a function for every existing __pool_register_stack
-void __pool_unregister_stack(void *obj);
-
-// added for every global in a special function, registers all globals and their sizes
-void __pool_register_global(void *obj, size_t obj_size);
-
-// added after every allocation on the heap (for example malloc); excludes realloc-like allocation
-void __pool_register_heap(void *obj, size_t obj_size);
-// added after the deallocation of every a heap object
-void __pool_unregister_heap(void *obj);
-
-// added after every realloc-like allocation on the heap
-void __pool_reregister_heap(void *old_obj, void *new_obj, size_t new_size);
-}}}
-
-= Independently unnecessary load/store checks partitions = 
-{{{
-1. index problem
-1.1. none
-1.2. access starts before the object
-1.3. access ends after the object
-
-2. allocation problem
-2.1. none
-2.2. possibly freed
-2.3. unknown allocation
-
-3. index type
-3.1. constant
-3.2. simple expression (which limitations apply?)
-3.3. anything else
-
-4. object size type
-4.1. constant
-4.2. simple expression (which limitations apply?)
-4.3. anything else
-
-5. number of objects
-5.1. single object
-5.2. multiple objects
-
-6. number of object types
-6.1. one type
-6.2. two or more types
-
-7. number of object sizes
-7.1. one size
-7.2. two or more sizes
-
-8. reason for multiple objects
-8.1. N/A: one object
-8.2. select
-8.3. phi
-8.4. mixed
-
-9. loop structure
-9.1. none
-9.2. single loop
-9.3. multiple loops
-}}}
-
-= Partitions for load/store checks that may be implied by other such checks =
-{{{
-1. index problem 
-1.1. none
-1.2. off in the same direction
-1.3. off in different directions
-
-2. allocation problem
-2.1. none
-2.2. first check on a possibly freed object
-2.3. last check on a possibly freed object
-2.4. both checks on a possibly freed object
-
-3. boundary expression type
-3.1. constant
-3.2. simple expression (which limitations apply?)
-3.3. unknown
-3.4. anything else
-
-4. number of memory object sets
-4.1. one
-4.2. two
-
-5. CFG structure
-5.1. same basic block
-5.2. single connecting path
-5.3. multiple connecting paths
-
-6. loop structure
-6.1. none
-6.2. checks in the same loop
-6.3. checks in different loops / one not in a loop
-}}}
-
-= Partitions for load/store/gep checks that can be converted to their fast versions =
-{{{
-1. allocation type
-1.1. regular stack
-1.2. scoped alloca
-1.3. global
-1.4. heap
-1.5. mixed
-1.6. unknown
-
-2. allocation problem
-2.1. none
-2.2. possibly freed
-2.3. possible to override global variable's size
-
-3. object size type
-3.1. constant
-3.2. variable
-3.3. unknown
-
-4. number of objects
-4.1. single object
-4.2. multiple objects
-
-5. number of object types
-5.1. one type
-5.2. two or more types
-
-6. number of object sizes
-6.1. one size
-6.2. two or more sizes
-
-7. reason for multiple objects
-7.1. N/A: one object
-7.2. select
-7.3. phi
-7.4. mixed
-
-8. loop structure
-8.1. none
-8.2. single loop
-8.3. multiple loops
-
-9. CFG structure
-9.1. same basic block
-9.2. single connecting path
-9.3. multiple connecting paths
-}}}
+https://github.com/otinn/memory-safety-testing-utils
