@@ -10,6 +10,7 @@ Having similar checks and registration calls makes it possible to use the same o
   * Global and stack variable registration calls. Knowing that it will not be necessary to know about some of these memory objects to find out whether the load/store checks are valid makes it possible for ASan to avoid poisoning the memory around them.
 
 = Results =
+The optimizations opt1-3 are described after the tables.
 || bench          || num loads/stores || num optimized by opt1 || num optimized by opt2 || num optimized by opt3 || num optimized total || run-time checks before opt || run-time checks avoided ||
 || 401.bzip2      || 4157             || 167 (4%)              || 1334 (32%)            || 30 (1%)               || 1531 (37%)          || 10526244748                || 5514284227 (52%) ||
 || 429.mcf        || 559              || 38 (7%)               || 61 (11%)              || 2 (0%)                || 101 (18%)           || 1458123364                 || 237088293 (16%) ||
@@ -18,9 +19,23 @@ Having similar checks and registration calls makes it possible to use the same o
 || 456.hmmer      || 12391            || 1146 (9%)             || 1456 (12%)            || 27 (0%)               || 2629 (21%)          || 4904909455                 || 221111686 (5%) ||
 || 458.sjeng      || 5051             || 852 (17%)             || 399 (8%)              || 21 (0%)               || 1272 (25%)          || 3811134741                 || 595197870 (16%) ||
 || 462.libquantum || 1029             || 418 (41%)             || 51 (5%)               || 0 (0%)                || 469 (46%)           || 1616295534                 || 294378970 (18%) ||
-|| 464.h264ref    || 32248            || 3098 (10%)            || 2960 (9%)             || 133 (0%)              || 6191 (19%)          || 28132170266                || 7325970456 (26%) ||
+|| 464.h264ref    || 32238            || 3098 (10%)            || 2960 (9%)             || 133 (0%)              || 6191 (19%)          || 28132170266                || 7325970456 (26%) ||
 || 470.lbm        || 365              || 35 (10%)              || 24 (7%)               || 0 (0%)                || 59 (16%)            || 1432961919                 || 289561808 (20%) ||
-|| all            || 84226            || 10777 (13%)           || 9778 (12%)            || 624 (1%)              || 21179 (25%)         || 84729136989                || 25770089119 (30%) ||
+|| all            || 84216            || 10777 (13%)           || 9778 (12%)            || 624 (1%)              || 21179 (25%)         || 84729136989                || 25770089119 (30%) ||
+
+= Results vs. ASan Optimizations =
+This table shows the comparison between the optimizations already in ASan compared to adding the new optimizations. Note that the first run-time check column excludes the ones already avoided by ASan and the second one compares to the ASan results, not the completely unoptimized ones.
+|| bench          || num loads/stores || num optimized by ASan (incl. opt2) || num optimized by opt1 || num optimized by opt3 || num optimized total || run-time checks with ASan || extra run-time checks avoided ||
+|| 401.bzip2      || 4157             || 1397 (34%)                         || 117 (3%)              || 30 (1%)               || 1544 (37%)          || 5137561629                || 125601112 (2%) ||
+|| 429.mcf        || 559              || 64 (11%)                           || 35 (6%)               || 2 (0%)                || 101 (18%)           || 1347470725                || 126435654 (9%) ||
+|| 433.milc       || 4550             || 376 (8%)                           || 628 (14%)             || 0 (0%)                || 1004 (22%)          || 10445237743               || 9807239 (0%) ||
+|| 445.gobmk      || 23876            || 4155 (17%)                         || 3357 (14%)            || 411 (2%)              || 7923 (33%)          || 13277021610               || 2157650961 (16%) ||
+|| 456.hmmer      || 12391            || 1658 (13%)                         || 944 (8%)              || 27 (0%)               || 2629 (21%)          || 4841867418                || 158069649 (3%) ||
+|| 458.sjeng      || 5051             || 518 (10%)                          || 736 (15%)             || 21 (0%)               || 1275 (25%)          || 3450070076                || 234133230 (7%) ||
+|| 462.libquantum || 1029             || 195 (19%)                          || 274 (27%)             || 0 (0%)                || 469 (46%)           || 1330597100                || 8680536 (1%) ||
+|| 464.h264ref    || 32238            || 3182 (10%)                         || 2880 (9%)             || 133 (0%)              || 6195 (19%)          || 27806106226               || 7000682956 (25%) ||
+|| 470.lbm        || 365              || 29 (8%)                            || 30 (8%)               || 0 (0%)                || 59 (16%)            || 1143400226                || 115 (0%) ||
+|| all            || 84216            || 11574 (14%)                        || 9001 (11%)            || 624 (1%)              || 21199 (25%)         || 68779332753               || 9821061452 (14%) ||
 
 = Load/store Check Optimizations =
 == opt1 (optimize-fast-memory-checks) ==
