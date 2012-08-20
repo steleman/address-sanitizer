@@ -26,7 +26,7 @@ The optimizations opt1-3 are described after the tables.
 = Results vs. ASan Optimizations =
 This table shows the comparison between the optimizations already in ASan compared to adding the new optimizations. Note that the first run-time check column excludes the ones already avoided by ASan and the second one compares to the ASan results, not the completely unoptimized ones. The results were obtained by compiling with -O2.
 
-opt0 is the global scalar optimization.
+opt0 is ASan's global scalar optimization.
 
 || bench          || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total || run-time checks with ASan || extra run-time checks avoided ||
 || 401.bzip2      || 4157             || 181 (4%)              || 1337 (32%)            || 90 (2%)               || 30 (1%)               || 1638 (39%)          || 5137459805                || 125499329 (2%) ||
@@ -63,6 +63,8 @@ This pass can handle the following:
   * Cases where a gep indexes into an object using constant indices (this subsumes the ASan global scalar optimization).
   * Some cases where the previous case is complicated by the select and/or phi instructions that select the gep to use.
   * Some cases where the gep depends on loop induction variables. [https://github.com/otinn/llvm/blob/master/test/Instrumentation/MemorySafety/optimization/always_valid/0039.ll (example)]
+
+This pass could be improved by improving the pass that converts checks into fast checks where possible (exactcheck-opt) or by improving the range analysis.
 
 {{{
 // This file shows examples of optimize-fast-memory-checks being applied.
@@ -117,7 +119,9 @@ If any call is encountered then one of three things happens:
 2) It is a load/store check with a previously seen access pointer and size pair. The check is removed.
 3) It is another call that is not in a whitelist of functions known to not deallocate memory. The known access cache is cleared.
 
-The same behaviour already exists in ASan.
+Very similar behaviour already exists in ASan.
+
+This pass could be improved by determining whether a call can change the results of the checks.
 
 {{{
 // This file shows an example of optimize-identical-ls-checks being applied.
@@ -273,6 +277,13 @@ void sort_basket( min, max )
         sort_basket( l, max ); 
 }
 }}}
+
+= Analysis =
+The most useful new optimization for ASan would be opt1 because it works well on a wide range of programs by removing 11% of all remaining checks after existing ASan optimizations on SPEC and 31% on Chromium. That is 68% of all remaining *fast* checks after existing optimizations on SPEC and 98.5% on Chromium. Note that the high success rate on Chromium may be caused by low generic optimization levels or aggressive loop unrolling.
+
+Opt3 appears to be somewhat useful on some programs but not get anything done on others (often because opt1 was very successful). It removed 20% of SPEC's and 10% of Chromium's remaining *fast* load/store checks after opt1. Its usefulness depends on how important it is to remove those checks.
+
+Both of these optimizations depend on exactcheck-opt to actually identify the checks that can be converted to fast checks and thus easily optimized. Improving this pass by analysing simple heap variable lifetimes could improve both opt1 and opt3.
 
 = The Code =
 
