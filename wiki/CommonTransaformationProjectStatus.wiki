@@ -24,7 +24,7 @@ The optimizations opt1-3 are described after the tables.
 || all            || 84216            || 10777 (13%)           || 9778 (12%)            || 624 (1%)              || 21179 (25%)         || 84729136989                || 25770089119 (30%) ||
 
 = Results vs. ASan Optimizations =
-This table shows the comparison between the optimizations already in ASan compared to adding the new optimizations. Note that the first run-time check column excludes the ones already avoided by ASan and the second one compares to the ASan results, not the completely unoptimized ones.
+This table shows the comparison between the optimizations already in ASan compared to adding the new optimizations. Note that the first run-time check column excludes the ones already avoided by ASan and the second one compares to the ASan results, not the completely unoptimized ones. The results were obtained by compiling with -O2.
 
 opt0 is the global scalar optimization.
 
@@ -39,6 +39,21 @@ opt0 is the global scalar optimization.
 || 464.h264ref    || 32238            || 5268 (16%)            || 2559 (8%)             || 1996 (6%)             || 133 (0%)              || 9956 (31%)          || 26274260762               || 6120457746 (23%) ||
 || 470.lbm        || 365              || 15 (4%)               || 29 (8%)               || 15 (4%)               || 0 (0%)                || 59 (16%)            || 1143400158                || 47 (0%) ||
 || all            || 84216            || 13332 (16%)           || 9655 (11%)            || 6973 (8%)             || 624 (1%)              || 30584 (36%)         || 64432150818               || 7770363799 (12%) ||
+
+== Chromium ==
+
+This table shows statistics for the same optimizations as the last table but with missing run-time data.
+
+It is the result of building Chromium as follows:
+{{{
+GYP_GENERATORS=make GYP_DEFINES="clang=1 clang_use_chrome_plugins=0 disable_nacl=1" ./build/gyp_chromium
+make chrome BUILDTYPE=Release
+}}}
+
+|| bench    || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total ||
+|| chromium || 6557597          || 103657 (2%)           || 3777623 (58%)         || 847406 (13%)          || 1280 (0%)             || 4729966 (72%) ||
+
+The memory registration optimization pass also removed about 20% of the registrations in this case. The very high optimization rate may be influenced by different generic optimization options or the language (C in the SPEC table vs. a lot of C++ in Chromium).
 
 = Load/store Check Optimizations =
 == opt1 (optimize-fast-memory-checks) ==
