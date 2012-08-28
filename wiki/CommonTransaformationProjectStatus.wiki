@@ -4,30 +4,39 @@
 
 The goal of this project was to create memory safety instrumentation and optimization passes that could be used by different memory error detection systems. The general idea is to add checks before operations that may cause invalid memory accesses. Passes were also added to register memory objects becoming valid/invalid.
 
-Having similar checks and registration calls makes it possible to use the same optimization passes to avoid unnecessary checks and variable registrations at run-time. The important ones for ASan are the following:
-  * Load and store checks. These are inserted before all load/store instructions and other memory accessing intrinsics.
-  * Fast load and store checks. These are load/store checks where the memory object is known and it is only necessary to compare the access boundaries to the object boundaries to know whether it is valid. They are useful because it is easier to optimize them away.
-  * Global and stack variable registration calls. Knowing that it will not be necessary to know about some of these memory objects to find out whether the load/store checks are valid makes it possible for ASan to avoid poisoning the memory around them.
+= Check/call types =
+== Generic load/store checks ==
+These checks are the ones added just before loads, stores, and
+other memory intrinsics. All we know is the memory address accessed and the size of the access.
 
-= Results =
-The optimizations opt1-3 are described after the tables.
-|| bench          || num loads/stores || num optimized by opt1 || num optimized by opt2 || num optimized by opt3 || num optimized total || run-time checks before opt || run-time checks avoided ||
-|| 401.bzip2      || 4157             || 167 (4%)              || 1334 (32%)            || 30 (1%)               || 1531 (37%)          || 10526244748                || 5514284227 (52%) ||
-|| 429.mcf        || 559              || 38 (7%)               || 61 (11%)              || 2 (0%)                || 101 (18%)           || 1458123364                 || 237088293 (16%) ||
-|| 433.milc       || 4550             || 666 (15%)             || 338 (7%)              || 0 (0%)                || 1004 (22%)          || 13522033249                || 3086602745 (23%) ||
-|| 445.gobmk      || 23876            || 4357 (18%)            || 3155 (13%)            || 411 (2%)              || 7923 (33%)          || 19325263713                || 8205893064 (42%) ||
-|| 456.hmmer      || 12391            || 1146 (9%)             || 1456 (12%)            || 27 (0%)               || 2629 (21%)          || 4904909455                 || 221111686 (5%) ||
-|| 458.sjeng      || 5051             || 852 (17%)             || 399 (8%)              || 21 (0%)               || 1272 (25%)          || 3811134741                 || 595197870 (16%) ||
-|| 462.libquantum || 1029             || 418 (41%)             || 51 (5%)               || 0 (0%)                || 469 (46%)           || 1616295534                 || 294378970 (18%) ||
-|| 464.h264ref    || 32238            || 3098 (10%)            || 2960 (9%)             || 133 (0%)              || 6191 (19%)          || 28132170266                || 7325970456 (26%) ||
-|| 470.lbm        || 365              || 35 (10%)              || 24 (7%)               || 0 (0%)                || 59 (16%)            || 1432961919                 || 289561808 (20%) ||
-|| all            || 84216            || 10777 (13%)           || 9778 (12%)            || 624 (1%)              || 21179 (25%)         || 84729136989                || 25770089119 (30%) ||
+== Fast load/store checks ==
+Generic checks can be turned into fast checks if the following criteria are met:
+  * The memory object it must access is known.
+  * The size of the memory object is known.
+  * It is allowed to access the memory object at the time of the check.
 
-= Results vs. ASan Optimizations =
+This means that it must be sufficient to check the following (assuming no overflow):
+{{{
+object ptr <= access ptr && access ptr + access size <= object ptr + object size
+}}}
+For example allocas with function scope are always ok.
+A counterexample would be a heap object that is freed before the check. In that case just being in bounds isn't enough. The current implementation only handles global variables and allocas that obviously have function scope.
+
+== Memory object registration calls ==
+These calls are added for every alloca and global variable. The idea is
+that if we know that no check should look at a particular variable's red zone (because we optimized away all checks that could depend on that
+variable) then the red zone doesn't have to be added.
+
+= Why it is useful to prove that a check could be a fast check =
+  * It is much easier to optimize fast checks away because they are essentially assertions about variable ranges. Regular checks also have to find the memory object at run-time and check that the memory objects have not been deallocated.
+  * If run-time fast checks were implemented using comparisons instead of red zones then we could avoid registering the memory objects the fast checks are on (as long as there can be no other cases where the object might be needed for regular checks).
+
+= Results on part of SPEC =
 This table shows the comparison between the optimizations already in ASan compared to adding the new optimizations. Note that the first run-time check column excludes the ones already avoided by ASan and the second one compares to the ASan results, not the completely unoptimized ones. The results were obtained by compiling with -O2.
 
-opt0 is ASan's global scalar optimization.
+Optimizations opt0-3 are explained after the tables. Note that the order between the optimizations matters because there are cases where each of the load/store check optimizations could remove a particular check. The total number of checks optimized is not affected.
 
+== Both generic and fast load/store checks ==
 || bench          || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total || run-time checks with ASan || extra run-time checks avoided ||
 || 401.bzip2      || 4157             || 181 (4%)              || 1337 (32%)            || 90 (2%)               || 30 (1%)               || 1638 (39%)          || 5137459805                || 125499329 (2%) ||
 || 429.mcf        || 559              || 22 (4%)               || 62 (11%)              || 18 (3%)               || 2 (0%)                || 104 (19%)           || 1250399778                || 29364707 (2%) ||
@@ -39,10 +48,44 @@ opt0 is ASan's global scalar optimization.
 || 464.h264ref    || 32238            || 5268 (16%)            || 2559 (8%)             || 1996 (6%)             || 133 (0%)              || 9956 (31%)          || 26274260762               || 6120457746 (23%) ||
 || 470.lbm        || 365              || 15 (4%)               || 29 (8%)               || 15 (4%)               || 0 (0%)                || 59 (16%)            || 1143400158                || 47 (0%) ||
 || all            || 84216            || 13332 (16%)           || 9655 (11%)            || 6973 (8%)             || 624 (1%)              || 30584 (36%)         || 64432150818               || 7770363799 (12%) ||
+|| median         ||                  || 16%                   || 11%                   || 11%                   || 0%                    || 44%                 ||                           || 2% ||
+|| maximum        ||                  || 36%                   || 16%                   || 20%                   || 2%                    || 55%                 ||                           || 23% ||
 
-== Chromium ==
+== Only generic load/store checks ==
+|| bench          || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total || run-time checks with ASan || extra run-time checks avoided ||
+|| 401.bzip2      || 3801             || 154 (4%)              || 1213 (32%)            || 0 (0%)                || 0 (0%)                || 1367 (36%)          || 4287114265                || 0 (0%) ||
+|| 429.mcf        || 511              || 3 (1%)                || 59 (12%)              || 0 (0%)                || 0 (0%)                || 62 (12%)            || 1131362574                || 0 (0%) ||
+|| 433.milc       || 3853             || 1157 (30%)            || 303 (8%)              || 0 (0%)                || 0 (0%)                || 1460 (38%)          || 10118336477               || 0 (0%) ||
+|| 445.gobmk      || 16753            || 3111 (19%)            || 1985 (12%)            || 0 (0%)                || 0 (0%)                || 5096 (30%)          || 7664245889                || 0 (0%) ||
+|| 456.hmmer      || 11106            || 225 (2%)              || 1419 (13%)            || 0 (0%)                || 0 (0%)                || 1644 (15%)          || 4667858416                || 0 (0%) ||
+|| 458.sjeng      || 3852             || 1756 (46%)            || 138 (4%)              || 0 (0%)                || 0 (0%)                || 1894 (49%)          || 2139309390                || 0 (0%) ||
+|| 462.libquantum || 611              || 5 (1%)                || 51 (8%)               || 0 (0%)                || 0 (0%)                || 56 (9%)             || 1321916564                || 0 (0%) ||
+|| 464.h264ref    || 28473            || 4318 (15%)            || 2369 (8%)             || 0 (0%)                || 0 (0%)                || 6687 (23%)          || 19544998709               || 0 (0%) ||
+|| 470.lbm        || 330              || 0 (0%)                || 24 (7%)               || 0 (0%)                || 0 (0%)                || 24 (7%)             || 1143400111                || 0 (0%) ||
+|| all            || 69290            || 10729 (15%)           || 7561 (11%)            || 0 (0%)                || 0 (0%)                || 18290 (26%)         || 52018542395               || 0 (0%) ||
+|| median         ||                  || 15%                   || 8%                    || 0%                    || 0%                    || 23%                 ||                           || 0% ||
+|| maximum        ||                  || 46%                   || 13%                   || 0%                    || 0%                    || 49%                 ||                           || 0% ||
 
-This table shows statistics for the same optimizations as the last table but with missing run-time data.
+This table basically demonstrates that the extra optimizations only work on fast checks.
+
+== Only fast load/store checks ==
+|| bench          || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total || run-time checks with ASan || extra run-time checks avoided ||
+|| 401.bzip2      || 356              || 27 (8%)               || 124 (35%)             || 90 (25%)              || 30 (8%)               || 271 (76%)           || 850345540                 || 125499329 (15%) ||
+|| 429.mcf        || 48               || 19 (40%)              || 3 (6%)                || 18 (38%)              || 2 (4%)                || 42 (88%)            || 119037204                 || 29364707 (25%) ||
+|| 433.milc       || 697              || 22 (3%)               || 41 (6%)               || 606 (87%)             || 0 (0%)                || 669 (96%)           || 8610924                   || 6904142 (80%) ||
+|| 445.gobmk      || 7123             || 1270 (18%)            || 1268 (18%)            || 2542 (36%)            || 411 (6%)              || 5491 (77%)          || 4055150139                || 1208435475 (30%) ||
+|| 456.hmmer      || 1285             || 127 (10%)             || 226 (18%)             || 823 (64%)             || 27 (2%)               || 1203 (94%)          || 78850727                  || 63003542 (80%) ||
+|| 458.sjeng      || 1199             || 76 (6%)               || 119 (10%)             || 680 (57%)             || 21 (2%)               || 896 (75%)           || 570692505                 || 215039527 (38%) ||
+|| 462.libquantum || 418              || 97 (23%)              || 118 (28%)             || 203 (49%)             || 0 (0%)                || 418 (100%)          || 1659284                   || 1659284 (100%) ||
+|| 464.h264ref    || 3765             || 950 (25%)             || 190 (5%)              || 1996 (53%)            || 133 (4%)              || 3269 (87%)          || 6729262053                || 6120457746 (91%) ||
+|| 470.lbm        || 35               || 15 (43%)              || 5 (14%)               || 15 (43%)              || 0 (0%)                || 35 (100%)           || 47                        || 47 (100%) ||
+|| all            || 14926            || 2603 (17%)            || 2094 (14%)            || 6973 (47%)            || 624 (4%)              || 12294 (82%)         || 12413608423               || 7770363799 (63%) ||
+|| median         ||                  || 23%                   || 14%                   || 53%                   || 2%                    || 94%                 ||                           || 80% ||
+|| maximum        ||                  || 43%                   || 28%                   || 87%                   || 6%                    || 100%                ||                           || 100% ||
+
+This table demonstrates that once we have proven a check to be a fast check then the extra optimizations are quite effective (at least on the current cases).
+
+= Results on Chromium =
 
 It is the result of building Chromium as follows:
 {{{
@@ -50,17 +93,22 @@ GYP_GENERATORS=make GYP_DEFINES="clang=1 clang_use_chrome_plugins=0 disable_nacl
 make chrome BUILDTYPE=Release
 }}}
 
-|| bench    || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total ||
-|| chromium || 6557597          || 103657 (2%)           || 3777623 (58%)         || 847406 (13%)          || 1280 (0%)             || 4729966 (72%) ||
+|| check type    || num loads/stores || num optimized by opt0 || num optimized by opt2 || num optimized by opt1 || num optimized by opt3 || num optimized total ||
+|| only generic  || 4009323          || 58501 (1%)            || 2135555 (53%)         || 0 (0%)                || 0 (0%)                || 2194056 (55%)       ||
+|| only fast     || 2548274          || 45156 (2%)            || 1642068 (64%)         || 847406 (33%)          || 1280 (0%)             || 2535910 (100%)      ||
+|| generic+fast  || 6557597          || 103657 (2%)           || 3777623 (58%)         || 847406 (13%)          || 1280 (0%)             || 4729966 (72%)       ||
 
-The memory registration optimization pass also removed about 20% of the registrations in this case. The very high optimization rate may be influenced by different generic optimization options or the language (C in the SPEC table vs. a lot of C++ in Chromium).
+The very high optimization rate may be influenced by different generic optimization options or the language (C in the used SPEC benchmarks and a lot of C++ in Chromium).
 
 = Load/store Check Optimizations =
+== opt0 (ASan's global scalar optimization) ==
+This pass works just like ASan's global scalar optimization which removes all checks on accesses to global scalars. This pass is brought out separately only because it helps show the difference between existing and potential new optimizations. The opt1 can do everything this pass can and more.
+
 == opt1 (optimize-fast-memory-checks) ==
 This pass removes fast load/store checks (ones where the memory object is known and valid at the time of the check) if it can prove that the access is entirely inside the memory object. It uses the array bounds analysis group to do so.
 
 This pass can handle the following:
-  * Cases where a gep indexes into an object using constant indices (this subsumes the ASan global scalar optimization).
+  * Cases where a gep indexes into an object using constant indices (this subsumes the opt0 pass).
   * Some cases where the previous case is complicated by the select and/or phi instructions that select the gep to use.
   * Some cases where the gep depends on loop induction variables. [https://github.com/otinn/llvm/blob/master/test/Instrumentation/MemorySafety/optimization/always_valid/0039.ll (example)]
 
@@ -278,12 +326,44 @@ void sort_basket( min, max )
 }
 }}}
 
+== Overlapping optimization cases ==
+Here is an example where each of the existing optimizations could optimize away the last check:
+
+{{{
+static int global_int;
+void f(void) {
+  ++global_int;
+}
+}}}
+
+This creates the sequence:
+  # fast load check
+  # load
+  # add
+  # fast store check
+  # store
+
+Whichever current optimization is run first will optimize away the
+fast store check.
+
+opt0 (ASan's global scalar optimization):
+Both checks just use global scalars so they can be removed.
+
+opt1 (optimize-fast-memory-checks):
+Both checks are in bounds so they can be removed.
+
+opt2 (identical checks in the same basic block; similar optimization in ASan):
+The store check repeats the load check with no function calls between
+them so it can be removed.
+
+opt3 (optimize-implied-fast-ls-checks):
+Both checks access the same range in a global variable of the same
+size so the store check can be removed.
+
 = Analysis =
-The most useful new optimization for ASan would be opt1 because it works well on a wide range of programs by removing 11% of all remaining checks after existing ASan optimizations on SPEC and 31% on Chromium. That is 68% of all remaining *fast* checks after existing optimizations on SPEC and 98.5% on Chromium. Note that the high success rate on Chromium may be caused by low generic optimization levels or aggressive loop unrolling.
+At least based on the compile-time data and the run-time data on SPEC it appears that the single most useful optimization that is not in ASan is opt1. This appears to be the case because it is much better than opt3 on every case and because it gets rid of 13% of all compile-time checks on Chromium after the current optimizations have already been run.
 
-Opt3 appears to be somewhat useful on some programs but not get anything done on others (often because opt1 was very successful). It removed 20% of SPEC's and 10% of Chromium's remaining *fast* load/store checks after opt1. Its usefulness depends on how important it is to remove those checks.
-
-Both of these optimizations depend on exactcheck-opt to actually identify the checks that can be converted to fast checks and thus easily optimized. Improving this pass by analysing simple heap variable lifetimes could improve both opt1 and opt3.
+The current run-time data shows that it removes 12% of load/store checks left over after ASan on average but only 2% on the median case. This large difference should be clarified once the Chromium run-time data is added.
 
 = The Code =
 
