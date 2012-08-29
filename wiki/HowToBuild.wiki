@@ -67,21 +67,6 @@ R=$(svn info | grep Revision: | awk '{print $2}')
 (cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
 (cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
 }}}
-  # Apply the following patch (from root of llvm checkout).
-{{{
---- projects/CMakeLists.txt	(revision 160622)
-+++ projects/CMakeLists.txt	(working copy)
-@@ -4,8 +4,7 @@
- file(GLOB entries *)
- foreach(entry ${entries})
-   if(IS_DIRECTORY ${entry} AND EXISTS ${entry}/CMakeLists.txt)
--    if((NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/compiler-rt) AND
--       (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libcxx))
-+    if(NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libcxx)
-       add_subdirectory(${entry})
-     endif()
-   endif()
-}}}
   # Set configuration and build LLVM.
 {{{
 mkdir llvm_cmake_build
@@ -112,6 +97,6 @@ cd projects/compiler-rt/lib/asan
 make -j12 clang_rt.asan-x86_64 clang_rt.asan-i386
 # On Mac:
 make -j12 clang_rt.asan_osx
-# The runtime libraries are build at folder:
+# The runtime libraries are built at:
 # llvm_cmake_build/lib/clang/3.2/lib/{linux,darwin}/
 }}}
