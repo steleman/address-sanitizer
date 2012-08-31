@@ -18,6 +18,7 @@ Quite a few bugs in Chromium and !WebKit:
   * http://googlechromereleases.blogspot.com/2012/07/stable-channel-update.html
   * http://googlechromereleases.blogspot.com/2012/07/stable-channel-release.html
   * http://googlechromereleases.blogspot.com/2012/08/stable-channel-update.html
+  * http://googlechromereleases.blogspot.com/2012/08/stable-channel-update_30.html
   * http://support.apple.com/kb/HT5000
   * http://support.apple.com/kb/HT5192
   * http://support.apple.com/kb/HT5400
