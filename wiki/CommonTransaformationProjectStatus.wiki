@@ -85,7 +85,7 @@ This table basically demonstrates that the extra optimizations only work on fast
 
 This table demonstrates that once we have proven a check to be a fast check then the extra optimizations are quite effective (at least on the current cases).
 
-= Results on Chromium =
+= Compilation results on Chromium =
 
 It is the result of building Chromium as follows:
 {{{
@@ -99,6 +99,88 @@ make chrome BUILDTYPE=Release
 || generic+fast  || 6557597          || 103657 (2%)           || 3777623 (58%)         || 847406 (13%)          || 1280 (0%)             || 4729966 (72%)       ||
 
 The very high optimization rate may be influenced by different generic optimization options or the language (C in the used SPEC benchmarks and a lot of C++ in Chromium).
+
+= Run-time results on Chromium's browser_tests =
+The following table shows the amount of time in seconds taken to run Chromium's browser_tests. The time is shown as the sum of the times taken to run all the test cases as reported by the test runner.
+
+The tests were run 6 times: once as a warm-up and then five more times as shown in the `run 1-5` columns.
+
+|| Method || average || run 1 || run 2 || run 3 || run 4 || run 5 ||
+|| Current ASAN || *7344* || 7283 || 7385 || 7276 || 7215 || 7563 ||
+|| Current ASAN + opt1 || *7088* || 6852 || 6965 || 7131 || 6954 || 7536 ||
+|| All optimizations || *7079* || 6953 || 7039 || 7292 || 7109 || 7001 ||
+
+The results indicate that using opt1 makes it run about 3% faster on average. The other new optimizations don't seem to make a significant additional difference.
+
+The following tests were disabled because they caused occasional failures:
+{{{
+AutofillTest.AutofillAfterReload
+AutofillTest.AutofillViaDownArrow
+AutofillTest.BasicFormFill
+AutofillTest.ComparePhoneNumbers
+AutofillTest.DistinguishMiddleInitialWithinName
+AutofillTest.DynamicFormFill
+AutofillTest.FormFillLatencyAfterSubmit
+AutofillTest.FormFillableOnReset
+AutofillTest.MultipleEmailFilledByOneUserGesture
+AutofillTest.NoAutofillForReadOnlyFields
+BrowserTagTest.Isolation
+BubbleGtkTest.ArrowLocation
+ClickToPlayPluginTest.Basic
+ClickToPlayPluginTest.LoadAllBlockedPlugins
+ClickToPlayPluginTest.NoCallbackAtLoad
+DevToolsSanityTest.TestNetworkRawHeadersText
+DevToolsSanityTest.TestNetworkSize
+DevToolsSanityTest.TestNetworkSyncSize
+DownloadsDOMHandlerTest.DownloadsDOMHandlerTest_Created
+ExtensionApiTest.CaptureVisibleTabJpeg
+ExtensionApiTest.I18N
+ExtensionWebRequestApiTest.WebRequestNewTab
+FileSystemApiTest.FileSystemApiGetWritableTest
+FileSystemApiTest.FileSystemApiSaveExistingFileWithWriteTest
+FindInPageControllerTest.FindMovesWhenObscuring
+FontSettingsWebUITest.testOpenFontSettings
+FullscreenControllerBrowserTest.FLAKY_FullscreenMouseLockContentSettings
+FullscreenControllerTest.BrowserFullscreenAfterTabFSExit
+FullscreenControllerTest.BrowserFullscreenExit
+FullscreenControllerTest.FullscreenFileURL
+FullscreenControllerTest.TestFullscreenBubbleMouseLockState
+FullscreenControllerTest.TestFullscreenFromTabWhenAlreadyInBrowserFullscreenWorks
+FullscreenControllerTest.TestTabDoesntExitFullscreenOnSubFrameNavigation
+FullscreenControllerTest.TestTabExitsFullscreenOnGoBack
+FullscreenControllerTest.TestTabExitsFullscreenOnNavigation
+FullscreenControllerTest.TestTabExitsItselfFromFullscreen
+GpuFeatureTest.AcceleratedCompositingAllowed
+GpuFeatureTest.Canvas2DAllowed
+GpuFeatureTest.RafNoDamage
+GpuFeatureTest.WebGLAllowed
+IsolatedAppTest.SubresourceCookieIsolation
+NTP4WebUITest.FLAKY_NTPHasThumbnails
+NewTabUIBrowserTest.LoadNTPInExistingProcess
+PageCyclerCachedBrowserTest.PlaybackMode
+PageCyclerCachedBrowserTest.URLNotInCache
+PanelBrowserNavigatorTest.NavigateFromCrashedPanel
+PerformanceMonitorBrowserTest.KilledByOSEvent
+PerformanceMonitorBrowserTest.RendererCrashEvent
+PrerenderBrowserTest.PrerenderDelayLoadPlugin
+PrerenderBrowserTest.PrerenderHTML5Video
+PrerenderBrowserTest.PrerenderHTML5VideoJs
+PrerenderBrowserTest.PrerenderHTML5VideoNetwork
+PrerenderBrowserTest.PrerenderIframeDelayLoadPlugin
+PrerenderBrowserTest.PrerenderInfiniteLoop
+SavePageAsMHTMLBrowserTest.SavePageAsMHTML
+SavePageBrowserTest.FileNameFromPageTitle
+SavePageBrowserTest.RemoveFromList
+SavePageBrowserTest.SaveCompleteHTML
+SavePageBrowserTest.SaveHTMLOnly
+SavePageBrowserTest.SaveHTMLOnlyCancel
+SavePageBrowserTest.SaveViewSourceHTMLOnly
+SpellCheckHostBrowserTest.DeleteCorruptedBDICT
+ThreadedCompositorTest.ThreadedCompositor
+TimeFormatBrowserTest.DecimalPointNotDot
+UnloadTest.BrowserCloseInfiniteBeforeUnload
+UnloadTest.BrowserCloseInfiniteBeforeUnloadAlert
+}}}
 
 = Load/store Check Optimizations =
 == opt0 (ASan's global scalar optimization) ==
@@ -361,9 +443,10 @@ Both checks access the same range in a global variable of the same
 size so the store check can be removed.
 
 = Analysis =
-At least based on the compile-time data and the run-time data on SPEC it appears that the single most useful optimization that is not in ASan is opt1. This appears to be the case because it is much better than opt3 on every case and because it gets rid of 13% of all compile-time checks on Chromium after the current optimizations have already been run.
+Based on both compile-time and run-time data it looks like the single most useful optimization is opt1.
 
-The current run-time data shows that it removes 12% of load/store checks left over after ASan on average but only 2% on the median case. This large difference should be clarified once the Chromium run-time data is added.
+On chromium's browser_tests it reduced the runtime by about 3% on average.
+On the tested part of SPEC it removed 12% of load/store checks left over after the ASan optimizations (on average) although it got rid of only 2% in the median case.
 
 = The Code =
 
