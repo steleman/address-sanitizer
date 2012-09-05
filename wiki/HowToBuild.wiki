@@ -58,8 +58,8 @@ svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://$CNAME
 }}}
 
 ==Building AddressSanitizer unit tests with CMake==
-  # Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need at least CMake 2.8.8).
-  # Get llvm, clang and compiler-rt, build it all
+  * Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need at least CMake 2.8.8).
+  * Get llvm, clang and compiler-rt, build it all
 {{{
 svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
 cd llvm
@@ -67,7 +67,7 @@ R=$(svn info | grep Revision: | awk '{print $2}')
 (cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
 (cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
 }}}
-  # Set configuration and build LLVM.
+  * Set configuration and build LLVM.
 {{{
 mkdir llvm_cmake_build
 cd llvm_cmake_build
@@ -80,17 +80,26 @@ export CC=/usr/bin/gcc
 export CXX=/usr/bin/g++
 cmake $CMAKE_DEFINES $LLVM_CHECKOUT
 }}}
-  # Now you can build and test ASan:
+  * Now you can build and test LLVM code:
 {{{
-make -j12 check-asan
+make -j12 # build everything
+make check-all -j12 # build and run all tests (llvm+clang+ASan)
+make check-asan -j12 # build and run ASan unit and output tests
 }}}
-  # To build/run only ASan unit tests:
+  To build/run only ASan unit tests:
 {{{
 cd projects/compiler-rt/lib/asan/tests
 make -j12 AsanUnitTests
 ./Release/AsanTest  # or ./Debug/AsanTest
 }}}
-  # To build ASan static runtime libraries:
+  To re-run a single ASan lit-style output test make sure you've builr Clang and run:
+{{{
+# Make sure clang and llvm tools are in your PATH.
+export PATH="/path/to/llvm_cmake_build/bin:$PATH"
+# Run a specific output test.
+llvm-lit /path/to/llvm/checkout/projects/compiler-rt/lib/asan/lit_tests/deep_tail_call.cc
+}}}
+  * To build ASan static runtime libraries:
 {{{
 cd projects/compiler-rt/lib/asan
 # On Linux:
