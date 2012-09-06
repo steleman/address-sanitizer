@@ -106,6 +106,7 @@ cd projects/compiler-rt/lib/asan
 make -j12 clang_rt.asan-x86_64 clang_rt.asan-i386
 # On Mac:
 make -j12 clang_rt.asan_osx
+make -j12 clang_rt.asan_osx_dynamic # optional
 # The runtime libraries are built at:
 # llvm_cmake_build/lib/clang/3.2/lib/{linux,darwin}/
 }}}
