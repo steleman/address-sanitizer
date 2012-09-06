@@ -173,7 +173,7 @@ The substring `.*prefix` will be removed from the file names.
 There is also an out-of-process symbolizer based on LLVM libraries (currently under development) that can be run by AddressSanitizer in a separate subprocess and symbolize stack traces online. If you build have
 a [http://code.google.com/p/address-sanitizer/wiki/HowToBuild cmake build of LLVM] and compiler-rt, this symbolizer can be found at
 {{{
-SYMBOLIZER_PATH=llvm_cmake_build/projects/compiler-rt/utils/llvm-symbolizer/llvm-symbolizer
+SYMBOLIZER_PATH=/path/to/llvm_cmake_build/projects/compiler-rt/utils/llvm-symbolizer/llvm-symbolizer
 }}}
 You may use it in ASan in the following manner:
 {{{
