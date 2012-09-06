@@ -127,8 +127,8 @@ ASAN_OPTIONS=verbosity=1 ./a.out
 
 || flag|| default || description ||
 || verbosity  || 0 || Be more verbose (mostly for testing the tool itself) ||
-|| malloc_context_size || 16 || Number of frames in `malloc`/`free` stack traces. ||
-|| redzone || 128 || Size of the redzone. Valid values are 32, 64, 128, 256, ... ||
+|| malloc_context_size || 30 || Number of frames in `malloc`/`free` stack traces. Valid values are 0...256. Note: for large sizes to work you may also need to increase the redzone to 256 or 512 ||
+|| redzone || 128 || Size of the redzone. Valid values are 32, 64, 128, ..., 4096 ||
 || sleep_before_dying || 0 || Sleep for this number of seconds before exiting the process on failure. ||
 || || || ||
 
