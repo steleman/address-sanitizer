@@ -170,6 +170,16 @@ The substring `.*prefix` will be removed from the file names.
    #0 0x402c77 in main address-sanitizer/asan/use-after-free.c:5
    ...
 }}}
+There is also an out-of-process symbolizer based on LLVM libraries (currently under development) that can be run by AddressSanitizer in a separate subprocess and symbolize stack traces online. If you build have
+a [http://code.google.com/p/address-sanitizer/wiki/HowToBuild cmake build of LLVM] and compiler-rt, this symbolizer can be found at
+{{{
+SYMBOLIZER_PATH=llvm_cmake_build/projects/compiler-rt/utils/llvm-symbolizer/llvm-symbolizer
+}}}
+You may use it in ASan in the following manner:
+{{{
+export ASAN_SYMBOLIZER_PATH=${SYMBOLIZER_PATH}
+ASAN_OPTIONS=symbolize=1 ./a.out
+}}}
 
 =Blacklist file=
 In some cases a particular function should be ignored (not instrumented) by AddressSanitizer.
