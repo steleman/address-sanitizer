@@ -4,37 +4,44 @@
 These temporary build instructions may or may not work.
 If you need something stable come back later, or grab the prebuilt binaries (see AddressSanitizer page)
 
+==Checkout AddressSanitizer sources==
 {{{
 # cd somewhere
-# Get llvm, clang and compiler-rt, build it all
+# Get llvm, clang and compiler-rt
 svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
 cd llvm
 R=$(svn info | grep Revision: | awk '{print $2}')
 (cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
 (cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
+}}}
 
+To switch your checkout to read-write mode:
+{{{
+CNAME=your_name_here
+cd llvm
+svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://$CNAME@llvm.org/svn/llvm-project/llvm/trunk
+(cd tools && svn switch --relocate http://llvm.org/svn/llvm-project/cfe/trunk https://$CNAME@llvm.org/svn/llvm-project/cfe/trunk clang)
+(cd projects && svn switch --relocate http://llvm.org/svn/llvm-project/compiler-rt/trunk https://$CNAME@llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
+}}}
+
+
+==Building AddressSanitizer with configure+make==
+{{{
+cd /path/to/llvm
 mkdir build
 (cd build && ../configure --enable-optimized && make -j 10)
 }}}
-
-Build AddressSanitizer tests:
-{{{
-cd projects/compiler-rt/lib/asan/
-make -f Makefile.old get_third_party
-make -f Makefile.old test -j 10
-# Install clang and asan run-time into a separate directory ../asan_clang_linux
-make -f Makefile.old install
-}}}
+Note that building and running ASan tests is supported in CMake build
+only (see instructions below).
 
 To build Clang/LLVM using AddressSanitizer (bootstrap)
 {{{
 # Build fresh clang with AddressSanitizer as explained above
-LLVM=/path/to/llvm/;
-CLANG="$LLVM/build/Release+Asserts/bin/clang";
+LLVM=/path/to/llvm/
+CLANG="$LLVM/build/Release+Asserts/bin/clang"
 CC="$CLANG -faddress-sanitizer" CXX="$CLANG++ -faddress-sanitizer  " $LLVM/configure --enable-optimized
 make -j10 TOOL_NO_EXPORTS=
 }}}
-
 
 To update an existing checkout:
 {{{
@@ -48,25 +55,9 @@ make update
 }}}
 to rebuild it. Just running `make` in the `asan` subdirectory does not work.
 
-To switch your checkout to read-write mode:
-{{{
-CNAME=your_name_here
-cd llvm
-svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://$CNAME@llvm.org/svn/llvm-project/llvm/trunk
-(cd tools && svn switch --relocate http://llvm.org/svn/llvm-project/cfe/trunk https://$CNAME@llvm.org/svn/llvm-project/cfe/trunk clang)
-(cd projects && svn switch --relocate http://llvm.org/svn/llvm-project/compiler-rt/trunk https://$CNAME@llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
-}}}
-
 ==Building AddressSanitizer with CMake==
   * Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need at least CMake 2.8.8).
-  * Get llvm, clang and compiler-rt, build it all
-{{{
-svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
-cd llvm
-R=$(svn info | grep Revision: | awk '{print $2}')
-(cd tools && svn co -r $R http://llvm.org/svn/llvm-project/cfe/trunk clang)
-(cd projects && svn co -r $R http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt)
-}}}
+  * Get llvm, clang and compiler-rt sources (see above).
   * Set configuration and build LLVM.
 {{{
 mkdir llvm_cmake_build
