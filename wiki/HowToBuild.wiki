@@ -101,3 +101,14 @@ make -j12 clang_rt.asan_osx_dynamic # optional
 # The runtime libraries are built at:
 # llvm_cmake_build/lib/clang/3.2/lib/{linux,darwin}/
 }}}
+  * Visit [http://llvm.org/docs/CMake.html LLVM CMake guide] to see the ways you can customize your LLVM/Clang/ASan build. For example, you can build LLVM/Clang with ASan-ified Clang:
+{{{
+mkdir llvm_cmake_build_asan
+cd llvm_cmake_build_asan
+export CC=clang
+export CXX=clang++
+CFLAGS="-faddress-sanitizer -fno-omit-frame-pointers -O1 -gline-tables-only"
+CMAKE_DEFINES="-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=${CFLAGS} -DCMAKE_CXX_FLAGS=${CFLAGS}"
+
+cmake $CMAKE_DEFINES /path/to/llvm/checkout
+}}}
