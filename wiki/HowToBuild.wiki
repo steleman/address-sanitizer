@@ -107,8 +107,9 @@ mkdir llvm_cmake_build_asan
 cd llvm_cmake_build_asan
 export CC=clang
 export CXX=clang++
-CFLAGS="-faddress-sanitizer -fno-omit-frame-pointers -O1 -gline-tables-only"
-CMAKE_DEFINES="-DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=${CFLAGS} -DCMAKE_CXX_FLAGS=${CFLAGS}"
 
-cmake $CMAKE_DEFINES /path/to/llvm/checkout
+cmake -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_C_FLAGS="-fno-omit-frame-pointer -gline-tables-only -faddress-sanitizer" \
+      -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -gline-tables-only -faddress-sanitizer" \
+   /path/to/llvm/checkout
 }}}
