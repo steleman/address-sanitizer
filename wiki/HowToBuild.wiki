@@ -65,7 +65,7 @@ cd llvm_cmake_build
 export LLVM_CHECKOUT=/path/to/llvm/checkout
 # Choose build type from {Debug, Release}.
 # You may also add "-DLLVM_BUILD_32_BITS=ON" if you want to build Clang in 32-bit mode.
-export CMAKE_DEFINES="-DCMAKE_BUILD_TYPE=Release"
+export CMAKE_DEFINES="-DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON"
 # Setup host compilers.
 export CC=/usr/bin/gcc
 export CXX=/usr/bin/g++
