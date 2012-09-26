@@ -113,3 +113,6 @@ cmake -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -gline-tables-only -faddress-sanitizer" \
    /path/to/llvm/checkout
 }}}
+
+==Ninja==
+If you want to get even faster incremental builds, use ninja: http://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
