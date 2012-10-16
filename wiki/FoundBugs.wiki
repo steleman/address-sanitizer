@@ -76,6 +76,11 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
   * https://github.com/parrot/parrot/commit/b58a50c2b147c
   * https://github.com/parrot/parrot/commit/1e5f20eefce263
 
+=MySQL=
+  * http://bugs.mysql.com/bug.php?id=67242
+  * http://bugs.mysql.com/bug.php?id=67243
+  * http://bugs.mysql.com/bug.php?id=67244
+
 =vim=
 http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
 
