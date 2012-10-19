@@ -40,7 +40,7 @@ To build Clang/LLVM using AddressSanitizer (bootstrap)
 LLVM=/path/to/llvm/
 CLANG="$LLVM/build/Release+Asserts/bin/clang"
 CC="$CLANG -faddress-sanitizer" CXX="$CLANG++ -faddress-sanitizer  " $LLVM/configure --enable-optimized
-make -j10 TOOL_NO_EXPORTS=
+make -j10 TOOL_NO_EXPORTS= HAVE_LINK_VERSION_SCRIPT=0
 }}}
 
 To update an existing checkout:
