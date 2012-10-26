@@ -75,6 +75,7 @@ cmake $CMAKE_DEFINES $LLVM_CHECKOUT
 {{{
 make -j12 # build everything
 make check-all -j12 # build and run all tests (llvm+clang+ASan)
+make check-sanitizer -j12 # build and run sanitizer_common tests
 make check-asan -j12 # build and run ASan unit and output tests
 }}}
   To build/run only ASan unit tests:
