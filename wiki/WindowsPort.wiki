@@ -42,7 +42,7 @@ cd ..\..\..
 
 Try to build your app with Clang:
 {{{
-path-to\llvm-build\bin\Release\clang.exe -faddress-sanitizer -g -c <your_files>
+path-to\llvm-build\bin\Release\clang.exe -fsanitize=address -g -c <your_files>
 link /debug /incremental:no /out:myprogname.exe /nologo <your_obj_files> path-to\rtl\asan_rtl.lib /defaultlib:libcmt
 myprogname.exe
 }}}
