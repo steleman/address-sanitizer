@@ -39,7 +39,7 @@ To build Clang/LLVM using AddressSanitizer (bootstrap)
 # Build fresh clang with AddressSanitizer as explained above
 LLVM=/path/to/llvm/
 CLANG="$LLVM/build/Release+Asserts/bin/clang"
-CC="$CLANG -faddress-sanitizer" CXX="$CLANG++ -faddress-sanitizer  " $LLVM/configure --enable-optimized
+CC="$CLANG -fsanitize=address" CXX="$CLANG++ -fsanitize=address  " $LLVM/configure --enable-optimized
 make -j10 TOOL_NO_EXPORTS= HAVE_LINK_VERSION_SCRIPT=0
 }}}
 
@@ -110,8 +110,8 @@ export CC=clang
 export CXX=clang++
 
 cmake -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_C_FLAGS="-fno-omit-frame-pointer -gline-tables-only -faddress-sanitizer" \
-      -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -gline-tables-only -faddress-sanitizer" \
+      -DCMAKE_C_FLAGS="-fno-omit-frame-pointer -gline-tables-only -fsanitize=address" \
+      -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -gline-tables-only -fsanitize=address" \
    /path/to/llvm/checkout
 }}}
 
