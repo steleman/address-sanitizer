@@ -50,7 +50,7 @@ So far, AddressSanitizer has been tested only on Linux Ubuntu 10.04, 64-bit
 If you want to build AddressSanitizer yourself, refer to HowToBuild.
 
 = Using !AddressSanitizer =
-In order to use AddressSanitizer you will need to compile and link your program using `clang` with the `-faddress-sanitizer` switch. <BR>
+In order to use AddressSanitizer you will need to compile and link your program using `clang` with the `-fsanitize=address` switch. <BR>
 To get a reasonable performance add `-O1` or higher. <BR>
 To get nicer stack traces in error messages add `-fno-omit-frame-pointer`.
 
@@ -62,7 +62,7 @@ int main() {
   free(x);
   return x[5];
 }
-% ../clang_build_Linux/Release+Asserts/bin/clang -faddress-sanitizer -O1 -fno-omit-frame-pointer -g   tests/use-after-free.c
+% ../clang_build_Linux/Release+Asserts/bin/clang -fsanitize=address -O1 -fno-omit-frame-pointer -g   tests/use-after-free.c
 }}}
 
 Now, run the executable.
