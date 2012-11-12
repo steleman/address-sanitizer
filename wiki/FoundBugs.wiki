@@ -89,6 +89,9 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
   * https://github.com/FooBarWidget/passenger/commit/795e8bb2f5b82b332ea26ba2d7c902317aa62fe9
   * https://github.com/FooBarWidget/passenger/commit/45c11efb6d0de8e182b74f81dba1cd370b58368d
 
+=Percona Server with XtraDB (http://www.percona.com/software/percona-server)=
+  * https://bugs.launchpad.net/percona-server/+bug/1067103
+
 =LLVM=
   * http://llvm.org/bugs/show_bug.cgi?id=12245
   * http://llvm.org/bugs/show_bug.cgi?id=12267
