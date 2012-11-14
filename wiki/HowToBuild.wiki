@@ -84,6 +84,8 @@ cd projects/compiler-rt/lib/asan/tests
 make -j12 AsanUnitTests
 ./Release/AsanTest  # or ./Debug/AsanTest
 }}}
+  Currently this command builds unit tests for a single architecture (by default it is 64 bits). You have to create a separate build tree configured with "-DLLVM_BUILD_32_BITS=ON" to run 32-bit ASan unit tests.
+
   To re-run a single ASan lit-style output test make sure you've builr Clang and run:
 {{{
 # Make sure clang and llvm tools are in your PATH.
