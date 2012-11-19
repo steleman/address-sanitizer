@@ -60,16 +60,13 @@ to rebuild it. Just running `make` in the `asan` subdirectory does not work.
   * Get llvm, clang and compiler-rt sources (see above).
   * Set configuration and build LLVM.
 {{{
-mkdir llvm_cmake_build
-cd llvm_cmake_build
-export LLVM_CHECKOUT=/path/to/llvm/checkout
-# Choose build type from {Debug, Release}.
+mkdir llvm_cmake_build && cd llvm_cmake_build
+export LLVM_CHECKOUT=
+# Choose CMAKE_BUILD_TYPE {Debug, Release}
+# Choose LLVM_ENABLE_ASSERTIONS {ON,OFF}
 # You may also add "-DLLVM_BUILD_32_BITS=ON" if you want to build Clang in 32-bit mode.
-export CMAKE_DEFINES="-DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON"
-# Setup host compilers.
-export CC=/usr/bin/gcc
-export CXX=/usr/bin/g++
-cmake $CMAKE_DEFINES $LLVM_CHECKOUT
+# Choose the host compiler
+CC=gcc CXX=g++ cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON /path/to/llvm/checkout
 }}}
   * Now you can build and test LLVM code:
 {{{
