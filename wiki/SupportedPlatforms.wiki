@@ -41,7 +41,8 @@ Doing baby steps, help is welcome.
 
 == x86 Windows== 
 C-only code mostly works,
-Simple C++ code also works, complex C++ code using multiple/virtual inheritance doesn't work
+Simple C++ code also works, complex C++ code using multiple/virtual inheritance doesn't work.
+See issue 56 for the details.
 Help is welcome!
 
 == PowerPC32/PowerPC64 Linux == 
