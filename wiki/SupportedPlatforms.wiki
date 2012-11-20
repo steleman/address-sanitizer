@@ -40,7 +40,9 @@ Stack unwinding mechanism: `_Unwind_Backtrace`. <BR>
 Doing baby steps, help is welcome.
 
 == x86 Windows== 
-Small C-only tests work, help is welcome.
+C-only code mostly works,
+Simple C++ code also works, complex C++ code using multiple/virtual inheritance doesn't work
+Help is welcome!
 
 == PowerPC32/PowerPC64 Linux == 
 We've been notified that small tests work. 
