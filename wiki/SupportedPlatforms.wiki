@@ -1,5 +1,8 @@
 #summary This page describes the level of AddressSanitizer run-time and compiler support for various platforms
 
+<wiki:toc max_depth="2" />
+
+
 =Platforms=
 == x86/x86_64 Linux ==
 Just works, this is the primary platforms for the developers. 
