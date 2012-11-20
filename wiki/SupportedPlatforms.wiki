@@ -45,6 +45,8 @@ Simple C++ code also works, complex C++ code using multiple/virtual inheritance 
 See issue 56 for the details.<br>
 Help is welcome!
 
+Stack unwinding mechanism: `CaptureStackBackTrace` <BR>
+
 == PowerPC32/PowerPC64 Linux == 
 We've been notified that small tests work. 
 TODO: describe the differences (e.g. the shadow mapping, offset, page size, etc)
@@ -60,4 +62,6 @@ Just works, this is the primary compiler for the developers.
 
 ==GCC==
 The first version is in trunk, will appear in 4.8 release. 
-The implementation is not 100% complete (TODO(kcc): links to bugs), but works. 
+The implementation is not 100% complete but works. 
+  * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=55410 (bit fields are not checked)
+  * TODO(kcc) more links
