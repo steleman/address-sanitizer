@@ -1,0 +1,31 @@
+#summary This page describes the level of AddressSanitizer run-time and compiler support for various platforms
+
+=Platforms=
+== x86/x86_64 Linux ==
+Just works, this is the primary platforms for the developers. 
+
+== x86/x86_64 Darwin (OSX) ==
+Just works, but the machinery used to intercept functions (mach_override) may soon be replaced with another one (function interposition)
+
+== ARM Android ==
+Works (TODO(eugenis))
+
+== ARM iOS ==
+Doing baby steps, help is welcome.
+
+== x86 Windows== 
+Small C-only tests work, help is welcome.
+
+== PowerPC32/PowerPC64 Linux == 
+We've been notified that small tests work. 
+TODO: describe the differences (e.g. the shadow mapping, offset, page size, etc)
+
+== SPARC Linux == 
+The run-time library is known to build on SPARC Linux. 
+
+=Compilers= 
+==Clang/LLVM==
+Just works, this is the primary compiler for the developers. 
+==GCC==
+The first version is in trunk, will appear in 4.8 release. 
+The implementation is not 100% complete (TODO(kcc): links to bugs), but works. 
