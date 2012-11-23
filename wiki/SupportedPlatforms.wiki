@@ -65,6 +65,7 @@ The first version is in trunk, will appear in 4.8 release.
 The implementation is not 100% complete but works. 
   * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=55410 (bit fields are not checked)
   * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=55435 (__attribute__((no_address_safety_analysis)))
+  * The test suite is not (fully) integrated. 
   * TODO(kcc) more links
 
 In AddressSanitizer mode GCC defines `__SANITIZE_ADDRESS__` macro, but does not support `__has_feature(address_sanitizer)`
