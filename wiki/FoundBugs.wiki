@@ -21,6 +21,7 @@
   * http://googlechromereleases.blogspot.com/2012/09/stable-channel-update_25.html
   * http://googlechromereleases.blogspot.com/2012/10/stable-channel-update.html
   * http://googlechromereleases.blogspot.com/2012/11/stable-channel-release-and-beta-channel.html
+  * http://googlechromereleases.blogspot.com/2012/11/stable-channel-update.html
   * http://support.apple.com/kb/HT5000
   * http://support.apple.com/kb/HT5192
   * http://support.apple.com/kb/HT5400
