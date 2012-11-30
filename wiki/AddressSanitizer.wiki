@@ -52,7 +52,8 @@ If you want to build AddressSanitizer yourself, refer to HowToBuild.
 = Using !AddressSanitizer =
 In order to use AddressSanitizer you will need to compile and link your program using `clang` with the `-fsanitize=address` switch. <BR>
 To get a reasonable performance add `-O1` or higher. <BR>
-To get nicer stack traces in error messages add `-fno-omit-frame-pointer`.
+To get nicer stack traces in error messages add `-fno-omit-frame-pointer`. <BR>
+Note: [http://llvm.org/releases/3.1/tools/clang/docs/AddressSanitizer.html Clang 3.1 release uses another flag syntax].
 
 {{{
 % cat tests/use-after-free.c
