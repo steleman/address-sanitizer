@@ -97,7 +97,7 @@ which in turn calls `__asan_report_error`.
 If you want gdb to stop before asan reports an error, set a breakpoint on `__asan_report_error`.
 
 However, please note, that there are [https://code.google.com/p/address-sanitizer/issues/detail?id=41 bugs]
-in the DWARF ssupport in Clang/AddressSanitizer.
+in the DWARF support in Clang/AddressSanitizer.
 
 
 ==ulimit -v==
