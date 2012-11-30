@@ -96,6 +96,10 @@ When AddressSanitizer finds a bug it calls one of the functions `__asan_report_{
 which in turn calls `__asan_report_error`.
 If you want gdb to stop before asan reports an error, set a breakpoint on `__asan_report_error`.
 
+However, please note, that there are [https://code.google.com/p/address-sanitizer/issues/detail?id=41 bugs]
+in the DWARF ssupport in Clang/AddressSanitizer.
+
+
 ==ulimit -v==
 The `ulimit -v` command can be used with ASan-ified binaries.
 However, you should remember that ASan consumes 16 terabytes of virtual memory for shadow state and the `ulimit -v` value should be set accordingly.
