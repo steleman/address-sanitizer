@@ -136,6 +136,7 @@ ASAN_OPTIONS=verbosity=1 ./a.out
 || redzone || 128 || Size of the redzone. Valid values are 32, 64, 128, ..., 4096 ||
 || log_path|| <none> || Path to the log files. If log_path=PATH is given, every process will write error reports to PATH.PID. By default all reports are written to stderr. ||
 || sleep_before_dying || 0 || Sleep for this number of seconds before exiting the process on failure. ||
+|| quarantine_size || 256Mb || Size of quarantine (in bytes) for finding use-after-free errors. Lower values save memory but increase false negatives rate. ||
 || || || ||
 
 =Call stack=
