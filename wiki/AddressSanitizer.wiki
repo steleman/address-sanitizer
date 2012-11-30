@@ -122,7 +122,7 @@ Compile-time flags are passed via clang flag `-mllvm <flag>`.
 || flag|| default || description ||
 || -asan-stack   || 1 || Detect overflow/underflow for stack objects ||
 || -asan-globals || 1 || Detect overflow/underflow for global objects (see [KnownBugs])   ||
-|| -asan-blacklist ||  || Pass a [#BlackList_file blacklist file] ||
+|| -asan-blacklist ||  || Pass a [#Turning_off_instrumentation blacklist file] ||
 
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
@@ -190,12 +190,26 @@ export ASAN_SYMBOLIZER_PATH=${SYMBOLIZER_PATH}
 ASAN_OPTIONS=symbolize=1 ./a.out
 }}}
 
-=Blacklist file=
+=Turning off instrumentation=
 In some cases a particular function should be ignored (not instrumented) by AddressSanitizer.
 One of the reasons is speed (e.g. a hot function known to be correct).
 Another reason is to avoid reporting known problems.
 
-To ignore certain functions, create a file `my_ignores.txt` and pass it to AddressSanitizer
+To ignore certain functions, one can use a no_address_safety_analysis attribute supported by Clang. You can define the following macro:
+{{{
+#if defined(__clang__)
+# define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS __attribute__((no_address_safety_analysis))
+#else
+# define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
+#endif
+}}}
+and then use it to turn off instrumentation for specific functions:
+{{{
+ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
+void not_instrumented_function() {...}
+}}}
+
+You may also ignore certain functions using a blacklist: create a file `my_ignores.txt` and pass it to AddressSanitizer
 at compile time using `-mllvm -asan-blacklist=my_ignores.txt`:
 {{{
 # Ignore exactly this function (the names are mangled)
