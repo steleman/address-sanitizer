@@ -191,26 +191,27 @@ ASAN_OPTIONS=symbolize=1 ./a.out
 }}}
 
 =Turning off instrumentation=
-In some cases a particular function should be ignored (not instrumented) by AddressSanitizer.
-One of the reasons is speed (e.g. a hot function known to be correct).
-Another reason is to avoid reporting known problems.
+In some cases a particular function should be ignored (not instrumented) by AddressSanitizer:
+  * Ignore a very hot function known to be correct to speedup the app.
+  * Ignore a function that does some low-level magic (e.g. walking through the thread's stack bypassing the frame boundaries). 
+  * Don't report a know problem. 
+In either case, be *very careful*. 
 
-To ignore certain functions, one can use a no_address_safety_analysis attribute supported by Clang. You can define the following macro:
+To ignore certain functions, one can use a `no_address_safety_analysis`
+attribute supported by Clang (3.1+) and GCC (4.8+). You can define the following macro:
 {{{
-#if defined(__clang__)
+#if defined(__clang__) || defined (__GNUC__)
 # define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS __attribute__((no_address_safety_analysis))
 #else
 # define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
 #endif
-}}}
-and then use it to turn off instrumentation for specific functions:
-{{{
+...
 ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
-void not_instrumented_function() {...}
+void ThisFunctionWillNotBeInstrumented() {...}
 }}}
 
 You may also ignore certain functions using a blacklist: create a file `my_ignores.txt` and pass it to AddressSanitizer
-at compile time using `-mllvm -asan-blacklist=my_ignores.txt`:
+at compile time using `-mllvm -asan-blacklist=my_ignores.txt` (TODO: this flag is going to change soon. it is only supported by Clang now):
 {{{
 # Ignore exactly this function (the names are mangled)
 fun:MyFooBar
@@ -219,6 +220,7 @@ fun:_Z8MyFooBarv
 # Ignore all function containing MyFooBar
 fun:*MyFooBar*
 }}}
+
 
 =FAQ=
   * Q: Can AddressSanitizer continue running after reporting first error? 
