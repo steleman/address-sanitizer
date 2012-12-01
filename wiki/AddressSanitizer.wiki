@@ -197,7 +197,7 @@ In some cases a particular function should be ignored (not instrumented) by Addr
   * Don't report a know problem. 
 In either case, be *very careful*. 
 
-To ignore certain functions, one can use a `no_address_safety_analysis`
+To ignore certain functions, one can use the *no_address_safety_analysis*
 attribute supported by Clang (3.1+) and GCC (4.8+). You can define the following macro:
 {{{
 #if defined(__clang__) || defined (__GNUC__)
