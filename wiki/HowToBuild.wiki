@@ -55,7 +55,7 @@ make update
 }}}
 to rebuild it. Just running `make` in the `asan` subdirectory does not work.
 
-==Building AddressSanitizer with CMake==
+==Building AddressSanitizer with CMake (LLVM 3.2 or later) ==
   * Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need at least CMake 2.8.8).
   * Get llvm, clang and compiler-rt sources (see above).
   * Set configuration and build LLVM.
