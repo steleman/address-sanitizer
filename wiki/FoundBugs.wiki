@@ -77,6 +77,9 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
   * https://rt.perl.org/rt3/Ticket/Display.html?id=111586
   * https://rt.perl.org/rt3/Public/Bug/Display.html?id=113060 
 
+=php=
+  * https://bugs.php.net/bug.php?id=63700
+
 =parrot (http://www.parrot.org/)=
   * https://github.com/parrot/parrot/commit/df12f34e946553
   * https://github.com/parrot/parrot/commit/b58a50c2b147c
