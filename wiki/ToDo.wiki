@@ -2,8 +2,4 @@
 
 TODO items in no particular order:
 
-  * Instrumentation:
-    * Implement GCC instrumentation pass.
-    * Implement CompileTimeOptimizations.
-    * Instrument strlen/strcat/etc (in flight)
-  * Set up a build bot
+  * Implement CompileTimeOptimizations.
