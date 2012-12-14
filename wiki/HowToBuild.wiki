@@ -77,9 +77,9 @@ make check-asan -j12 # build and run ASan unit and output tests
 }}}
   To build only ASan runtime library:
 {{{
-  make clang_rt.asan-x86_64  # build runtime on 64-bit Linux
-  make clang_rt.asan-i386    # build runtime on 32-bit Linux
-  make clang_rt.asan_osx     # build runtime for both archs on Mac
+make clang_rt.asan-x86_64  # build runtime on 64-bit Linux
+make clang_rt.asan-i386    # build runtime on 32-bit Linux
+make clang_rt.asan_osx     # build runtime for both archs on Mac
 }}}
   To build/run only ASan unit tests:
 {{{
