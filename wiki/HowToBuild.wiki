@@ -64,7 +64,6 @@ mkdir llvm_cmake_build && cd llvm_cmake_build
 export LLVM_CHECKOUT=
 # Choose CMAKE_BUILD_TYPE {Debug, Release}
 # Choose LLVM_ENABLE_ASSERTIONS {ON,OFF}
-# You may also add "-DLLVM_BUILD_32_BITS=ON" if you want to build Clang in 32-bit mode.
 # Choose the host compiler
 CC=gcc CXX=g++ cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON /path/to/llvm/checkout
 }}}
@@ -77,35 +76,29 @@ make check-asan -j12 # build and run ASan unit and output tests
 }}}
   To build only ASan runtime library:
 {{{
-make clang_rt.asan-x86_64  # build runtime on 64-bit Linux
-make clang_rt.asan-i386    # build runtime on 32-bit Linux
-make clang_rt.asan_osx     # build runtime for both archs on Mac
+# On Linux:
+make -j12 clang_rt.asan-x86_64
+make -j12 clang_rt.asan-i386
+# On Mac:
+make -j12 clang_rt.asan_osx
+make -j12 clang_rt.asan_osx_dynamic # optional
+# The runtime libraries are built at:
+# llvm_cmake_build/lib/clang/3.3/lib/{linux,darwin}/
 }}}
   To build/run only ASan unit tests:
 {{{
-cd projects/compiler-rt/lib/asan/tests
 make -j12 AsanUnitTests
-./Release/AsanTest  # or ./Debug/AsanTest
+cd projects/compiler-rt/lib/asan/tests
+./Release/Asan-x86_64-Test  # or ./Debug/Asan-x86_64-Test
+./Release/Asan-i386-Test    # or ./Debug/Asan-i386-Test
 }}}
-  Currently this command builds unit tests for a single architecture (by default it is 64 bits). You have to create a separate build tree configured with "-DLLVM_BUILD_32_BITS=ON" to run 32-bit ASan unit tests.
 
-  To re-run a single ASan lit-style output test make sure you've builr Clang and run:
+  To re-run a single ASan lit-style output test make sure you've built Clang and run:
 {{{
 # Make sure clang and llvm tools are in your PATH.
 export PATH="/path/to/llvm_cmake_build/bin:$PATH"
 # Run a specific output test.
 llvm-lit /path/to/llvm/checkout/projects/compiler-rt/lib/asan/lit_tests/deep_tail_call.cc
-}}}
-  * To build ASan static runtime libraries:
-{{{
-cd projects/compiler-rt/lib/asan
-# On Linux:
-make -j12 clang_rt.asan-x86_64 clang_rt.asan-i386
-# On Mac:
-make -j12 clang_rt.asan_osx
-make -j12 clang_rt.asan_osx_dynamic # optional
-# The runtime libraries are built at:
-# llvm_cmake_build/lib/clang/3.2/lib/{linux,darwin}/
 }}}
   * Visit [http://llvm.org/docs/CMake.html LLVM CMake guide] to see the ways you can customize your LLVM/Clang/ASan build. For example, you can build LLVM/Clang with ASan-ified Clang:
 {{{
