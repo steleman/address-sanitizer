@@ -117,12 +117,18 @@ ulimit -v $ASAN_LIMIT
 
 
 =Flags=
+|| flag|| default || description ||
+|| -fsanitize=address ||  || Enable AddressSanitizer ||
+|| -fno-omit-frame-pointer || || Leave frame pointers. Allows the fast unwinder to function properly. ||
+|| -fsanitize-blacklist=<path> || || Pass a [#Turning_off_instrumentation blacklist file] ||
+|| -fno-common || || Do not treat global variable in C as common variables (allows ASan to instrument them) ||
 
-Compile-time flags are passed via clang flag `-mllvm <flag>`.
+
+ASan-specific compile-time flags are passed via clang flag `-mllvm <flag>`. In most cases you don't need them.
 || flag|| default || description ||
 || -asan-stack   || 1 || Detect overflow/underflow for stack objects ||
 || -asan-globals || 1 || Detect overflow/underflow for global objects (see [KnownBugs])   ||
-|| -asan-blacklist ||  || Pass a [#Turning_off_instrumentation blacklist file] ||
+
 
 
 Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
@@ -212,7 +218,7 @@ void ThisFunctionWillNotBeInstrumented() {...}
 }}}
 
 You may also ignore certain functions using a blacklist: create a file `my_ignores.txt` and pass it to AddressSanitizer
-at compile time using `-mllvm -asan-blacklist=my_ignores.txt` (TODO: this flag is going to change soon. it is only supported by Clang now):
+at compile time using `-fsanitize-blacklist==my_ignores.txt` (This flag is new and is only supported by Clang now):
 {{{
 # Ignore exactly this function (the names are mangled)
 fun:MyFooBar
