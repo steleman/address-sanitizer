@@ -120,7 +120,7 @@ ulimit -v $ASAN_LIMIT
 || flag|| default || description ||
 || -fsanitize=address ||  || Enable AddressSanitizer ||
 || -fno-omit-frame-pointer || || Leave frame pointers. Allows the fast unwinder to function properly. ||
-|| -fsanitize-blacklist=<path> || || Pass a [#Turning_off_instrumentation blacklist file] ||
+|| -fsanitize-blacklist=path || || Pass a [#Turning_off_instrumentation blacklist file] ||
 || -fno-common || || Do not treat global variable in C as common variables (allows ASan to instrument them) ||
 
 
@@ -218,7 +218,7 @@ void ThisFunctionWillNotBeInstrumented() {...}
 }}}
 
 You may also ignore certain functions using a blacklist: create a file `my_ignores.txt` and pass it to AddressSanitizer
-at compile time using `-fsanitize-blacklist==my_ignores.txt` (This flag is new and is only supported by Clang now):
+at compile time using `-fsanitize-blacklist=my_ignores.txt` (This flag is new and is only supported by Clang now):
 {{{
 # Ignore exactly this function (the names are mangled)
 fun:MyFooBar
