@@ -109,6 +109,8 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
   * http://llvm.org/viewvc/llvm-project?view=rev&revision=140427
   * http://llvm.org/viewvc/llvm-project?view=rev&revision=152738
   * http://llvm.org/bugs/show_bug.cgi?id=14186
+  * http://llvm.org/viewvc/llvm-project?rev=169047&view=rev
+  * http://llvm.org/viewvc/llvm-project?rev=171150&view=rev
 (and some more)
 
 =GCC=
