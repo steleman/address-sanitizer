@@ -145,6 +145,7 @@ ASAN_OPTIONS=verbosity=1 ./a.out
 || quarantine_size || 256Mb || Size of quarantine (in bytes) for finding use-after-free errors. Lower values save memory but increase false negatives rate. ||
 || fast_unwind_on_fatal || 1 || Use Fast/Slow unwinder when found a bug. The fast one relies on frame pointers, while slow one does not. The default may change to 0 soon. ||
 || fast_unwind_on_malloc || 1 || Same as `fast_unwind_on_fatal`, but control unwinding inside `malloc`/`free`, i.e. performance critical.  ||
+|| abort_on_error || 0 || If `1`, call `abort` on error. By default `_exit(1)` is called on error.  ||
 
 =Call stack=
 AddressSanitizer collects call stacks on the following events:
