@@ -127,55 +127,8 @@ ulimit -v $ASAN_LIMIT
 See the separate [Flags Flags page].
 
 =Call stack=
-AddressSanitizer collects call stacks on the following events:
-  * `malloc` and `free`
-  * thread creation
-  * failure
 
-`malloc` and `free` happen relatively frequently and it is important to unwind the call stack fast.
-AddressSanitizer uses a simple unwinder that relies on frame pointers.
-
-If you don't care about `malloc`/`free` call stacks, simply disable the unwinder completely
-(`malloc_context_size=0`).
-
-Each stack frame needs to be symbolized (of course, if the binary is compiled with debug info).
-Given a PC, we need to print
-{{{
-  #0xabcdf function_name file_name.cc:1234
-}}}
-<wiki:comment>
-[http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue].
-</wiki:comment>
-Currently, AddressSanitizer does not have an in-process symbolizer.
-You will need to filter the log file through `scripts/asan_symbolize.py` to get the symbols.
-This script takes an optional parameter -- a file prefix.
-The substring `.*prefix` will be removed from the file names.
-{{{
-% ./a.out
-    ...
-    #0 0x402c77 (/home/you/address-sanitizer/asan/a.out+0x402c77)
-    ...
-% ./a.out 2>&1  | ../scripts/asan_symbolize.py
-   ...
-   #0 0x402c77 in main /home/you/address-sanitizer/asan/use-after-free.c:5
-   ...
-% ./a.out 2>&1  | ../scripts/asan_symbolize.py /you/
-   ...
-   #0 0x402c77 in main address-sanitizer/asan/use-after-free.c:5
-   ...
-}}}
-There is also an out-of-process symbolizer based on LLVM libraries (currently under development) that can be run by AddressSanitizer in a separate subprocess and symbolize stack traces online. If you have
-a [http://code.google.com/p/address-sanitizer/wiki/HowToBuild cmake build of LLVM] and compiler-rt, you can build this symbolizer:
-{{{
-cd /path/to/llvm_cmake_build/projects/compiler-rt/utils/llvm-symbolizer
-make
-SYMBOLIZER_PATH=`pwd`/llvm-symbolizer
-}}}
-You may use it in ASan in the following manner:
-{{{
-export ASAN_SYMBOLIZER_PATH=${SYMBOLIZER_PATH}
-ASAN_OPTIONS=symbolize=1 ./a.out
-}}}
+See the separate CallStack page.
 
 =Turning off instrumentation=
 In some cases a particular function should be ignored (not instrumented) by AddressSanitizer:
