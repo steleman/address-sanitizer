@@ -51,7 +51,7 @@ lib /nologo /OUT:asan_rtl.lib *.obj || g%ROOT%
 echo @@@BUILD_STEP asan test@@@
 cd win_tests || goto :DIE
 cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebFILECHECK=../llvm-build/bin/Debug/FileCheckn/DebuFLAGS="-fsanitize=address -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer llvm/projects/compiler-rt/lib/asan/asan_rtl.lib || goto :DIE
+C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebFILECHECK=../llvm-build/bin/Debug/FileCheckn/DebuFLAGS="-fsanitize=address -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer llvm/projects/compiler-rt/lib/asan/asan_rtl.lib -k || goto :DIE
 cd %ROOT%
 
 :: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan test64@@@
