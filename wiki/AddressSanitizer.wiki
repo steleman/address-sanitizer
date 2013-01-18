@@ -130,6 +130,10 @@ See the separate [Flags Flags page].
 
 See the separate CallStack page.
 
+=Incompatibility= 
+
+Sometimes an AddressSanitizer build may behave differently than the regular one. See [Incompatiblity] for details. 
+
 =Turning off instrumentation=
 In some cases a particular function should be ignored (not instrumented) by AddressSanitizer:
   * Ignore a very hot function known to be correct to speedup the app.
