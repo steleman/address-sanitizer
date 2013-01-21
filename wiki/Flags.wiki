@@ -6,6 +6,7 @@
 || -fno-omit-frame-pointer || || Leave frame pointers. Allows the fast unwinder to function properly. ||
 || -fsanitize-blacklist=path || || Pass a [#Turning_off_instrumentation blacklist file] ||
 || -fno-common || || Do not treat global variable in C as common variables (allows ASan to instrument them) ||
+|| -f(no-)sanitize-address-zero-base-shadow || no || Enable ZeroBasedShadow for ~ 5% extra performance. Requires -pie, Linux-only. || 
 
 ASan-specific compile-time flags are passed via clang flag `-mllvm <flag>`. In most cases you don't need them.
 || flag|| default || description ||
