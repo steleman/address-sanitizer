@@ -1,6 +1,77 @@
-#summary This is an experimental mode when shadow memory starts at zero offset.
+#summary The mode when shadow memory starts at zero offset.
 
-To enable this mode, build and test the run-time library like this:
+To enable this mode, build *all* the sources with `-fsanitize-address-zero-base-shadow`, clang-only. 
+
+Instead of computing `Shadow = (Mem >> 3) + kOffset` we compute `Shadow = (Mem >> 3)`, i.e. `kOffset = 0` (see AddressSanitizerAlgorithm). 
+This mode is possible only if 1/8 of address space starting from the zero page is not occupied at startup and AddressSanitizer can map it for the shadow.
+We are aware of only one situation where this works: Linux executables compiled with `-fPIC` or `-fPIE` and linked with `-pie`. 
+
 {{{
-make -f Makefile.old test ASAN_OFFSET=0 ASAN_FLEXIBLE_MAPPING_AND_OFFSET=1 ASAN_PIE=1
+% cat  procmaps.cc 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+int main() {
+  char buff[100];
+  sprintf(buff, "cat /proc/%d/maps", getpid());
+  system(buff);
+}
 }}}
+
+Regular mode: 
+{{{
+% clang -fsanitize=address ./procmaps.cc && ./a.out 
+00400000-00421000 r-xp 00000000 fc:00 1573310                            /tmp/a.out
+00620000-00621000 r--p 00020000 fc:00 1573310                            /tmp/a.out
+00621000-00622000 rw-p 00021000 fc:00 1573310                            /tmp/a.out
+00622000-0338e000 rw-p 00000000 00:00 0 
+ffffffff000-120000000000 rw-p 00000000 00:00 0 <<<<<<<<<<< LowShadow
+120000000000-140000000000 ---p 00000000 00:00 0  <<<<<<<<< SHadowGap
+140000000000-200000000000 rw-p 00000000 00:00 0  <<<<<<<<< HighShadow
+7f1ebd5a9000-7f1ebd75e000 r-xp 00000000 fc:00 1208459                    /lib/x86_64-linux-gnu/libc-2.15.so
+....
+7f1ebe1c2000-7f1ebe1c4000 rw-p 00023000 fc:00 1208920                    /lib/x86_64-linux-gnu/ld-2.15.so
+7fffccd4b000-7fffccd6c000 rw-p 00000000 00:00 0                          [stack]
+7fffccdff000-7fffcce00000 r-xp 00000000 00:00 0                          [vdso]
+}}}
+
+Zero shadow offset mode: 
+
+{{{
+TODO
+}}}
+
+Why is this worth the trouble? 
+Zero shadow offset no just saves one arithmetic instruction, 
+but also saves one register, which is otherwise occupied with the large constant. Compare these two: 
+
+{{{
+% cat load.c 
+long Foo(long *a) { return *a; }
+% clang -fsanitize=address -fsanitize-address-zero-base-shadow -O2 -c load.c && objdump -d load.o
+0000000000000000 <Foo>:
+   0:	50                   	push   %rax
+   1:	48 89 f8             	mov    %rdi,%rax
+   4:	48 c1 e8 03          	shr    $0x3,%rax
+   8:	80 38 00             	cmpb   $0x0,(%rax)
+   b:	75 05                	jne    12 <Foo+0x12>
+   d:	48 8b 07             	mov    (%rdi),%rax
+  10:	5a                   	pop    %rdx
+% clang -fsanitize=address -O2 -c load.c && objdump -d load.o
+0000000000000000 <Foo>:
+   0:	50                   	push   %rax
+   1:	48 89 f8             	mov    %rdi,%rax
+   4:	48 c1 e8 03          	shr    $0x3,%rax
+   8:	48 b9 00 00 00 00 00 	movabs $0x100000000000,%rcx
+   f:	10 00 00 
+  12:	48 09 c1             	or     %rax,%rcx
+  15:	80 39 00             	cmpb   $0x0,(%rcx)
+  18:	75 05                	jne    1f <Foo+0x1f>
+  1a:	48 8b 07             	mov    (%rdi),%rax
+  1d:	5a                   	pop    %rdx
+  1e:	c3                   	retq   
+}}}
+
+
+
+
