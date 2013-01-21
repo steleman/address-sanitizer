@@ -35,19 +35,31 @@ ffffffff000-120000000000 rw-p 00000000 00:00 0 <<<<<<<<<<< LowShadow
 7fffccdff000-7fffcce00000 r-xp 00000000 00:00 0                          [vdso]
 }}}
 
-Zero shadow offset mode: 
+Zero shadow offset mode (with -pie): 
 
 {{{
-TODO
+% clang -fsanitize=address -fsanitize-address-zero-base-shadow -fPIE -pie ./procmaps.cc && ./a.out 
+00040000-20000000000 ---p 00000000 00:00 0       <<<<<<<<< ShadowGap
+20000000000-100000000000 rw-p 00000000 00:00 0   <<<<<<<<< HighShadow
+7f343283c000-7f34329f1000 r-xp 00000000 fc:00 1208459                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f3433679000-7f343367a000 rw-p 00022000 fc:00 1573310                    /tmp/a.out
+7f343367a000-7f34363e6000 rw-p 00000000 00:00 0 
+7fff79e32000-7fff79e53000 rw-p 00000000 00:00 0                          [stack]
+7fff79f1a000-7fff79f1b000 r-xp 00000000 00:00 0                          [vdso]
 }}}
 
 Why is this worth the trouble? 
-Zero shadow offset no just saves one arithmetic instruction, 
+Zero shadow offset not just saves one arithmetic instruction, 
 but also saves one register, which is otherwise occupied with the large constant. Compare these two: 
 
 {{{
 % cat load.c 
 long Foo(long *a) { return *a; }
+}}}
+
+
+
+{{{
 % clang -fsanitize=address -fsanitize-address-zero-base-shadow -O2 -c load.c && objdump -d load.o
 0000000000000000 <Foo>:
    0:	50                   	push   %rax
@@ -57,6 +69,8 @@ long Foo(long *a) { return *a; }
    b:	75 05                	jne    12 <Foo+0x12>
    d:	48 8b 07             	mov    (%rdi),%rax
   10:	5a                   	pop    %rdx
+}}}
+{{{
 % clang -fsanitize=address -O2 -c load.c && objdump -d load.o
 0000000000000000 <Foo>:
    0:	50                   	push   %rax
@@ -72,6 +86,4 @@ long Foo(long *a) { return *a; }
   1e:	c3                   	retq   
 }}}
 
-
-
-
+Our experiments show that zero based shadow improves the performance and code size by roughly 5%. (TODO: more data)
