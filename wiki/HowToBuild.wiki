@@ -113,5 +113,10 @@ cmake -DCMAKE_BUILD_TYPE=Release \
    /path/to/llvm/checkout
 }}}
 
+To run lint:
+{{{
+projects/compiler-rt/lib/sanitizer_common/scripts/check_lint.sh
+}}}
+
 ==Ninja==
 If you want to get even faster incremental builds, use ninja: http://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
