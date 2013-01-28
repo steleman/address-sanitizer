@@ -89,8 +89,8 @@ make -j12 clang_rt.asan_osx_dynamic # optional
 {{{
 make -j12 AsanUnitTests
 cd projects/compiler-rt/lib/asan/tests
-./Release/Asan-x86_64-Test  # or ./Debug/Asan-x86_64-Test
-./Release/Asan-i386-Test    # or ./Debug/Asan-i386-Test
+./Asan-x86_64-Test
+./Asan-i386-Test
 }}}
 
   To re-run a single ASan lit-style output test make sure you've built Clang and run:
