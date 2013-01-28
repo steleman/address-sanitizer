@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ASAN="../asan_clang_Linux/bin/clang++ -O1 -g -faddress-sanitizer -mllvm -asan-use-after-return=1"
-FILTER="../scripts/asan_symbolize.py /"
-
+export ASAN_OPTIONS=symbolize=1:strip_path_prefix=$(pwd)/
 for source in example_*.cc; do
-  name=`echo $source | sed 's/example_//g; s/\.cc$//g'`
+  name=$(echo $source | sed 's/example_//g; s/\.cc$//g')
+  run=$(grep RUN: $source | sed "s/.*RUN: //g; s/%t/$source/g")
+  echo run: "$run"
   echo $name
   wiki="Example$name.wiki"
   rm -f $wiki
@@ -13,14 +13,11 @@ for source in example_*.cc; do
   cat $source                        >> $wiki
   printf "}}}\n"                     >> $wiki
 
-  printf "{{{\n"                     >> $wiki
-  printf "clang++ -O1 -faddress-sanitizer $source\n" >> $wiki
-  printf "./a.out\n"                 >> $wiki
-  printf "}}}\n"                     >> $wiki
+  echo "$run" > tmp
 
-  $ASAN $source
   printf "{{{\n"                     >> $wiki
-  ./a.out 2>&1 | $FILTER | c++filt   >> $wiki
+  . tmp                              >> $wiki 2>&1
   printf "}}}\n"                     >> $wiki
-  rm -f ./a.out
+  printf "Read CallStack about symolizing callstack\n" >> $wiki
+  rm -f ./a.out tmp
 done

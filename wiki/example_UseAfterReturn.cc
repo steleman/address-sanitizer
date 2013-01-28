@@ -1,10 +1,12 @@
+// RUN: clang -O -g -fsanitize=address %t -mllvm -asan-use-after-return=1 && ./a.out
 // By default, AddressSanitizer does not try to detect
 // stack-use-after-return bugs.
 // It may still find such bugs occasionally
 // and report them as a hard-to-explain stack-buffer-overflow.
 
-// This test is compiled with experimental flag -asan-use-after-return=-1
+// This test is compiled with experimental flag -asan-use-after-return=1
 int *ptr;
+__attribute__((noinline))
 void FunctionThatEscapesLocalObject() {
   int local[100];
   ptr = &local[0];

@@ -1,3 +1,4 @@
+// RUN: clang -O -g -fsanitize=address %t && ./a.out
 int main(int argc, char **argv) {
   int stack_array[100];
   stack_array[1] = 0;
