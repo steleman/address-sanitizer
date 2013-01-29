@@ -37,7 +37,7 @@ only (see instructions below).
 To build Clang/LLVM using AddressSanitizer (bootstrap)
 {{{
 # Build fresh clang with AddressSanitizer as explained above
-LLVM=/path/to/llvm/
+LLVM=/absolute/path/to/llvm/
 CLANG="$LLVM/build/Release+Asserts/bin/clang"
 CC="$CLANG -fsanitize=address" CXX="$CLANG++ -fsanitize=address  " $LLVM/configure --enable-optimized
 make -j10 TOOL_NO_EXPORTS= HAVE_LINK_VERSION_SCRIPT=0
