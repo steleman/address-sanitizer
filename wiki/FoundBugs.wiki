@@ -55,6 +55,9 @@ Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
   * http://www.mozilla.org/security/announce/2012/mfsa2012-96.html
   * http://www.mozilla.org/security/announce/2012/mfsa2012-105.html
   * http://www.mozilla.org/security/announce/2012/mfsa2012-106.html
+  * http://www.mozilla.org/security/announce/2013/mfsa2013-02.html
+  * http://www.mozilla.org/security/announce/2013/mfsa2013-03.html
+  * http://www.mozilla.org/security/announce/2013/mfsa2013-05.html
 
 See also http://blog.mozilla.com/decoder/2012/01/27/trying-new-code-analysis-techniques/#more-14
 
