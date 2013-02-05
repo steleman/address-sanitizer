@@ -177,6 +177,7 @@ READ of size 4 mem: 0x00007fff516bd140 thread T0
 ...
 Address 0x00007fff516bd140 is inside T0's stack
 }}}
+See also: http://www.spec.org/cpu2006/Docs/faq.html#Run.05
 
 Global buffer overflow in 464.h264ref:
 {{{
