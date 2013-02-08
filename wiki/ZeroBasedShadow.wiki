@@ -1,5 +1,8 @@
 #summary The mode when shadow memory starts at zero offset.
 
+<wiki:toc max_depth="2" />
+=Zero-based shadow mapping=
+
 To enable this mode, build *all* the sources with `-fsanitize-address-zero-base-shadow`, clang-only. 
 
 Instead of computing `Shadow = (Mem >> 3) + kOffset` we compute `Shadow = (Mem >> 3)`, i.e. `kOffset = 0` (see AddressSanitizerAlgorithm). 
@@ -48,9 +51,12 @@ Zero shadow offset mode (with -pie):
 7fff79f1a000-7fff79f1b000 r-xp 00000000 00:00 0                          [vdso]
 }}}
 
+==Example==
+
 Why is this worth the trouble? 
 Zero shadow offset not just saves one arithmetic instruction, 
 but also saves one register, which is otherwise occupied with the large constant. Compare these two: 
+
 
 {{{
 % cat load.c 
@@ -86,4 +92,32 @@ long Foo(long *a) { return *a; }
   1e:	c3                   	retq   
 }}}
 
-Our experiments show that zero based shadow improves the performance and code size by roughly 5%. (TODO: more data)
+==Performance==
+The data below reflects the performance gain from ZeroBasedShadow on SPEC CPU 2006. <B>
+Measured LLVM r174590 on Intel Xeon W3690 @3.47GHz
+
+{{{
+       400.perlbench,      1200.00,      1179.00,         0.98
+           401.bzip2,       885.00,       821.00,         0.93
+             403.gcc,       744.00,       724.00,         0.97
+             429.mcf,       605.00,       579.00,         0.96
+           445.gobmk,       843.00,       809.00,         0.96
+           456.hmmer,      1305.00,      1236.00,         0.95
+           458.sjeng,       923.00,       898.00,         0.97
+      462.libquantum,       539.00,       532.00,         0.99
+         464.h264ref,      1269.00,      1194.00,         0.94
+         471.omnetpp,       629.00,       598.00,         0.95
+           473.astar,       676.00,       663.00,         0.98
+       483.xalancbmk,       493.00,       452.00,         0.92
+            433.milc,       712.00,       656.00,         0.92
+            444.namd,       637.00,       592.00,         0.93
+          447.dealII,       654.00,       631.00,         0.96
+          450.soplex,       391.00,       369.00,         0.94
+          453.povray,       458.00,       419.00,         0.91
+             470.lbm,       388.00,       384.00,         0.99
+         482.sphinx3,       995.00,       886.00,         0.89
+}}}
+
+
+==Experimental==
+We are experimenting with another way to achieve zero-based offset using `-Wl,-Ttext-segment=0x40000000`. *TODO*
