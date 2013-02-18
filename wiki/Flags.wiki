@@ -22,8 +22,8 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 
 || flag|| default || description ||
 || verbosity  || 0 || Be more verbose (mostly for testing the tool itself) ||
-|| malloc_context_size || 30 || Number of frames in `malloc`/`free` stack traces. Valid values are 0...256. Note: for large sizes to work you may also need to increase the redzone to 256 or 512 ||
-|| redzone || 128 || Size of the redzone. Valid values are 32, 64, 128, ..., 4096 ||
+|| malloc_context_size || 30 || Number of frames in `malloc`/`free` stack traces. Valid values are 0...256.  ||
+|| redzone || 16 || Size of the minimal redzone. Since LLVM 3.3 asan uses adaptive redzones for heap, i.e. for large heap allocations the redzones are larger. ||
 || log_path|| <none> || Path to the log files. If log_path=PATH is given, every process will write error reports to PATH.PID. By default all reports are written to stderr. ||
 || sleep_before_dying || 0 || Sleep for this number of seconds before exiting the process on failure. ||
 || quarantine_size || 256Mb || Size of quarantine (in bytes) for finding use-after-free errors. Lower values save memory but increase false negatives rate. ||
