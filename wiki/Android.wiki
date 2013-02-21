@@ -24,10 +24,11 @@ cp -r Release+Asserts/lib/clang $TOOLCHAIN/prebuilt/linux-x86/lib/
 ln -sf clang $TOOLCHAIN/prebuilt/linux-x86/bin/arm-linux-androideabi-gcc
 ln -sf clang $TOOLCHAIN/prebuilt/linux-x86/bin/arm-linux-androideabi-g++
 }}}
-  * Find libasan_preload.so in your AOSP build and copy it where it can be found by ndk-build: either in a toolchain lib directory, or somewhere under ndk/platforms/android-XX.
 
 And that's all! Now ndk-build will use Clang for "armeabi" and
 "armeabi-v7a" platforms.
+
+It is also possible to do this without copying Clang with a set of --sysroot and -B flags.
 
 If you choose to keep the original toolchain, ndk-build has a handy
 switch NDK_TOOLCHAIN= (ex., NDK_TOOLCHAIN=arm-linux-androideabi-4.4.3)
@@ -35,6 +36,22 @@ to pick one or the other.
 
 With Clang-based toolchain, add the following to your Android.mk to enable ASan:
 {{{
-LOCAL_CFLAGS += -faddress-sanitizer
-LOCAL_LDFLAGS += -faddress-sanitizer
+LOCAL_CFLAGS += -fsanitize=address
+LOCAL_LDFLAGS += -fsanitize=address
 }}}
+
+
+== Running NDK applications with ASan ==
+
+Copy libclang_rt.asan-arm-android.so (in Clang library directory) somewhere on the device.
+
+Preload it into Dalvik VM.
+
+`adb shell setprop wrap._name_ _wrapper_` will spawn a new Dalvik process (fork+exec) for any instance of a given application, with `_wrapper_` prepended to the command line. System properties on Android are limited in length, so write a script like
+{{{
+ASAN_OPTIONS=debug=1,verbosity=1 \
+LD_LIBRARY_PATH=/data/local/tmp/asan:$LD_LIBRARY_PATH \
+LD_PRELOAD=libclang_rt.asan-arm-android.so \
+exec $@
+}}}
+, push it on device beside the runtime library and run `adb shell setprop wrap._name_ /data/local/tmp/asan/asanwrapper.sh`. Then start your program as usual. Reports will be printed to `adb logcat` (you may need to add `logwrapper` to the `setprop` line for that to happen).
