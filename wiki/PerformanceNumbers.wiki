@@ -2,7 +2,7 @@
 
 = Spec CPU 2006 (C/C++) =
 
-These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (C/C++ only) using AddressSanitizer r496
+These numbers are measured on [http://www.spec.org/cpu2006/ Spec CPU 2006] (C/C++ only) using AddressSanitizer r496 (clang -O2 -fsanitize=address)
 with `malloc_context_size=1` (i.e. no unwinding).
 
 The baseline is `clang -O2`. <BR>
@@ -11,3 +11,5 @@ When only writes are instrumented (blue), the average slowdown is *1.26*.
 
 
 http://address-sanitizer.googlecode.com/svn/trunk/img/spec_r496.png 
+
+TODO: remeasure with the more recent clang
