@@ -164,6 +164,29 @@ previously allocated by thread T0 here:
     #9 0x7fa3900e2c4d in __libc_start_main ??:0
 }}}
 
+global-buffer-overflow in `memcmp("perlio", "unix", 6)`:
+{{{
+==17858== ERROR: AddressSanitizer: global-buffer-overflow on address 0x0000006af025 at pc 0x426478 bp 0x7fffb37ffe40 sp 0x7fffb37ffe18
+READ of size 6 at 0x0000006af025 thread T0
+    #0 0x426477 in __interceptor_memcmp _asan_rtl_
+    #1 0x4bf792 in PerlIO_find_layer perlio.c:751
+    #2 0x4c0ab2 in PerlIO_default_buffer perlio.c:1015
+    #3 0x4c1171 in PerlIO_default_layers perlio.c:1113
+    #4 0x4c255d in PerlIO_resolve_layers perlio.c:1433
+    #5 0x4c3289 in PerlIO_openn perlio.c:1519
+    #6 0x4c1410 in PerlIO_fdopen perlio.c:4745
+    #7 0x4cfca1 in Perl_PerlIO_stdin perlio.c:4686
+    #8 0x4b57df in S_open_script perl.c:3348
+    #9 0x4d13f7 in main perlmain.c:96
+    #10 0x7fcab450876c in __libc_start_main libc-start.c:226
+    #11 0x4359b4 in _start ??:0
+0x0000006af025 is located 59 bytes to the left of global variable '.str39 (perlio.c)' (0x6af060) of size 3
+  '.str39 (perlio.c)' is ascii string 'r+'
+0x0000006af025 is located 0 bytes to the right of global variable '.str38 (perlio.c)' (0x6af020) of size 5
+  '.str38 (perlio.c)' is ascii string 'unix'
+Shadow bytes around the buggy address:
+}}}
+
 
 Stack buffer overflow in 464.h264ref:
 {{{
