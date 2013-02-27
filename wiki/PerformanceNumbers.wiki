@@ -12,4 +12,29 @@ When only writes are instrumented (blue), the average slowdown is *1.26*.
 
 http://address-sanitizer.googlecode.com/svn/trunk/img/spec_r496.png 
 
-TODO: remeasure with the more recent clang
+
+Numbers from Clang 3.3 (trunk) r176088 (Feb 26 2013). <BR>
+Measured on Intel Xeon W3690 @3.47GHz. <BR>
+2-nd column: `clang -O2` <BR>
+3-rd column: `clang -O2 -fsanitize=address`, run with `ASAN_OPTIONS="malloc_context_size=1`
+||      400.perlbench   ||    346.00    ||  1116.00    ||     3.23||
+||          401.bzip2   ||    487.00    ||   837.00    ||     1.72||
+||            403.gcc   ||    321.00    ||   717.00    ||     2.23||
+||            429.mcf   ||    315.00    ||   581.00    ||     1.84||
+||          445.gobmk   ||    409.00    ||   799.00    ||     1.95||
+||          456.hmmer   ||    604.00    ||  1276.00    ||     2.11||
+||          458.sjeng   ||    455.00    ||   854.00    ||     1.88||
+||     462.libquantum   ||    482.00    ||   536.00    ||     1.11||
+||        464.h264ref   ||    547.00    ||  1199.00    ||     2.19||
+||        471.omnetpp   ||    309.00    ||   551.00    ||     1.78||
+||          473.astar   ||    402.00    ||   647.00    ||     1.61||
+||      483.xalancbmk   ||    221.00    ||   439.00    ||     1.99||
+||           433.milc   ||    404.00    ||   668.00    ||     1.65||
+||           444.namd   ||    368.00    ||   594.00    ||     1.61||
+||         447.dealII   ||    323.00    ||   581.00    ||     1.80||
+||         450.soplex   ||    234.00    ||   366.00    ||     1.56||
+||         453.povray   ||    187.00    ||   395.00    ||     2.11||
+||            470.lbm   ||    310.00    ||   400.00    ||     1.29||
+||        482.sphinx3   ||    500.00    ||   911.00    ||     1.82||
+
+Note, the numbers for 403.gcc and 400.perlbench are worse than before due to [[https://code.google.com/p/address-sanitizer/issues/detail?id=163 issue 163]].
