@@ -154,6 +154,8 @@ ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
 void ThisFunctionWillNotBeInstrumented() {...}
 }}}
 
+Clang 3.3 supports `__attribute__((no_sanitize_address))` instead.
+
 You may also ignore certain functions using a blacklist: create a file `my_ignores.txt` and pass it to AddressSanitizer
 at compile time using `-fsanitize-blacklist=my_ignores.txt` (This flag is new and is only supported by Clang now):
 {{{
