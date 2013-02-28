@@ -1,0 +1,18 @@
+#summary How to run SPEC 2006 bencmarks
+
+= Getting SPEC 2006 =
+
+SPEC 2006 may be obtained from http://www.spec.org/cpu2006 
+(it is not free, but most compiler experts already have access to it). 
+Make sure to use the latest version 1.2
+
+
+= Patching SPEC 2006 =
+
+There are several bugs in SPEC 2006 detectable by AddressSanitizer: 
+FoundBugs#Spec_CPU_2006 <BR>
+You will need to patch the spec code in order to run the benchmarks w/o werrors. TODO
+
+
+= Running SPEC 2006 =
+TODO
