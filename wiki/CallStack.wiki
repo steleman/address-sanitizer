@@ -50,5 +50,5 @@ SYMBOLIZER_PATH=`pwd`/llvm-symbolizer
 You may use it in ASan in the following manner:
 {{{
 export ASAN_SYMBOLIZER_PATH=${SYMBOLIZER_PATH}
-ASAN_OPTIONS=symbolize=1 ./a.out
+./a.out
 }}}
