@@ -31,3 +31,5 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 || fast_unwind_on_malloc || 1 || Same as `fast_unwind_on_fatal`, but control unwinding inside `malloc`/`free`, i.e. performance critical. See also CallStack ||
 || exitcode || 1 || Call `_exit(exitcode)` on error.  ||
 || abort_on_error || 0 || If `1`, call `abort()` instead of `_exit(exitcode)` on error.||
+|| allow_user_poisoning  || 1 || Allow/disallow ManualPoisoning || 
+|| strict_memcmp || 1 || when set to `1` (default), `memcmp("foo", "bar", 100)` is treated as a bug ||
