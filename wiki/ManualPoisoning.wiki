@@ -1,8 +1,8 @@
 #summary Poisoning memory manually
 
-*This feature is still experimental*
-
 A user may poison/unpoison a region of memory manually.
+Use this feature with caution. In many cases good old `malloc+free` 
+is a better way to find heap bugs than using custom allocators with manual poisoning.
 
 From `compiler-rt/include/sanitizer/asan_interface.h`:
 {{{
@@ -38,4 +38,10 @@ From `compiler-rt/include/sanitizer/asan_interface.h`:
 #endif 
 }}}
 
-If a [Flags run-time flag] `allow_user_poisoning` is set to `0`, these callbacks are no-ops.
+If you have a custom allocation arena, the typical workflow would be to
+poison the entire arena first, and then unpoison allocated chunks of memory 
+leaving poisoned redzones between them.
+The allocated chunks should start with 8-aligned addresses.
+
+
+If a [Flags run-time flag] `allow_user_poisoning` is set to `0`, the manual poisoning callbacks are no-ops.
