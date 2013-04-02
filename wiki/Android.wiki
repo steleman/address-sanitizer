@@ -1,5 +1,7 @@
 #summary How to build and run AddressSanitizer on Android
 
+== Android platform workflow ==
+
 AddressSanitizer is fully supported in AOSP starting with JellyBean release. To run applications built with ASan you'll need an -eng build of Android.
 
 To build any part of Android system with ASan, add LOCAL_ADDRESS_SANITIZER:=true to the appropriate Android.mk.
@@ -11,13 +13,17 @@ Running:
 NOTE: if you get an assertion failure about INTERCEPT(something), this means ASan interceptors have not kicked in. Verify that you are running the program with asanwrapper.
 
 
-== Building NDK applications with ASan ==
+== Android NDK workflow ==
 
-First, you need to get a Clang-based NDK toolchain.
+Grab Android SDK and NDK from the internet.
 
-  * Grab the NDK at http://developer.android.com/sdk/ndk/index.html and unpack it.
-  * Build Clang ToT with --target=arm-linux-androideabi.
-  * Find the GCC-based ARM toolchain in `<ndk>/toolchains/arm-linux-androideabi-4.4.3`, and copy Clang build over it:
+Then do one of the following:
+  * (make build) Read http://src.chromium.org/viewvc/chrome/trunk/src/tools/clang/scripts/update.sh?revision=HEAD&view=markup and do the same (search for "android"). 
+  * (cmake build) Read https://code.google.com/p/address-sanitizer/source/browse/trunk/build/scripts/slave/buildbot_cmake.sh and do the same (search for "ANDROID"). 
+
+Either of the above will get you Clang with arm-android ASan runtime library. Cmake build (the second bullet) will also build ASan tests for Android.
+
+Find the GCC-based ARM toolchain in `<ndk>/toolchains/arm-linux-androideabi-4.4.3`, and copy Clang build over it:
 {{{
 cp Release+Asserts/bin/clang $TOOLCHAIN/prebuilt/linux-x86/bin/
 cp -r Release+Asserts/lib/clang $TOOLCHAIN/prebuilt/linux-x86/lib/
