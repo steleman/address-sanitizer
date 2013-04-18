@@ -108,20 +108,11 @@ freed by thread T0 here:
 
 
 ==ulimit -v==
-The `ulimit -v` command can be used with ASan-ified binaries.
-However, you should remember that ASan consumes 16 terabytes of virtual memory for shadow state and the `ulimit -v` value should be set accordingly.
-For example, the following script may be used as a wrapper for `ulimit -v`:
-{{{
-#!/bin/bash
-LIMIT_IN_GIGABYTES=$1
-shift
-# The value to pass to ulimit is 2^44+$LIMIT_IN_GIGABYTES bytes
-ASAN_LIMIT=$(echo "(2^44 + $LIMIT_IN_GIGABYTES * 2^30) / 2^10" | bc -q)
-echo ASAN_LIMIT: $ASAN_LIMIT
-ulimit -v $ASAN_LIMIT
-"$@"
-}}}
+The `ulimit -v` command makes little sense with ASan-ified binaries
+because ASan consumes 20 terabytes of virtual memory (plus a bit).
 
+You may try more sophisticated tools to limit your memory consumption, 
+e.g. http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/cgroups/memory.txt
 
 =Flags=
 See the separate [Flags Flags page].
