@@ -26,6 +26,7 @@ These numbers are measured on [RunningSpecBenchmarks SPEC 2006] (C/C++ only) usi
 ||             470.lbm||      318.00||      393.00||        1.24||
 ||         482.sphinx3||      519.00||      911.00||        1.76||
 
+The average slowdown is *1.93*, the median slowdown is *1.86*.
 
 Older measurements: asan r496 (`clang -O2 -fsanitize=address`) with `malloc_context_size=1` (i.e. no unwinding).<BR>
 The baseline is `clang -O2`. <BR>
