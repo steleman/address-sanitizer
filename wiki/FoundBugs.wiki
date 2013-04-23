@@ -100,6 +100,9 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
   * http://bugs.mysql.com/bug.php?id=67243
   * http://bugs.mysql.com/bug.php?id=67244
 
+=Hypertable=
+https://github.com/hypertable/hypertable/commit/237f170de93ceda11560f87970c4494a8790e0d9
+
 =vim=
 http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
 
