@@ -30,7 +30,7 @@ Same as in Google Heap Leak Checker: read the list of memory regions from /proc/
 
 Advantages: would not miss anything.
 
-Disadvantages: the root set would include any address ranges mapped by internal sanitizer data structures, some of which may contain pointers to otherwise unreachable heap chunks. Since those data structures don't use a single internal allocator, each of them would have to be given special treatment to prevent false negatives.
+Disadvantages: the root set would include any address ranges mapped by internal sanitizer data structures, some of which may contain pointers to otherwise unreachable heap blocks. Since those data structures don't use a single internal allocator, each of them would have to be given special treatment to prevent false negatives.
 
 === Current approach ===
   * Global regions are obtained from `dl_iterate_phdr()`,
