@@ -6,7 +6,7 @@ LeakSanitizer is a heap leak detector which is designed to run on top of Address
 
 = Operation =
 
-LSan is a run-time tool which doesn't require any compiler instrumentation. The tool consists of two components: the leak checking module itself and the run-time environment, which includes an allocator, a thread registry, and interceptors for memory allocation / thread management functions. These are common components shared by most sanitizer tools, so eventually we should be able to run the leak checking module on top of ASan/MSan instead of using a dedicated environment.
+LSan is a run-time tool which doesn't require any compiler instrumentation. The tool consists of two components: the leak checking module itself and the run-time environment, which includes an allocator, a thread registry, and interceptors for memory allocation / thread management functions. These are common components shared by most sanitizer tools, so eventually we should be able to run the leak checking module on top of ASan / MSan instead of using a dedicated environment.
 
 The leak checker module is inactive until the very end of a process' lifetime. When invoked, it first halts the execution of the process. This ensures that the pointer graph does not change while we examine it, and allows us to collect any transient pointers from register contexts of running threads. To this effect, we run the leak checker as a separate task that attaches to the parent process with ptrace.
 
