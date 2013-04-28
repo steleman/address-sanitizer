@@ -24,22 +24,9 @@ Another useful feature is being able to distinguish between directly leaked bloc
 
 == Finding the root set ==
 
-=== Initial approach ===
-
-Same as in Google Heap Leak Checker: read the list of memory regions from /proc/self/maps, filter out the heap and everything mapped by user code, use the rest as the root set.
-
-Advantages: would not miss anything.
-
-Disadvantages: the root set would include any address ranges mapped by internal sanitizer data structures, some of which may contain pointers to otherwise unreachable heap blocks. Since those data structures don't use a single internal allocator, each of them would have to be given special treatment to prevent false negatives.
-
-=== Current approach ===
   * Global regions are obtained from `dl_iterate_phdr()`,
   * stack ranges are obtained from `pthread_getattr_np()`,
   * a thread's static TLS area can be found using the internal glibc function `_dl_get_tls_static_info()` (like in TSan). On x86 and x86-64 this area includes the thread descriptor, which contains pointers to thread-specific data. On the other hand, dynamically allocated TLS blocks can't always be reached easily through the thread descriptor. We handle them by intercepting the `__libc_memalign` calls that the linker uses to allocate dynamic TLS space, and considering all blocks allocated from the linker to be live.
-
-Advantages: a much cleaner implementation.
-
-Disadvantages: can't discover pointers stored in mapped memory (which hopefully doesn't happen often).
 
 == Coupling LSan with other sanitizer tools ==
 
