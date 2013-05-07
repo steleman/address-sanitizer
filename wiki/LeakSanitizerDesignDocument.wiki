@@ -30,8 +30,8 @@ Another useful feature is being able to distinguish between directly leaked bloc
 
 There are several ways by which a user might want to specify which leaks are to be ignored:
   * via Valgrind-like suppression files (cf. ThreadSanitizerSuppressions),
-  * by calling a function which is passed an pointer to a specific leaked object (i.e. `SuppressObject()`),
-  * by suppressing all allocations made between two execution points (i.e. between calls to `StartSuppressingLeaks()`/`StopSuppressingLeaks()`).
+  * by calling a function which accepts a pointer to a specific leaked object (i.e. `SuppressObject()`),
+  * by suppressing all allocations made between two execution points (i.e. between calls to `StartSuppressingLeaks()` / `StopSuppressingLeaks()`).
 Lsan could eventually support all of them. Suppressed blocks would have to be marked by setting the reachability flag to yet another state.
 
 == Coupling LSan with other sanitizer tools ==
