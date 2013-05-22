@@ -1,8 +1,6 @@
 #summary Build Instructions for AddressSanitizer
 
-*Warning*: we are in the process of integrating AddressSanitizer with [http://llvm.org LLVM].
-These temporary build instructions may or may not work.
-If you need something stable come back later, or grab the prebuilt binaries (see AddressSanitizer page)
+AddressSanitizer is fully integrated with the LLVM source tree. 
 
 ==Checkout AddressSanitizer sources==
 {{{
