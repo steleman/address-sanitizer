@@ -16,7 +16,7 @@ It finds:
   * [ExampleStackOutOfBounds Stack buffer overflow]
   * [ExampleGlobalOutOfBounds Global buffer overflow]
   * [ExampleUseAfterReturn Use after return]
-  * [ExampleInitOrderFiasco Initialization order bugs]
+  * [InitializationOrderFiasco Initialization order bugs]
 
 This tool is very fast. The average slowdown of the instrumented program is ~2x (see PerformanceNumbers).
 
