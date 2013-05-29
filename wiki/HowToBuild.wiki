@@ -59,13 +59,14 @@ to rebuild it. Just running `make` in the `asan` subdirectory does not work.
   * Set configuration and build LLVM.
 {{{
 mkdir llvm_cmake_build && cd llvm_cmake_build
+# Choose the host compiler
 # Choose CMAKE_BUILD_TYPE {Debug, Release}
 # Choose LLVM_ENABLE_ASSERTIONS {ON,OFF}
 # Choose LLVM_ENABLE_WERROR {ON,OFF}
-# Choose the host compiler
-CC=gcc CXX=g++ cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -DLLVM_ENABLE_WERROR=ON /path/to/llvm/checkout
+# Set LLVM_TARGETS_TO_BUILD to X86 to speed up the build
+[CC=clang CXX=clang++] cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON [-DLLVM_ENABLE_WERROR=ON] [-DLLVM_TARGETS_TO_BUILD=X86] /path/to/llvm/checkout
 }}}
-  You may optionally speed up the build by adding `-DLLVM_TARGETS_TO_BUILD=X86`.
+  You may optionally speed up the build by adding ``.
 
   * Now you can build and test LLVM code:
 {{{
