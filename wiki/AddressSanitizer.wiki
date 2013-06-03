@@ -31,7 +31,7 @@ See also:
 
 =Getting !AddressSanitizer=
 
-AddressSanitizer is a part of LLVM starting with version 3.1 and will be a part of GCC starting with version 4.8 <BR>
+AddressSanitizer is a part of LLVM starting with version 3.1 and a part of GCC starting with version 4.8 <BR>
 You can download pre-built Clang/LLVM binaries from http://llvm.org/releases/
 
 The Chromium team periodically bakes fresh LLVM/Clang binaries, which include AddressSanitizer support. 
