@@ -2,6 +2,8 @@
 
 = AddressSanitizer for Mac: don’t be afraid. =
 
+Attention: some of the implementation details of ASan on Mac have changed recently and aren't reflected in this document yet. Please refer to the source.
+
 This document should cover the implementation details of AddressSanitizer for Mac OS, because there are notable differences from Linux. We are almost sure that not all the possible issues are covered here (and in the code), so any comments and suggestions are welcome.
 
 <wiki:toc max_depth="4" />
