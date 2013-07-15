@@ -1,0 +1,30 @@
+#summary AddressSanitizer for Linux kernel.
+
+= Details =
+
+Pre-alpha repository: https://github.com/xairy/linux
+
+Currently the kernel has the following:
+
+CONFIG_DEBUG_SLAB
+ * Enables red-zoning and poisoning.
+ * Can detect some out-of-bounds (OOB) accesses and use-after-free (UAF).
+ * Does not detect OOB reads.
+ * Best-effort UAF detection.
+
+CONFIG_KMEMCHECK
+ * CONFIG_KMEMCHECK is a heavy-handed uninitialized memory access checker which causes page-fault on every memory access.
+ * Slow.
+
+CONFIG_DEBUG_PAGEALLOC
+ * Unmaps freed pages from address space. Can detect some UAF accesses. Detects UAF only when the whole page is unused.
+
+We are going to implement:
+
+CONFIG_ASAN
+ * Fast and comprehensive solution for UAF and OOB.
+ * Based on compiler instrumentation (fast)
+ * OOB for both writes and reads
+ * Strong UAF detection
+ * Prompt detection of bad memory accesses
+ * Informative reports
