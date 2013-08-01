@@ -1,8 +1,6 @@
 #summary AddressSanitizer for Linux kernel.
 
-= Details =
-
-Pre-alpha repository: https://github.com/xairy/linux
+= Overview =
 
 Currently the kernel has the following configs:
 
@@ -30,3 +28,7 @@ CONFIG_ASAN
  * Strong UAF detection
  * Prompt detection of bad memory accesses
  * Informative reports
+
+= Details =
+
+Pre-alpha repository: https://github.com/xairy/linux
