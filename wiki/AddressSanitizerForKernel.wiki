@@ -10,8 +10,8 @@ CONFIG_DEBUG_SLAB
  * Does not detect OOB reads
  * Best-effort UAF detection
 
-CONFIG_KMEMCHECK
- * CONFIG_KMEMCHECK is a heavy-handed uninitialized memory access checker which causes page-fault on every memory access
+CONFIG_KMEMCHECK - heavy-handed uninitialized memory access checker
+ * Causes page-fault on every memory access
  * Slow
 
 CONFIG_DEBUG_PAGEALLOC
@@ -32,3 +32,10 @@ CONFIG_ASAN
 = Details =
 
 Pre-alpha repository: https://github.com/xairy/linux
+
+The description of the ASan algorithm for user-space applications can be found [https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm here].
+In kernel-space we are tracking only the part of the virtual address space, that is directly mapped to the physical memory (0xffff880000000000 - 0xffffc7ffffffffff).
+
+= Trophies =
+
+ * http://patchwork.ozlabs.org/patch/264733/
