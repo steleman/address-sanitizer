@@ -1,5 +1,10 @@
 #summary AddressSanitizer for Linux kernel.
 
+= Introduction =
+
+A dynamic memory error detector for Linux kernel.
+Currently works on x86_64.
+
 = Overview =
 
 Currently the kernel has the following configs:
@@ -33,8 +38,17 @@ CONFIG_ASAN
 
 Pre-alpha repository: https://github.com/xairy/linux
 
+== Algorithm ==
+
 The description of the ASan algorithm for user-space applications can be found [https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm here].
 In kernel-space we are tracking only the part of the virtual address space, that is directly mapped to the physical memory (0xffff880000000000 - 0xffffc7ffffffffff).
+
+== Mapping ==
+
+{{{
+ShadowSize = (max_pfn << PAGE_OFFSET) >> 3;
+Shadow = ((Mem - PAGE_OFFSET) >> 3) + PAGE_OFFSET + SHADOW_OFFSET;
+}}}
 
 = Trophies =
 
