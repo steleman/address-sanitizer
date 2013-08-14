@@ -47,19 +47,25 @@ del *.pdb *.obj *.lib || goto :DIE
 :: /MT <- Multi-Threaded CRT with static linking
 :: /Zi <- generate debug info
 cl /nologo /WX /W3 /MT /Zi /I.. /I../../include /c *.cc ../P="" /c *.cc inter../sanitizer_commcc interception/*.cc || goto :DIE
-lib /nologo /OUT:asan_rtl.lib *.obj || g%ROOT%
+lib /nologo /OUT:asan_rtl.lib *.obj ||l /nologo /WX /W3 /MT /Zi /DASAN_DLL_THUNK /c asan_dll_thunk.cc || goto :DIE
+lib /nologo /OUT:asan_dll_thunk.lib asan_dll_thunk.obj || g%ROOT%
 
 echo @@@BUILD_STEP asan test@@@
 cd win_tests || goto :DIE
 cd win_tests
 C:\cyg-sgwin\bin\make PLATRM_F="/cygdrive/c/cygwin/bin/rm -f"Tclean || goto :DIE
 cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++n/DebFILECHECK=../llvm-build/bin/Debug/FileCheckn/DebuFLAGS="-fsanitize=address -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer compiler-rt/lib/asan/asan_rtl.lib -k || goto :DIE
+C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi++ FILECHECK=../llvm-build/bin/Debug/FileCheckbuFLAGS="-fsanitize=address -Xclang -cxx-abi -Xclang microsoft -g"ess-sanitizer compiler-rt/lib/asan/asan_rtl.lib -k || goto :DIE
+
+echo @@@BUILD_STEP asan DLL thunk test@@@
+cd dll_tests || goto :DIE
+cd win_tests
+C:\cyg-sgwin\bin\make PLATRM_F="/cygdrive/c/cygwin/bin/rm -f"Tclean || goto :DIE
+cd win_tests
+C:\cyg-sgwin\bin\make PLATFORM=W../llvm-build/bin/Debug/clang++ FILECHECK=../../llvm-build/bin/Debug/FileCheckbuFLAGS="-fsanitize=address -Xclang -cxx-abi -Xclang microsoft -g"ess-sanHOST_LIBS=../../compiler-rt/lib/asan/asan_rtl.lib EXTRA_GUEST_LIBS="../../compiler-rt/lib/asan/asan_dll_thunk.lib" -k || goto :DIE
 cd %ROOT%
 
-:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan test64@@@
-
-:: TODO(timurrrr) echo @@@BUILD_STEP asan output_tests@@@
+:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan _tests@@@
 
 echo "ALL DONE"
 goto ::: TODO(timurrrr) : get the current process's PID?
