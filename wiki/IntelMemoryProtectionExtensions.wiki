@@ -12,6 +12,14 @@ including the Memory Protection Extensions (MPX). Here we will discuss the appli
   * http://software.intel.com/en-us/articles/using-intel-mpx-with-the-intel-software-development-emulator -- Using the MPX-enabled GCC and SDE (emulator)
   * http://download-software.intel.com/sites/default/files/319433-015.pdf -- Fresh documentation on Intel ISA which includes MPX
 
+=Using SDE=
+Intel documentation is too verbose, here is a very short summary for Linux x86_64: 
+  * From https://secure-software.intel.com/en-us/protected-download/267266/144917
+    * Get 2013-07-22-mpx-runtime-external-lin.tar.bz2
+    * Get sde-external-6.1.0-2013-07-22-lin.tar.bz2
+  * From http://software.intel.com/en-us/articles/intel-software-development-emulator : 
+    * Get binutils-x86-64-static-avx512-mpx-sha.tar.bz2
+    * Get gcc-x86-64-static-avx512-mpx-sha.tar.bz2
 
 
 =False positives=
