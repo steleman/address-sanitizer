@@ -110,7 +110,7 @@ However, as the process runs longer we see another picture:
 }}}
 Here, we see one BNDLDX for every 18 BNDCLs, which is much better. 
 
-For 483.xalancbmk (full test run) the statistic is quite different: 
+For 483.xalancbmk (full test run, built with O2) the statistic is quite different: 
 {{{
    2929693 BNDMK
    5827466 BNDSTX
