@@ -62,6 +62,7 @@ $MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64\
  -fno-mpx-use-fast-string-functions -fno-mpx-use-nochk-string-functions  -O1
 }}}
 
+The emulator ($SDE_KIT/sde) is a PIN-based tool and has ~30x slowdown.
 
 
 =False positives=
