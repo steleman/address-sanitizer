@@ -161,3 +161,10 @@ Bound violation detected,status 0x1 at 0x4012b8
 
 ==False positive with un-instrumented code==
   * http://software.intel.com/en-us/forums/topic/413960
+
+=Random Thoughts=
+BNDLDX/BNDSTX are (I guess) very slow since they access two cache lines.
+Instead of BNDLDX/BNDSTX a tool may use a simple directly mapped shadow and use BNDMOV to read/write bounds.
+If we instrument the entire program (with all libraries) we don't need to check the pointer value (as in BNDLDX)
+and can have 2x shadow instead of 4x shadow.
+TODO: rephrase this better.
