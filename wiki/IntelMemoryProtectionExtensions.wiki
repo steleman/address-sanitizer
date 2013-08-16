@@ -72,7 +72,7 @@ MPX has several different instructions that have very different performance prop
   * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two difference cache like).
 
 Every memory access that needs to be checked will be instrumented with BNDCU/BNDCL (compiler optimizations may apply). 
-Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX.
+Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of the number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX/BNDMOV.
 
 Unfortunately, the SDE does not seem to allow to collect the statistics in an efficient way. 
 The only way to gather statistics from SDE we found is to dump the entire trace:
@@ -103,7 +103,19 @@ However, as the process runs longer we see another picture:
 }}}
 Here, we see one BNDLDX for every 18 BNDCLs, which is much better. 
 
+For 483.xalancbmk (full test run) the statistic is quite different: 
+{{{
+   2929693 BNDMK
+   5827466 BNDSTX
+  14736793 BNDLDX
+  52422164 BNDMOV
+  34818525 BNDCL
+  59032822 BNDCU
+}}}
+
 Once we have SDE with reasonable statistics switch, we will gather stats for complete runs of all SPEC benchmarks. 
+Also, the data is preliminary because we've built the benchmarks with `-fno-mpx-use-fast-string-functions -fno-mpx-use-nochk-string-functions`
+and without the MPX-enabled glibc.
 
 =False positives=
 == False positive with atomic pointers ==
