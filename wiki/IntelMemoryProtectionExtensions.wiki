@@ -21,18 +21,25 @@ Intel documentation is too verbose, here is a very short summary for Linux x86_6
     * Get sde-external-6.1.0-2013-07-22-lin.tar.bz2
   * From http://software.intel.com/en-us/articles/intel-software-development-emulator : 
     * Get binutils-x86-64-static-avx512-mpx-sha.tar.bz2
-    * Get gcc-x86-64-static-avx512-mpx-sha.tar.bz2
-  * Extract all archives into $MPX_HOME and set the following environment variables: 
+  * Extract all archives into $MPX_HOME and set the following environment variables:
 {{{
-export MPX_GCC=$MPX_HOME/gcc_x86_64_static_avx512-mpx-sha
 export MPX_BINUTILS=$MPX_HOME/binutils_x86_64_static_avx512-mpx-sha
 export MPX_RUNTIME_LIB=$MPX_HOME/2013-07-22-mpx-runtime-external-lin
 export SDE_KIT=$MPX_HOME/sde-external-6.1.0-2013-07-22-lin
 }}}
 
-The compiler is build w/o support for multiarch, so I had to do this: 
+Now you need to compile and install the mpx-enabled gcc
+(don't take the binaries from Intel, they may not work):
 {{{
-% sudo ln -s  /usr/lib/x86_64-linux-gnu/ /usr/lib64
+DIR=`pwd`
+wget http://software.intel.com/sites/default/files/article/144915/gcc-avx512-mpx-sha-src.tar.bz2
+tar xf gcc-avx512-mpx-sha-src.tar.bz2
+mkdir gcc-build
+cd gcc-build
+../gcc/configure --prefix=$DIR/gcc-inst --enable-languages=c,c++ --enable-mpx \
+  --with-as=$MPX_BINUTILS/bin/as --with-ld=$MPX_BINUTILS/bin/ld
+make -j && make install
+export MPX_GCC=$DIR/gcc-inst
 }}}
 
 ==Run==
