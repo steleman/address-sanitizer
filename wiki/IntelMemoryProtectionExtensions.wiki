@@ -1,6 +1,7 @@
 #summary Discussion of Intel Memory Protection Extensions (MPX)
 
 *This page is under construction*
+<wiki:toc max_depth="1" />
 
 = Introduction =
 On July 2013 Intel released documentation on the upcoming instruction set extensions, 
@@ -64,6 +65,45 @@ $MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64\
 
 The emulator ($SDE_KIT/sde) is a PIN-based tool and has ~30x slowdown.
 
+=Performance=
+MPX has several different instructions that have very different performance properties: 
+  * BNDCU/BNDCL/BNDMK -- pure arithmetic, supposedly very fast
+  * BNDMOV -- move the BNDx registers from/to memory, mostly used to spill/fill registers. When accessing memory on stack should hit the L1 cache and thus be fast.
+  * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two difference cache like).
+
+Every memory access that needs to be checked will be instrumented with BNDCU/BNDCL (compiler optimizations may apply). 
+Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX.
+
+Unfortunately, the SDE does not seem to allow to collect the statistics in an efficient way. 
+The only way to gather statistics from SDE we found is to dump the entire trace:
+{{{
+time $SDE_KIT/sde -ompx_trace trace.txt -mpx_trace_ins all  -mpx-mode -- ./a.out ...
+}}}
+We are waiting for Intel to release a version of SDE which will provide the statistics with a reasonable speed. 
+
+So far, we've collected stats on 401.bzip2 startup. At the very beginning the stats looks like this:
+{{{
+ 232622 BNDMK
+ 267373 BNDSTX
+1482635 BNDMOV
+2134686 BNDLDX
+2941285 BNDCL
+2941397 BNDCU
+}}}
+In other words, we execute one BNDLDX for every BNDCL. This should be very slow. 
+
+However, as the process runs longer we see another picture: 
+{{{
+ 450521  BNDMK
+ 512036  BNDSTX
+4086445  BNDLDX
+5173580  BNDMOV
+44887291 BNDCL
+44890125 BNDCU
+}}}
+Here, we see one BNDLDX for every ten BNDCLs, which is much better. 
+
+Once we have SDE with reasonable statistics switch, we will gather stats for complete runs of all SPEC benchmarks. 
 
 =False positives=
   * http://software.intel.com/en-us/forums/topic/413959
