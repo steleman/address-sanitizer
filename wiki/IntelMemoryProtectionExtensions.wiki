@@ -106,5 +106,39 @@ Here, we see one BNDLDX for every 18 BNDCLs, which is much better.
 Once we have SDE with reasonable statistics switch, we will gather stats for complete runs of all SPEC benchmarks. 
 
 =False positives=
-  * http://software.intel.com/en-us/forums/topic/413959
+== False positive with atomic pointers ==
+http://software.intel.com/en-us/forums/topic/413959
+{{{
+% cat cxx11_ptr_check.cc 
+// Example of a false positive with Pointer Checker or MPX.
+// The false report happens because the pointer update
+// and the metadata update together do not happen atomically.
+#include <atomic>
+#include <thread>
+#include <iostream>
+#include <assert.h>
+std::atomic<int *> p;
+int A, B;
+void Thread1() { for (int i = 0; i < 100000; i++) p = &A; }
+void Thread2() { for (int i = 0; i < 100000; i++) p = &B; }
+void Thread3() { for (int i = 0; i < 100000; i++) assert(*p == 0); }
+
+int main() {
+  std::cout << "A=" << &A << " B=" << &B << std::endl;
+  p = &A;
+  std::thread t1(Thread1);
+  std::thread t2(Thread2);
+  std::thread t3(Thread3);
+  t1.join();
+  t2.join();
+  t3.join();
+}
+% $MPX_GCC/bin/g++ -std=c++0x -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin \
+ -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB cxx11_ptr_check.cc 
+% $SDE_KIT/sde   -mpx-mode -- ./a.out
+A=0x606d28 B=0x606d2c
+Bound violation detected,status 0x1 at 0x4012b8
+}}}
+
+==False positive with un-instrumented code==
   * http://software.intel.com/en-us/forums/topic/413960
