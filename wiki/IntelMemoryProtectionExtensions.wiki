@@ -34,7 +34,7 @@ The compiler is build w/o support for multiarch, so I had to do this:
 % sudo ln -s  /usr/lib/x86_64-linux-gnu/ /usr/lib64
 }}}
 
-==Run ==
+==Run==
 {{{
 % cat global_buffer_overflow.c 
 #include <stdio.h>
@@ -52,6 +52,16 @@ g: 0x600bb0 0x600bd8
 Bound violation detected,status 0x1 at 0x4006ce
 finishing
 }}}
+
+
+I was able to build 401.bzip2 benchmark using this command line: 
+
+{{{
+$MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64\ 
+ -Wl,-rpath,$MPX_RUNTIME_LIB *.c -w -DSPEC_CPU -DNDEBUG -DSPEC_CPU_LP64  \
+ -fno-mpx-use-fast-string-functions -fno-mpx-use-nochk-string-functions  -O1
+}}}
+
 
 
 =False positives=
