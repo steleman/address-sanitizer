@@ -13,6 +13,7 @@ including the Memory Protection Extensions (MPX). Here we will discuss the appli
   * http://download-software.intel.com/sites/default/files/319433-015.pdf -- Fresh documentation on Intel ISA which includes MPX
 
 =Using SDE=
+== Set up ==
 Intel documentation is too verbose, here is a very short summary for Linux x86_64: 
   * From https://secure-software.intel.com/en-us/protected-download/267266/144917
     * Get 2013-07-22-mpx-runtime-external-lin.tar.bz2
@@ -20,6 +21,32 @@ Intel documentation is too verbose, here is a very short summary for Linux x86_6
   * From http://software.intel.com/en-us/articles/intel-software-development-emulator : 
     * Get binutils-x86-64-static-avx512-mpx-sha.tar.bz2
     * Get gcc-x86-64-static-avx512-mpx-sha.tar.bz2
+  * Extra all archives into $MPX_HOME and set the following environment variables: 
+{{{
+export MPX_GCC=$MPX_HOME/gcc_x86_64_static_avx512-mpx-sha
+export MPX_BINUTILS=$MPX_HOME/binutils_x86_64_static_avx512-mpx-sha
+export MPX_RUNTIME_LIB=$MPX_HOME/2013-07-22-mpx-runtime-external-lin
+export SDE_KIT=$MPX_HOME/sde-external-6.1.0-2013-07-22-lin
+}}}
+
+==Run ==
+{{{
+% cat global_buffer_overflow.c 
+#include <stdio.h>
+int g[10];
+int main(int argc, char **argv) {
+  printf("g: %p %p\n", g, g+10);
+  int x = g[argc * 10];
+  printf("finishing\n");
+  return x;
+}
+% $MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB global_buffer_overflow.c
+# Use CHKP_RT_MODE=count to continue running after bug reports
+% CHKP_RT_MODE=count $SDE_KIT/sde -mpx-mode -- ./a.out
+g: 0x600bb0 0x600bd8
+Bound violation detected,status 0x1 at 0x4006ce
+finishing
+}}}
 
 
 =False positives=
