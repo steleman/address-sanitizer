@@ -1,0 +1,19 @@
+#summary Discussion of Intel Memory Protection Extensions (MPX)
+
+*This page is under construction*
+
+= Introduction =
+On July 2013 Intel released documentation on the upcoming instruction set extensions, 
+including the Memory Protection Extensions (MPX). Here we will discuss the applicability of MPX for memory error detection. 
+
+=Links=
+
+  * http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler -- MPX-enabled GCC wiki
+  * http://software.intel.com/en-us/articles/using-intel-mpx-with-the-intel-software-development-emulator -- Using the MPX-enabled GCC and SDE (emulator)
+  * http://download-software.intel.com/sites/default/files/319433-015.pdf -- Fresh documentation on Intel ISA which includes MPX
+
+
+
+=False positives=
+  * http://software.intel.com/en-us/forums/topic/413959
+  * http://software.intel.com/en-us/forums/topic/413960
