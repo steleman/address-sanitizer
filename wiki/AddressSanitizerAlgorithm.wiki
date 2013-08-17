@@ -48,7 +48,7 @@ memory into 1 byte of the shadow memory.
 
 There are only 9 different values for any aligned 8 bytes of the application memory:
   * All 8 bytes in qword are unpoisoned (i.e. addressible). The shadow value is 0.
-  * All 8 bytes in qword are poisoned (i.e. not addressible). The shadow value is -1.
+  * All 8 bytes in qword are poisoned (i.e. not addressible). The shadow value is negative.
   * First `k` bytes are unpoisoned, the rest `8-k` are poisoned. The shadow value is `k`.
 This is guaranteed by the fact that `malloc` returns 8-byte aligned chunks of memory.
 The only case where different bytes of an aligned qword have different state is the tail of
@@ -72,7 +72,7 @@ if (shadow_value) {
 // and these k bytes are unpoisoned.
 bool SlowPathCheck(shadow_value, address, kAccessSize) {
   last_accessed_byte = (address & 7) + kAccessSize - 1;
-  return last_accessed_byte >= shadow_value);
+  return (last_accessed_byte >= shadow_value);
 }
 }}}
 
