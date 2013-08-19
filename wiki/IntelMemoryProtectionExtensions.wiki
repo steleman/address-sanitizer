@@ -54,7 +54,8 @@ int main(int argc, char **argv) {
   printf("finishing\n");
   return x;
 }
-% $MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB global_buffer_overflow.c
+% $MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB \
+  global_buffer_overflow.c
 # Use CHKP_RT_MODE=count to continue running after bug reports
 % CHKP_RT_MODE=count $SDE_KIT/sde -mpx-mode -- ./a.out
 g: 0x600bb0 0x600bd8
@@ -161,7 +162,55 @@ Bound violation detected,status 0x1 at 0x4012b8
 }}}
 
 ==False positive with un-instrumented code==
-  * http://software.intel.com/en-us/forums/topic/413960
+If a part of the code is not instrumented, the bounds associated with a given pointer will not be updated.
+This usually will lead to false negatives (missed bugs) but in relatively rare cases may cause false positives
+(invalid bug reports). For example, if a stack address is first used by an instrumented function and then reused
+by a non-instrumented function: 
+{{{
+==> mpxfp1.c <==
+#include <stdio.h>
+int *p;
+extern int Foo(int idx);
+extern int Bar(int idx);
+void Set(int *x) { p = x; }
+int Get(int idx) { return p[idx]; }
+int main() {
+  return Foo(5) + Bar(15);
+}
+
+==> mpxfp2.c <==
+#include <stdio.h>
+void Set(int *x);
+int Get(int idx);
+int Foo(int idx) {
+  int b[22];
+  int a[10];  // Address of 'a' must match 'a' from Bar()
+  printf("Foo: a=%p b=%p\n", a, b);
+  Set(a);
+  return Get(idx);
+}
+
+==> mpxfp3.c <==
+#include <stdio.h>
+extern int *p;
+int Get(int idx);
+int Bar(int idx) {
+  int a[20];  // Address of 'a' must match 'a' from Bar()
+  int b[20];
+  printf("Bar: a=%p b=%p\n", a, b);
+  p = a;
+  return Get(idx);
+}
+% $MPX_GCC/bin/g++ -O  -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -c mpxfp[12].c
+% $MPX_GCC/bin/g++ -O -c mpxfp3.c  # No instrumentation
+% $MPX_GCC/bin/g++ -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB mpxfp[123].o
+% $SDE_KIT/sde   -mpx-mode -- ./a.out
+Foo: a=0x7ffff074d8f0 b=0x7ffff074d920
+Bar: a=0x7ffff074d8f0 b=0x7ffff074d940
+Bound violation detected,status 0x1 at 0x4006ce
+}}}
+
+Another example is when a heap memory address is reused: http://software.intel.com/en-us/forums/topic/413960
 
 =Comparison with AddressSanitizer=
 MPX is not yet available in hardware, so this section is speculation based
