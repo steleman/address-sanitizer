@@ -162,10 +162,13 @@ Bound violation detected,status 0x1 at 0x4012b8
 }}}
 
 ==False positive with un-instrumented code==
-If a part of the code is not instrumented, the bounds associated with a given pointer will not be updated.
-This usually will lead to false negatives (missed bugs) but in relatively rare cases may cause false positives
-(invalid bug reports). For example, if a stack address is first used by an instrumented function and then reused
-by a non-instrumented function: 
+This limitation is acknowledged by Intel developers (http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler#Mixing_instrumented_and_legacy_code):
+
+ Note that in rare cases Bounds Table mechanism may miss bounds changes.
+ We may model a case when legacy code rewrites a pointer in a memory with pointer of the same value but with different bounds.
+ In such case false bound violation may occur. User is responsible for avoiding such cases.
+ To get higher level of protection try to use instrumentation for modules generating external data.
+
 {{{
 ==> mpxfp1.c <==
 #include <stdio.h>
