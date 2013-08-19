@@ -78,19 +78,20 @@ The emulator ($SDE_KIT/sde) is a PIN-based tool and has ~30x slowdown.
 MPX has several different instructions that have very different performance properties: 
   * BNDCU/BNDCL/BNDMK -- pure arithmetic, supposedly very fast
   * BNDMOV -- move the BNDx registers from/to memory, mostly used to spill/fill registers. When accessing memory on stack should hit the L1 cache and thus be fast.
-  * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two difference cache like).
+  * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two different cache like).
 
 Every memory access that needs to be checked will be instrumented with BNDCU/BNDCL (compiler optimizations may apply). 
 Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of the number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX/BNDMOV.
 
-Unfortunately, the SDE does not seem to allow to collect the statistics in an efficient way. 
+Unfortunately, the SDE does not seem to allow collecting statistics in an efficient way.
 The only way to gather statistics from SDE we found is to dump the entire trace:
 {{{
 time $SDE_KIT/sde -ompx_trace trace.txt -mpx_trace_ins all  -mpx-mode -- ./a.out ...
 }}}
 We are waiting for Intel to release a version of SDE which will provide the statistics with a reasonable speed. 
 
-So far, we've collected stats on 401.bzip2 startup. At the very beginning the stats looks like this:
+W've collected stats on 401.bzip2 startup. At the very beginning the stats looks scary: 
+we execute one BNDLDX for every BNDCL. This should be very slow.
 {{{
  232622 BNDMK
  267373 BNDSTX
@@ -99,9 +100,8 @@ So far, we've collected stats on 401.bzip2 startup. At the very beginning the st
 2941285 BNDCL
 2941397 BNDCU
 }}}
-In other words, we execute one BNDLDX for every BNDCL. This should be very slow. 
 
-However, as the process runs longer we see another picture: 
+However, as the process runs longer we see one BNDLDX for every 18 BNDCLs, which is much better:
 {{{
    2061679 BNDSTX
   10164003 BNDMK
@@ -110,7 +110,6 @@ However, as the process runs longer we see another picture:
  338241718 BNDCL
  340688594 BNDCU
 }}}
-Here, we see one BNDLDX for every 18 BNDCLs, which is much better. 
 
 For 483.xalancbmk (full test run, built with O2) the statistic is quite different (much worse): 
 {{{
