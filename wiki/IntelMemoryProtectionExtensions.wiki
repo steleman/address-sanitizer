@@ -1,7 +1,7 @@
 #summary Discussion of Intel Memory Protection Extensions (MPX)
 
 *This page is under construction*
-<wiki:toc max_depth="1" />
+<wiki:toc max_depth="2" />
 
 = Introduction =
 On July 2013 Intel released documentation on the upcoming instruction set extensions, 
@@ -162,7 +162,7 @@ Bound violation detected,status 0x1 at 0x4012b8
 }}}
 
 ==False positive with un-instrumented code==
-This limitation is acknowledged by Intel developers (http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler#Mixing_instrumented_and_legacy_code):
+This limitation is acknowledged by Intel developers (http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler#Mixing_instrumented_and_legacy_code ):
 
  Note that in rare cases Bounds Table mechanism may miss bounds changes.
  We may model a case when legacy code rewrites a pointer in a memory with pointer of the same value but with different bounds.
