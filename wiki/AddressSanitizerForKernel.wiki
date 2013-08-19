@@ -52,4 +52,4 @@ Shadow = ((Mem - PAGE_OFFSET) >> 3) + PAGE_OFFSET + SHADOW_OFFSET;
 
 = Trophies =
 
- * http://git.kernel.org/cgit/linux/kernel/git/davem/net.git/commit/?id=aab515d7c32a34300312416c50314e755ea6f765
+ * http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515d7c32a34300312416c50314e755ea6f765
