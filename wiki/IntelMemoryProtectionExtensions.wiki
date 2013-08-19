@@ -12,6 +12,7 @@ including the Memory Protection Extensions (MPX). Here we will discuss the appli
   * http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler -- MPX-enabled GCC wiki
   * http://software.intel.com/en-us/articles/using-intel-mpx-with-the-intel-software-development-emulator -- Using the MPX-enabled GCC and SDE (emulator)
   * http://download-software.intel.com/sites/default/files/319433-015.pdf -- Fresh documentation on Intel ISA which includes MPX
+  * http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static -- Intel Pointer Checker
 
 =Using SDE=
 == Set up ==
@@ -110,7 +111,7 @@ However, as the process runs longer we see another picture:
 }}}
 Here, we see one BNDLDX for every 18 BNDCLs, which is much better. 
 
-For 483.xalancbmk (full test run, built with O2) the statistic is quite different: 
+For 483.xalancbmk (full test run, built with O2) the statistic is quite different (much worse): 
 {{{
    2929693 BNDMK
    5827466 BNDSTX
@@ -161,6 +162,36 @@ Bound violation detected,status 0x1 at 0x4012b8
 
 ==False positive with un-instrumented code==
   * http://software.intel.com/en-us/forums/topic/413960
+
+=Comparison with AddressSanitizer=
+MPX is not yet available in hardware, so this section is speculation based
+on our evaluation of 
+[http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static Intel Pointer Checker]
+(software-only implementation of MPX-like checker) and the MPX-enabled gcc (which can be run under emulator).
+
+==MPX strengths==
+MPX-based tool can find in-struct buffer overflows:
+{{{
+  struct X {int a[10], b[20]; }; ...
+  X x; ...
+  x.a[15];  // Overflows to x.b[5]
+}}}
+
+MPX-based tool can find buffer overflows of any size since it does not rely on redzones:
+{{{
+int a[10]; ... 
+a[1000000] = 0;  // Will be detected by MPX
+}}}
+
+MPX is expected to be very fast if the ratio of BNDCU/BNDLDX is large (i.e. for programs with long loops iterating over arrays).
+
+==MPX weaknesses==
+  * MPX can not find use-after-free bugs
+  * MPX has false positives with atomic pointers
+  * MPX has false positives if some of the code is not instrumented
+  * MPX is (as we expect) very slow for code working with lots of pointers (trees, lists, etc). This is partially confirmed by very small ratio of BNDCU/BNDLDX on 483.xalancbmk (above).
+  * MPX may be hard to deploy on legacy code where pointers to members are used to access other members (e.g. at least 7 SPEC benchmarks have errors).
+
 
 =Random Thoughts=
 BNDLDX/BNDSTX are (I guess) very slow since they access two cache lines.
