@@ -206,3 +206,11 @@ Besides, with byte-to-bit mapping it will be harder to find
 [https://code.google.com/p/address-sanitizer/issues/detail?id=100 unaligned partially OOB accesses].
 
 But byte-to-bit mapping _may_ be simpler to implement in hardware.
+
+==Automatically check loads/stores==
+An alternative to ASANCHK instruction is to perform the checks for all load/store instructions
+if HWASAN is anabled (ASANCFGU).
+The benefit is that no instrumentation will be required and all legacy code will be automatically checked
+if linked with the AddressSanitizer run-time library.
+The downside is that no compiler optimizations (eliminations of ASANCHK) will be possible.
+
