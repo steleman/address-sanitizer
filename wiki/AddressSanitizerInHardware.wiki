@@ -109,8 +109,6 @@ to have shorter instrumentation for 8-byte accesses.
 However values 4, 5, and 6 allow to use less memory for shadow at the cost of increased minimal
 redzone. If the minimal redzone size is 16 bytes (which is the default for SWASAN),
 then ShadowScale=4 might be better for HWASAN.
-Larger ShadowScale will allow simpler detection of 
-[https://code.google.com/p/address-sanitizer/issues/detail?id=100 unaligned partially OOB accesses].
 
 This configuration option is less important and may be harder to implement than the first two.
 
