@@ -79,7 +79,7 @@ on the main path. One or two instructions are added for failure handling
 For smaller memory accesses extra branch instruction and 3-4 arithmetic instructions are added.
 
 We believe that all these computations could be done by a single new machine instruction,
-*ASANCHK*, that takes `Addr` a single parameter and has 7 modifications for  7 different
+*ASANCHK*, that takes `Addr` as a single parameter and has 7 modifications for 7 different
 accesses sizes.
 This may sound too complex for one instruction, but Intel has recently introduced
 two even more complex instructions: [IntelMemoryProtectionExtensions BNDLDX/BNDSTX].
