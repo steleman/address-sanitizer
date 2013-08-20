@@ -100,7 +100,7 @@ Currently, SWASAN has to reserve the shadow memory region at startup at a fixed 
 which causes conflict with other sandbox-like environments. With kOffset in ASANCFGS
 the tool will be able to choose an arbitrary region for the shadow.
 
-==ShadowScale==
+==!ShadowScale==
 Two bits in ASANCFGS could indicate the ShadowScale
 (the number by which the Addr is right-shifted to compute the shadow).
 In SWASAN, ShadowScale is 3 which appears to be the best value performance-wise
@@ -168,4 +168,3 @@ Besides, with byte-to-bit mapping it will be harder to find
 [https://code.google.com/p/address-sanitizer/issues/detail?id=100 unaligned partially OOB accesses].
 
 But byte-to-bit mapping _may_ be simpler to implement in hardware.
-
