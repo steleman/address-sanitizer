@@ -113,7 +113,7 @@ checking at run-time.
 
 We could have two separate 'enabled' bits, one for loads and one for stores,
 so that a user can enable checking loads and stores independently.
-In this case the ASANCHK instruction opcode will need to contain an RW bit:
+In this case the ASANCHK instruction opcode will need to contain a _load-or-store_ bit:
 {{{
 # long load8(long *a) { return *a; }
 0000000000000030 <load8>:
