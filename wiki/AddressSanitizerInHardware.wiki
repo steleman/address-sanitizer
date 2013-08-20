@@ -24,14 +24,14 @@ is a compile-time constant and is one of 1, 2, 4, 8, 16, 32, and 64.
 The code for `CheckAddressAndCrashIfBad(Addr, kSize)` is inlined by the compiler module.
 Currently it looks like this (kSize < 8):
 {{{
-SadowAddr = (Addr >> 3) + kOffset;
+ShadowAddr = (Addr >> 3) + kOffset;
 Shadow = LoadByte(ShadowAddr);
 if (Shadow && Shadow <= (Addr & 7) + kSize - 1)
   ReportBug(Addr);
 }}}
 and even simpler for kSize >= 8:
 {{{
-SadowAddr = (Addr >> 3) + kOffset;
+ShadowAddr = (Addr >> 3) + kOffset;
 Shadow = LoadNBytes(ShadowAddr, kSize / 8);
 if (Shadow)
   ReportBug(Addr);
