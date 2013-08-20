@@ -83,13 +83,13 @@ in the shadow region, it will crash.
 
 ===64-bit===
 {{{
-Shadow = (Mem >> 3) | 0x0000100000000000;
+Shadow = (Mem >> 3) | 0x7fff8000;
 }}}
-|| `[0x0000200000000000, 0x00007fffffffffff]` || HighMem    ||
-|| `[0x0000140000000000, 0x00001fffffffffff]` || HighShadow ||
-|| `[0x0000120000000000, 0x000013ffffffffff]` || ShadowGap ||
-|| `[0x0000100000000000, 0x000011ffffffffff]` || LowShadow  ||
-|| `[0x0000000000000000, 0x00000fffffffffff]` || LowMem     ||
+|| `[0x10007fff8000, 0x7fffffffffff]` || `HighMem`    ||
+|| `[0x02008fff7000, 0x10007fff7fff]` || `HighShadow` ||
+|| `[0x00008fff7000, 0x02008fff6fff]` || `ShadowGap`  ||
+|| `[0x00007fff8000, 0x00008fff6fff]` || `LowShadow`  ||
+|| `[0x000000000000, 0x00007fff7fff]` || `LowMem`     ||
 
 ===32 bit===
 {{{
@@ -148,56 +148,38 @@ void foo() {
 }
 }}}
 
-== Examples of instrumented code ==
-{{{
-void write64(long long *a) {
-  *a = 0;
-}
-void write16(short *a) {
-  *a = 0;
-}
-}}}
+== Examples of instrumented code (x86_64)==
 
 {{{
-0000000000402460 <write64>:
-  402460:	push   %rbp           << stack frame
-  402461:	mov    %rsp,%rbp    
-  402464:	mov    %rdi,%rax
-  402467:	shr    $0x3,%rax      << shift by 3
-  40246b:	mov    $0x100000000000,%rcx
-  402472:
-  402475:	or     %rax,%rcx      << add offset
-  402478:	cmpb   $0x0,(%rcx)    << compare shadow with 0
-  40247b:	jne    402486 <write64+0x26>
-  40247d:	movq   $0x0,(%rdi)    << original store
-  402484:	pop    %rbp           
-  402485:	retq   
-  402486:	callq  405e10 <__asan_report_store8>  << report error
-  40248b:	nopl   0x0(%rax,%rax,1)
-
-0000000000402490 <write16>:
-  402490:	push   %rbp
-  402491:	mov    %rsp,%rbp
-  402494:	mov    %rdi,%rax
-  402497:	shr    $0x3,%rax
-  40249b:	mov    $0x100000000000,%rcx
-  4024a2:
-  4024a5:	or     %rax,%rcx
-  4024a8:	mov    (%rcx),%al
-  4024aa:	test   %al,%al
-  4024ac:	je     4024b9 <write16+0x29>
-  4024ae:	mov    %edi,%ecx
-  4024b0:	and    $0x7,%ecx
-  4024b3:	inc    %ecx
-  4024b5:	cmp    %al,%cl
-  4024b7:	jge    4024c0 <write16+0x30>
-  4024b9:	movw   $0x0,(%rdi)
-  4024be:	pop    %rbp
-  4024bf:	retq   
-  4024c0:	callq  405e70 <__asan_report_store2>
-  4024c5:	nopw   %cs:0x0(%rax,%rax,1)
+# long load8(long *a) { return *a; }
+0000000000000030 <load8>:
+  30:	48 89 f8             	mov    %rdi,%rax
+  33:	48 c1 e8 03          	shr    $0x3,%rax
+  37:	80 b8 00 80 ff 7f 00 	cmpb   $0x0,0x7fff8000(%rax)
+  3e:	75 04                	jne    44 <load8+0x14>
+  40:	48 8b 07             	mov    (%rdi),%rax   <<<<<< original load
+  43:	c3                   	retq   
+  44:	52                   	push   %rdx
+  45:	e8 00 00 00 00       	callq  __asan_report_load8
 }}}
-
+{{{
+# int  load4(int *a)  { return *a; }
+0000000000000000 <load4>:
+   0:	48 89 f8             	mov    %rdi,%rax
+   3:	48 89 fa             	mov    %rdi,%rdx
+   6:	48 c1 e8 03          	shr    $0x3,%rax
+   a:	83 e2 07             	and    $0x7,%edx
+   d:	0f b6 80 00 80 ff 7f 	movzbl 0x7fff8000(%rax),%eax
+  14:	83 c2 03             	add    $0x3,%edx
+  17:	38 c2                	cmp    %al,%dl
+  19:	7d 03                	jge    1e <load4+0x1e>
+  1b:	8b 07                	mov    (%rdi),%eax    <<<<<< original load
+  1d:	c3                   	retq   
+  1e:	84 c0                	test   %al,%al
+  20:	74 f9                	je     1b <load4+0x1b>
+  22:	50                   	push   %rax
+  23:	e8 00 00 00 00       	callq  __asan_report_load4
+}}}
 
 ==Unaligned accesses==
 The current compact mapping will not catch unaligned partially out-of-bound accesses:
