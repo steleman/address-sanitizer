@@ -214,7 +214,7 @@ Bound violation detected,status 0x1 at 0x4006ce
 
 Another example is when a heap memory address is reused: http://software.intel.com/en-us/forums/topic/413960
 
-=Comparison with AddressSanitizer=
+=Comparison with !AddressSanitizer=
 MPX is not yet available in hardware, so this section is speculation based
 on our evaluation of 
 [http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static Intel Pointer Checker]
