@@ -175,6 +175,11 @@ so that the binaries can run on legacy hardware.
 Using single instruction for bounds checking will simplify manual assembly debugging
 and inspection (in SWASAN, the instrumentation instructions pollute the code too much)
 
+It will become possible to always build shared libraries with instrumentation enabled
+and link them to all binaries (instrumented or not).
+This is a common issue with SWASAN where users want to use a single shared library
+with their instrumented binary and with a pre-built non-instrumented binary of e.g. Python interpreter.
+
 =Possible modifications=
 SWASAN implementation has been tuned for the pure software case.
 However HWASAN could be different because a hardware implementation may allow us
