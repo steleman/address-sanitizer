@@ -84,6 +84,22 @@ accesses sizes.
 This may sound too complex for one instruction, but Intel has recently introduced
 two even more complex instructions: [IntelMemoryProtectionExtensions BNDLDX/BNDSTX].
 
+The instrumented code would look like this:
+{{{
+# long load8(long *a) { return *a; }
+0000000000000030 <load8>:
+asanchk.8 (%rdi)
+mov       (%rdi),%rax   <<<<<< original load
+retq
+}}}
+{{{
+# int  load4(int *a)  { return *a; }
+0000000000000000 <load4>:
+asanchk.4 (%rdi)
+mov       (%rdi),%eax    <<<<<< original load
+retq
+}}}
+
 =Configuration=
 Just like Intel's MPX has configuration registers BNDCFGU/BNDCFGS
 (one for user-space, one for kernel),
@@ -94,6 +110,25 @@ One bit in ASANCFGS could indicate whether HWASAN is enabled.
 If this bit is not set, ASANCHK is treated as a NOP.
 This would be a great advantage over SWASAN since SWASAN has no way to enable/disable
 checking at run-time.
+
+We could have two separate 'enabled' bits, one for loads and one for stores,
+so that a user can enable checking loads and stores independently.
+In this case the ASANCHK instruction opcode will need to contain an RW bit:
+{{{
+# long load8(long *a) { return *a; }
+0000000000000030 <load8>:
+asanchk.l.8 (%rdi)
+mov         (%rdi),%rax   <<<<<< original load
+retq
+}}}
+{{{
+# void store8(long *a) { *a = 0x1234; }
+0000000000000030 <store8>:
+asanchk.s.8 (%rdi)
+movq        $0x1234,(%rdi)
+retq
+}}}
+
 ==kOffset==
 48 bits in ASANCHK could store kOffset. Yet another advantage over SWASAN providing greater flexibility.
 Currently, SWASAN has to reserve the shadow memory region at startup at a fixed address,
