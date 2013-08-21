@@ -33,14 +33,13 @@ Now you need to compile and install the mpx-enabled gcc
 (don't take the binaries from Intel, they may not work):
 {{{
 DIR=`pwd`
-wget http://software.intel.com/sites/default/files/article/144915/gcc-avx512-mpx-sha-src.tar.bz2
-tar xf gcc-avx512-mpx-sha-src.tar.bz2
-mkdir gcc-build
-cd gcc-build
-../gcc/configure --prefix=$DIR/gcc-inst --enable-languages=c,c++ --enable-mpx \
+svn co svn://gcc.gnu.org/svn/gcc/branches/mpx # last tested r201897
+mkdir mpx-build
+cd mpx-build
+../gcc/configure --prefix=$DIR/mpx-inst --enable-languages=c,c++ --enable-mpx \
   --with-as=$MPX_BINUTILS/bin/as --with-ld=$MPX_BINUTILS/bin/ld
 make -j && make install
-export MPX_GCC=$DIR/gcc-inst
+export MPX_GCC=$DIR/mpx-inst
 }}}
 
 ==Run==
@@ -54,7 +53,7 @@ int main(int argc, char **argv) {
   printf("finishing\n");
   return x;
 }
-% $MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB \
+% $MPX_GCC/bin/gcc -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB \
   global_buffer_overflow.c
 # Use CHKP_RT_MODE=count to continue running after bug reports
 % CHKP_RT_MODE=count $SDE_KIT/sde -mpx-mode -- ./a.out
@@ -67,7 +66,7 @@ finishing
 I was able to build 401.bzip2 benchmark using this command line: 
 
 {{{
-$MPX_GCC/bin/gcc -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64\ 
+$MPX_GCC/bin/gcc -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64\ 
  -Wl,-rpath,$MPX_RUNTIME_LIB *.c -w -DSPEC_CPU -DNDEBUG -DSPEC_CPU_LP64  \
  -fno-mpx-use-fast-string-functions -fno-mpx-use-nochk-string-functions  -O1
 }}}
@@ -153,7 +152,7 @@ int main() {
   t2.join();
   t3.join();
 }
-% $MPX_GCC/bin/g++ -std=c++0x -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin \
+% $MPX_GCC/bin/g++ -std=c++0x -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin \
  -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB cxx11_ptr_check.cc 
 % $SDE_KIT/sde   -mpx-mode -- ./a.out
 A=0x606d28 B=0x606d2c
@@ -203,9 +202,9 @@ int Bar(int idx) {
   p = a;
   return Get(idx);
 }
-% $MPX_GCC/bin/g++ -O  -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -c mpxfp[12].c
+% $MPX_GCC/bin/g++ -O  -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -c mpxfp[12].c
 % $MPX_GCC/bin/g++ -O -c mpxfp3.c  # No instrumentation
-% $MPX_GCC/bin/g++ -fmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB mpxfp[123].o
+% $MPX_GCC/bin/g++ -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB mpxfp[123].o
 % $SDE_KIT/sde   -mpx-mode -- ./a.out
 Foo: a=0x7ffff074d8f0 b=0x7ffff074d920
 Bar: a=0x7ffff074d8f0 b=0x7ffff074d940
