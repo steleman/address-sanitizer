@@ -1,0 +1,35 @@
+#summary Comparison of LeakSanitizer and Heap Checker
+
+= Introduction =
+
+LeakSanitizer was designed to replace the gperftools [http://google-perftools.googlecode.com/svn/trunk/doc/heap_checker.html Heap Leak Checker] and to bring leak detection to ASan users. This page documents LSan's advantages over its predecessor.
+
+= Features and output =
+
+LeakSanitizer uses a very similar algorithm to the one used by Heap Checker. We do some things differently though, in particular handling of thread-local data. Heap Checker has an issue which causes it to miss some leaks in the presence of threads (see gperftools [https://code.google.com/p/gperftools/issues/detail?id=537 issue 537]). LSan reports those leaks correctly.
+
+LeakSanitizer reports more information about leaks. The stack traces look better (the symbolizer that we use reports source file name, line number, and the function’s type signature where Heap Checker reports only the function’s name). LSan also differentiates between direct and indirect leaks in its output. This gives useful information about which leaks should be prioritized, because fixing the direct leaks is likely to fix the indirect ones as well.
+
+LeakSanitizer also has built-in support for suppressions. This proves useful in Chrome where we had to use a wrapper script around Heap Checker to suppress reports of known leaks. In addition, we support Heap Checker-style in-code leak annotations.
+
+= Performance =
+
+Both LeakSanitizer and Heap Checker are built on top of thread caching allocators. However, Heap Checker negates the benefits of tcmalloc by installing a global lock on malloc/free. LSan keeps its allocator lock-free, which makes a difference in massively multithreaded malloc-intensive applications.
+
+A [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/lsan/lit_tests/TestCases/high_allocator_contention.cc?view=markup&pathrev=189012 crude synthetic benchmark] which executes 10 million malloc/free pairs in parallel produced the following numbers:
+
+||                       || 1 thread  || 5 threads || 50 threads || 500 threads ||
+|| Heap Checker (no ASan)          || 1.7s      || 16.3s     || 14.9s || 14.7s ||
+|| LSan on top of ASan        || 2.3s      || 1.1s      || 1.6s  || 1.9s  ||
+|| LSan without ASan     || 0.7s      || 0.2s      || 0.1s  || 0.2s  ||
+
+The slowdown introduced by ASan led to a disadvantage in the single-threaded run, but in multi-threaded Heap Checker-instrumented runs most of the time was spent waiting on a spinlock. LSan consistently outperformed Heap Checker when used without ASan instrumentation.
+
+We used Chrome's unit_tests target to benchmark real-world performance. Besides the total running time, we also measured the running time of user code (i.e. everything up to the leak checking phase), in order to get a better idea of the slowdown introduced.
+
+||                       || user code || total  || 
+|| Heap Checker (no ASan)          || 12m7s     || 12m52s ||
+|| LSan on top of ASan        || 10m37s    || 13m27s ||
+|| LSan without ASan     || 9m4s      || 10m56s ||
+
+There is a [https://code.google.com/p/address-sanitizer/issues/detail?id=213 known issue] in LSan which causes the leak checking phase to take much longer than it should. We're planning to fix it soon, which should bring the total running time of LSan on top of ASan to below that of Heap Checker.
