@@ -56,7 +56,7 @@ SHADOW_OFFSET = 0x0000000036600000
 
 == Instrumentation ==
 
-To instrument the kernel gcc-tsan instrumentation is used.
+To instrument the kernel gcc-tsan instrumentation is used, but it requires a slight modification.
 
 Checkout gcc:
 {{{
