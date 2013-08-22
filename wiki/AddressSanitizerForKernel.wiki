@@ -41,7 +41,7 @@ Pre-alpha repository: https://github.com/xairy/linux
 == Algorithm ==
 
 The description of the ASan algorithm for user-space applications can be found [https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm here].
-In kernel-space we are tracking only the part of the virtual address space, that is directly mapped to the physical memory (0xffff880000000000 - 0xffffc7ffffffffff).
+In kernel-space we are tracking only the part of the virtual address space, which is directly mapped to the physical memory (0xffff880000000000 - 0xffffc7ffffffffff).
 
 == Mapping ==
 
@@ -49,6 +49,67 @@ In kernel-space we are tracking only the part of the virtual address space, that
 ShadowSize = (max_pfn << PAGE_OFFSET) >> 3;
 Shadow = ((Mem - PAGE_OFFSET) >> 3) + PAGE_OFFSET + SHADOW_OFFSET;
 }}}
+
+== Instrumentation ==
+
+To instrument the kernel gcc-tsan instrumentation is used.
+
+Checkout gcc:
+{{{
+svn checkout -r 200953 svn://gcc.gnu.org/svn/gcc/trunk $GCC_KASAN
+}}}
+
+Apply the following patch:
+{{{
+Index: gcc/tsan.c
+===================================================================
+--- gcc/tsan.c	(revision 200953)
++++ gcc/tsan.c	(working copy)
+@@ -724,11 +724,11 @@
+   tree ctor_statements = NULL_TREE;
+ 
+   initialize_sanitizer_builtins ();
+-  tree init_decl = builtin_decl_implicit (BUILT_IN_TSAN_INIT);
+-  append_to_statement_list (build_call_expr (init_decl, 0),
+-			    &ctor_statements);
+-  cgraph_build_static_cdtor ('I', ctor_statements,
+-			     MAX_RESERVED_INIT_PRIORITY - 1);
++//  tree init_decl = builtin_decl_implicit (BUILT_IN_TSAN_INIT);
++//  append_to_statement_list (build_call_expr (init_decl, 0),
++//			    &ctor_statements);
++//  cgraph_build_static_cdtor ('I', ctor_statements,
++//			     MAX_RESERVED_INIT_PRIORITY - 1);
+ }
+ 
+ /* The pass descriptor.  */
+}}}
+to the gcc:
+{{{
+cd $GCC_KASAN
+patch -p0 -i patch_name
+}}}
+
+Install gcc prerequisites:
+{{{
+sudo apt-get install flex bison libc6-dev libc6-dev-i386 libgmp3-dev libmpfr-dev libmpc-dev
+}}}
+
+Build gcc:
+{{{
+cd $GCC_KASAN
+mkdir build
+mkdir install
+cd build
+../configure --enable-languages=c,c++ --disable-bootstrap --enable-checking=no --with-gnu-as --with-gnu-ld --with-ld=/usr/bin/ld.bfd --prefix=$GCC_KASAN/install
+make
+make install
+}}}
+
+Set gcc path in the wrapper script linux/gcc.py:
+{{{
+gcc = '$GCC_KASAN/install/bin/gcc'
+}}}
+
 
 = Trophies =
 
