@@ -46,8 +46,12 @@ In kernel-space we are tracking only the part of the virtual address space, whic
 == Mapping ==
 
 {{{
-ShadowSize = (max_pfn << PAGE_OFFSET) >> 3;
 Shadow = ((Mem - PAGE_OFFSET) >> 3) + PAGE_OFFSET + SHADOW_OFFSET;
+}}}
+where:
+{{{
+PAGE_OFFSET   = 0xffff880000000000
+SHADOW_OFFSET = 0x0000000036600000
 }}}
 
 == Instrumentation ==
