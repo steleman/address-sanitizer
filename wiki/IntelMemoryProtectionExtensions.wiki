@@ -9,10 +9,11 @@ including the Memory Protection Extensions (MPX). Here we will discuss the appli
 
 =Links=
 
-  * http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler -- MPX-enabled GCC wiki
-  * http://software.intel.com/en-us/articles/using-intel-mpx-with-the-intel-software-development-emulator -- Using the MPX-enabled GCC and SDE (emulator)
-  * http://download-software.intel.com/sites/default/files/319433-015.pdf -- Fresh documentation on Intel ISA which includes MPX
-  * http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static -- Intel Pointer Checker
+  * [http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compiler MPX-enabled GCC wiki]
+  * [http://software.intel.com/en-us/articles/using-intel-mpx-with-the-intel-software-development-emulator Using the MPX-enabled GCC and SDE (emulator)]
+  * [http://download-software.intel.com/sites/default/files/319433-015.pdf Fresh documentation on Intel ISA which includes MPX]
+  * [http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static Intel Pointer Checker]
+  * Some external feedback: [https://groups.google.com/d/msg/comp.arch/iKAACmTrTQs/bzqG5Dp-FPEJ 1], [http://www.cs.rutgers.edu/news/articles/2013/07/24/intel-memory-protection-extensions 2]
 
 =Using SDE=
 == Set up ==
@@ -242,6 +243,9 @@ MPX is expected to be very fast if the ratio of BNDCU/BNDLDX is large (i.e. for 
   * MPX is (as we expect) very slow for code working with lots of pointers (trees, lists, etc). This is partially confirmed by very small ratio of BNDCU/BNDLDX on 483.xalancbmk (above).
   * MPX may be hard to deploy on legacy code where pointers to members are used to access other members (e.g. at least 7 SPEC benchmarks have errors).
 
+=Biased conclusion=
+A *very biased* conclusion: Intel MPX might be useful for in-struct buffer overflow detection, and for general buffer overflow detection in programs with lots of arrays and few pointers.
+However AddressSanitizer (and, if implemented, AddressSanitizerInHardware) is more useful: faster, finds more bugs, easier to deploy.
 
 =Random Thoughts=
 BNDLDX/BNDSTX are (I guess) very slow since they access two cache lines.
