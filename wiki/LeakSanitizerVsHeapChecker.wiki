@@ -10,7 +10,14 @@ LeakSanitizer uses a very similar algorithm to the one used by Heap Checker. We 
 
 LeakSanitizer reports more information about leaks. The stack traces look better (the symbolizer that we use reports source file name, line number, and the function’s type signature where Heap Checker reports only the function’s name). LSan also differentiates between direct and indirect leaks in its output. This gives useful information about which leaks should be prioritized, because fixing the direct leaks is likely to fix the indirect ones as well.
 
-LeakSanitizer also has built-in support for suppressions. This proves useful in Chrome where we had to use a wrapper script around Heap Checker to suppress reports of known leaks. In addition, we support Heap Checker-style in-code leak annotations.
+LeakSanitizer also has built-in support for suppressions. This proves useful in Chrome where we had to use a wrapper script around Heap Checker to suppress reports of known leaks. In addition, we support Heap-Checker-style in-code leak annotations.
+
+Some of Heap Checker's less frequently used features are currently not supported by LeakSanitizer. In particular, we don't support:
+  * local leak checking,
+  * multiple leak checks per process,
+  * 'draconian' mode,
+  * the REGISTER_HEAPCHECK_CLEANUP macro,
+  * dumping the call graph to a heap profile file.
 
 = Performance =
 
