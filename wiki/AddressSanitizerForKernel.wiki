@@ -114,6 +114,8 @@ Set gcc path in the wrapper script linux/gcc.py:
 gcc = '$GCC_KASAN/install/bin/gcc'
 }}}
 
+The kernel Makefile is changed so when you start building the kernel it will automatically use the wrapper script.
+
 
 = Trophies =
 
