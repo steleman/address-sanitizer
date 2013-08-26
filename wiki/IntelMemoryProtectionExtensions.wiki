@@ -238,7 +238,7 @@ Here the compiler creates 2 loops to destruct `x` and `y`.
 The second loop (destruction of `x`) uses the pointer that starts from the beginning of `y`, 
 i.e. which is out of bounds right away.
 
-This class of false positives is avidable with careful analysis of compiler optimizations.
+This class of false positives is avoidable with careful analysis of compiler optimizations.
 
 =Comparison with !AddressSanitizer=
 MPX is not yet available in hardware, so this section is speculation based
