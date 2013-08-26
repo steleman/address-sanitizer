@@ -240,12 +240,25 @@ i.e. which is out of bounds right away.
 
 This class of false positives is avoidable with careful analysis of compiler optimizations.
 
+==Variable size fields==
+Variable size fields typically cause false positives with MPX, which is quite expected.
+The compiler has a special attribute to mark variable size fields as such: `__attribute__((bnd_variable_size))`.
+We had to apply this attribute
+in 8 places in [http://dev.chromium.org Chromium] sources (7 in  the ICU code) to get Chromium's `base_unittests` running.
+Example (third_party/icu/source/common/ucmndata.h)
+{{{
+  typedef struct {
+       uint32_t count;
+       UDataOffsetTOCEntry entry[2] __attribute__((bnd_variable_size));    /* Actual size of array is from count. */
+  } UDataOffsetTOC;
+}}}
+
+
 =Comparison with !AddressSanitizer=
 MPX is not yet available in hardware, so this section is speculation based
 on our evaluation of 
 [http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static Intel Pointer Checker]
 (software-only implementation of MPX-like checker) and the MPX-enabled gcc (which can be run under emulator).
-
 ==MPX strengths==
 MPX-based tool can find in-struct buffer overflows:
 {{{
