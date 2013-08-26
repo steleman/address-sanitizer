@@ -54,8 +54,8 @@ int main(int argc, char **argv) {
   printf("finishing\n");
   return x;
 }
-% $MPX_GCC/bin/gcc -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB \
-  global_buffer_overflow.c
+% $MPX_GCC/bin/gcc -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 \
+ -Wl,-rpath,$MPX_RUNTIME_LIB  global_buffer_overflow.c
 # Use CHKP_RT_MODE=count to continue running after bug reports
 % CHKP_RT_MODE=count $SDE_KIT/sde -mpx-mode -- ./a.out
 g: 0x600bb0 0x600bd8
@@ -205,7 +205,8 @@ int Bar(int idx) {
 }
 % $MPX_GCC/bin/g++ -O  -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -c mpxfp[12].c
 % $MPX_GCC/bin/g++ -O -c mpxfp3.c  # No instrumentation
-% $MPX_GCC/bin/g++ -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 -Wl,-rpath,$MPX_RUNTIME_LIB mpxfp[123].o
+% $MPX_GCC/bin/g++ -fcheck-pointers -mmpx -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 \
+ -Wl,-rpath,$MPX_RUNTIME_LIB mpxfp[123].o
 % $SDE_KIT/sde   -mpx-mode -- ./a.out
 Foo: a=0x7ffff074d8f0 b=0x7ffff074d920
 Bar: a=0x7ffff074d8f0 b=0x7ffff074d940
@@ -213,6 +214,31 @@ Bound violation detected,status 0x1 at 0x4006ce
 }}}
 
 Another example is when a heap memory address is reused: http://software.intel.com/en-us/forums/topic/413960
+
+==False positives caused by compiler optimizations ==
+We expect that the compiler optimizations will be causing a major headache to implementers of MPX-based checkers.
+
+One example (mpx-gcc r201896):
+{{{
+% cat two_arrays.cc 
+struct Bar {
+  virtual ~Bar() { }
+};
+struct Foo {
+  Bar x[3], y[3];
+};
+int main() {
+  Foo f;
+}
+% $MPX_GCC/bin/g++ -fcheck-pointers -mmpx -O2  -L$MPX_RUNTIME_LIB -B$MPX_BINUTILS/bin -lmpx-runtime64 \
+  -Wl,-rpath,$MPX_RUNTIME_LIB two_arrays.cc && $SDE_KIT/sde -mpx-mode -mpx_stats -- ./a.out
+   Bound violation detected,status 0x1 at 0x4007ed
+}}}
+Here the compiler creates 2 loops to destruct `x` and `y`. 
+The second loop (destruction of `x`) uses the pointer that starts from the beginning of `y`, 
+i.e. which is out of bounds right away.
+
+This class of false positives is avidable with careful analysis of compiler optimizations.
 
 =Comparison with !AddressSanitizer=
 MPX is not yet available in hardware, so this section is speculation based
