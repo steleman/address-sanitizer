@@ -275,7 +275,8 @@ MPX is expected to be very fast if the ratio of BNDCU/BNDLDX is large (i.e. for 
   * MPX can not find use-after-free bugs
   * MPX has false positives with atomic pointers
   * MPX has false positives if some of the code is not instrumented
-  * MPX is (as we expect) very slow for code working with lots of pointers (trees, lists, etc). This is partially confirmed by very small ratio of BNDCU/BNDLDX on 483.xalancbmk (above).
+  * MPX is (as we expect) very slow for code working with lots of pointers (trees, lists, graphs, etc). This is partially confirmed by very small ratio of BNDCU/BNDLDX on 483.xalancbmk (above).
+  * MPX has up to 4x overhead in RAM if the program has lots of pointers (trees, lists, graphs, etc).
   * MPX may be hard to deploy on legacy code where pointers to members are used to access other members (e.g. at least 7 SPEC benchmarks have errors).
 
 =Biased conclusion=
