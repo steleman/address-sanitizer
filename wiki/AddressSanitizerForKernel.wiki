@@ -119,4 +119,11 @@ The kernel Makefile is changed so when you start building the kernel it will aut
 
 = Trophies =
 
- * http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515d7c32a34300312416c50314e755ea6f765
+ * Out-of-bounds read in net/ipv4 (fixed):
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515d7c32a34300312416c50314e755ea6f765
+ * Use-after-free in drivers/net/ethernet/intel/e1000 (not confirmed):
+http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
+ * Use-after-free in kernel/kmod (not confirmed):
+https://www.lkml.org/lkml/2013/8/21/431
+ * Out-of-bounds read in fs/dcache:
+http://lxr.free-electrons.com/source/fs/dcache.c#L156
