@@ -36,3 +36,273 @@
 [ 1055.610001]   Heap redzone:          [1;31mfa[0m
 [ 1055.610871]   Freed heap region:     [1;35mfd[0m
 }}}
+
+{{{
+[  282.843558] [1;31mERROR: AddressSanitizer: heap-use-after-free on address ffff880012601d2c[0m
+[  282.844766] [1;34mAccessed by thread T542:[0m
+[  282.845814]   #0 ffffffff810dd250 (asan_report_error+0xb0/0x250)
+[  282.846708]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[  282.847570]   #2 ffffffff810dd453 (__tsan_read2+0x13/0x20)
+[  282.848330]   #3 ffffffff813f9de0 (ext4_mb_release_context+0x70/0xa40)
+[  282.848938]   #4 ffffffff813ffb38 (ext4_mb_new_blocks+0x888/0x9b0)
+[  282.849801]   #5 ffffffff813f0844 (ext4_ext_map_blocks+0x1404/0x1ba0)
+[  282.850433]   #6 ffffffff813a7dc5 (ext4_map_blocks+0x485/0x800)
+[  282.851063]   #7 ffffffff813ad163 (ext4_writepages+0x8f3/0x13d0)
+[  282.851729]   #8 ffffffff81226854 (do_writepages+0x54/0xa0)
+[  282.852304]   #9 ffffffff812d8833 (__writeback_single_inode+0x73/0x390)
+[  282.853201]   #10 ffffffff812da044 (writeback_sb_inodes+0x2a4/0x700)
+[  282.854110]   #11 ffffffff812da764 (wb_writeback+0x194/0x450)
+[  282.854684]   #12 ffffffff812dd7c1 (bdi_writeback_workfn+0x1d1/0x620)
+[  282.855409]   #13 ffffffff811113a0 (process_one_work+0x2d0/0x750)
+[  282.856266]   #14 ffffffff81111a83 (worker_thread+0x263/0x640)
+[  282.857078]   #15 ffffffff8111bdf2 (kthread+0x132/0x140)
+[  282.857786]   #16 ffffffff8192555c (ret_from_fork+0x7c/0xb0)
+[  282.858557] [1;35mAllocated by thread T542:[0m
+[  282.859209]   #0 ffffffff810dc784 (asan_slab_alloc+0x44/0xa0)
+[  282.859964]   #1 ffffffff81281d5a (kmem_cache_alloc+0x9a/0x4c0)
+[  282.860779]   #2 ffffffff8190ba4d (ext4_mb_new_inode_pa+0xd8/0x752)
+[  282.861629]   #3 ffffffff813ffbbb (ext4_mb_new_blocks+0x90b/0x9b0)
+[  282.862539]   #4 ffffffff813f0844 (ext4_ext_map_blocks+0x1404/0x1ba0)
+[  282.863423]   #5 ffffffff813a7dc5 (ext4_map_blocks+0x485/0x800)
+[  282.864262]   #6 ffffffff813ad163 (ext4_writepages+0x8f3/0x13d0)
+[  282.865163]   #7 ffffffff81226854 (do_writepages+0x54/0xa0)
+[  282.865920]   #8 ffffffff812d8833 (__writeback_single_inode+0x73/0x390)
+[  282.866824]   #9 ffffffff812da044 (writeback_sb_inodes+0x2a4/0x700)
+[  282.867682]   #10 ffffffff812da764 (wb_writeback+0x194/0x450)
+[  282.868475]   #11 ffffffff812dd7c1 (bdi_writeback_workfn+0x1d1/0x620)
+[  282.869342]   #12 ffffffff811113a0 (process_one_work+0x2d0/0x750)
+[  282.870181]   #13 ffffffff81111a83 (worker_thread+0x263/0x640)
+[  282.870833]   #14 ffffffff8111bdf2 (kthread+0x132/0x140)
+[  282.871574]   #15 ffffffff8192555c (ret_from_fork+0x7c/0xb0)
+[  282.872330] [1;35mFreed by thread T0:[0m
+[  282.872885]   #0 ffffffff810dc857 (asan_slab_free+0x77/0xb0)
+[  282.873689]   #1 ffffffff8127fae5 (kmem_cache_free+0x55/0x2e0)
+[  282.874540]   #2 ffffffff813f5ae2 (ext4_mb_pa_callback+0x32/0x40)
+[  282.875460]   #3 ffffffff811bcb62 (rcu_process_callbacks+0x292/0x880)
+[  282.876352]   #4 ffffffff810ee9c2 (__do_softirq+0x182/0x3a0)
+[  282.877139]   #5 ffffffff810eee45 (irq_exit+0x115/0x120)
+[  282.877831]   #6 ffffffff8192741a (smp_apic_timer_interrupt+0x6a/0x80)
+[  282.878812]   #7 ffffffff819261ca (apic_timer_interrupt+0x6a/0x70)
+[  282.879431]   #8 ffffffff8108b2c2 (arch_cpu_idle+0x42/0x50)
+[  282.880139]   #9 ffffffff8115e0ba (cpu_startup_entry+0xfa/0x330)
+[  282.880831]   #10 ffffffff810c12ea (start_secondary+0x27a/0x2f0)
+[  282.881697] Shadow bytes around the buggy address:
+[  282.882423]   ffff880038ac0350: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.885379]   ffff880038ac0360: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m
+[  282.888340]   ffff880038ac0370: [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.891294]   ffff880038ac0380: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.894249]   ffff880038ac0390: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m
+[  282.897198] =>ffff880038ac03a0: [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m[[1;35mfd[0m][1;35mfd[0m [1;35mfd[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.900558]   ffff880038ac03b0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.903216]   ffff880038ac03c0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m
+[  282.906150]   ffff880038ac03d0: [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.909099]   ffff880038ac03e0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.912077]   ffff880038ac03f0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  282.915039] Shadow byte legend (one shadow byte represents 8 application bytes):
+[  282.915982]   Addressable:           [1;37m00[0m
+[  282.916628]   Partially addressable: [1;37m01 02 03 04 05 06 07 [0m
+[  282.917489]   Heap redzone:          [1;31mfa[0m
+[  282.918140]   Freed heap region:     [1;35mfd[0m
+}}}
+
+{{{
+[  304.429006] [1;31mERROR: AddressSanitizer: heap-use-after-free on address ffff880012601d2c[0m
+[  304.430161] [1;34mAccessed by thread T542:[0m
+[  304.430798]   #0 ffffffff810dd250 (asan_report_error+0xb0/0x250)
+[  304.431613]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[  304.432418]   #2 ffffffff810dd453 (__tsan_read2+0x13/0x20)
+[  304.433170]   #3 ffffffff813f9de0 (ext4_mb_release_context+0x70/0xa40)
+[  304.434055]   #4 ffffffff813ffb38 (ext4_mb_new_blocks+0x888/0x9b0)
+[  304.434873]   #5 ffffffff813f0844 (ext4_ext_map_blocks+0x1404/0x1ba0)
+[  304.435748]   #6 ffffffff813a7dc5 (ext4_map_blocks+0x485/0x800)
+[  304.436557]   #7 ffffffff813ad163 (ext4_writepages+0x8f3/0x13d0)
+[  304.437377]   #8 ffffffff81226854 (do_writepages+0x54/0xa0)
+[  304.438141]   #9 ffffffff812d8833 (__writeback_single_inode+0x73/0x390)
+[  304.439037]   #10 ffffffff812da044 (writeback_sb_inodes+0x2a4/0x700)
+[  304.439873]   #11 ffffffff812da764 (wb_writeback+0x194/0x450)
+[  304.440659]   #12 ffffffff812dd7c1 (bdi_writeback_workfn+0x1d1/0x620)
+[  304.441533]   #13 ffffffff811113a0 (process_one_work+0x2d0/0x750)
+[  304.442364]   #14 ffffffff81111a83 (worker_thread+0x263/0x640)
+[  304.443157]   #15 ffffffff8111bdf2 (kthread+0x132/0x140)
+[  304.443881]   #16 ffffffff8192555c (ret_from_fork+0x7c/0xb0)
+[  304.444407] [1;35mAllocated by thread T542:[0m
+[  304.445044]   #0 ffffffff810dc784 (asan_slab_alloc+0x44/0xa0)
+[  304.445806]   #1 ffffffff81281d5a (kmem_cache_alloc+0x9a/0x4c0)
+[  304.446600]   #2 ffffffff8190ba4d (ext4_mb_new_inode_pa+0xd8/0x752)
+[  304.447458]   #3 ffffffff813ffbbb (ext4_mb_new_blocks+0x90b/0x9b0)
+[  304.448297]   #4 ffffffff813f0844 (ext4_ext_map_blocks+0x1404/0x1ba0)
+[  304.449163]   #5 ffffffff813a7dc5 (ext4_map_blocks+0x485/0x800)
+[  304.449946]   #6 ffffffff813ad163 (ext4_writepages+0x8f3/0x13d0)
+[  304.450786]   #7 ffffffff81226854 (do_writepages+0x54/0xa0)
+[  304.451555]   #8 ffffffff812d8833 (__writeback_single_inode+0x73/0x390)
+[  304.452459]   #9 ffffffff812da044 (writeback_sb_inodes+0x2a4/0x700)
+[  304.453325]   #10 ffffffff812da764 (wb_writeback+0x194/0x450)
+[  304.454115]   #11 ffffffff812dd7c1 (bdi_writeback_workfn+0x1d1/0x620)
+[  304.454966]   #12 ffffffff811113a0 (process_one_work+0x2d0/0x750)
+[  304.455796]   #13 ffffffff81111a83 (worker_thread+0x263/0x640)
+[  304.456589]   #14 ffffffff8111bdf2 (kthread+0x132/0x140)
+[  304.457323]   #15 ffffffff8192555c (ret_from_fork+0x7c/0xb0)
+[  304.458089] [1;35mFreed by thread T0:[0m
+[  304.458644]   #0 ffffffff810dc857 (asan_slab_free+0x77/0xb0)
+[  304.459424]   #1 ffffffff8127fae5 (kmem_cache_free+0x55/0x2e0)
+[  304.460229]   #2 ffffffff813f5ae2 (ext4_mb_pa_callback+0x32/0x40)
+[  304.461081]   #3 ffffffff811bcb62 (rcu_process_callbacks+0x292/0x880)
+[  304.461933]   #4 ffffffff810ee9c2 (__do_softirq+0x182/0x3a0)
+[  304.462704]   #5 ffffffff810eee45 (irq_exit+0x115/0x120)
+[  304.463433]   #6 ffffffff8192741a (smp_apic_timer_interrupt+0x6a/0x80)
+[  304.464318]   #7 ffffffff819261ca (apic_timer_interrupt+0x6a/0x70)
+[  304.465154]   #8 ffffffff8108b2c2 (arch_cpu_idle+0x42/0x50)
+[  304.465897]   #9 ffffffff8115e0ba (cpu_startup_entry+0xfa/0x330)
+[  304.466715]   #10 ffffffff810c12ea (start_secondary+0x27a/0x2f0)
+[  304.467523] Shadow bytes around the buggy address:
+[  304.468243]   ffff880038ac0350: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.471206]   ffff880038ac0360: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m
+[  304.474197]   ffff880038ac0370: [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.477191]   ffff880038ac0380: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.480184]   ffff880038ac0390: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m
+[  304.483170] =>ffff880038ac03a0: [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m [1;35mfd[0m[[1;35mfd[0m][1;35mfd[0m [1;35mfd[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.486156]   ffff880038ac03b0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.489160]   ffff880038ac03c0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m
+[  304.491997]   ffff880038ac03d0: [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;37m00[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.494977]   ffff880038ac03e0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.497989]   ffff880038ac03f0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[  304.500909] Shadow byte legend (one shadow byte represents 8 application bytes):
+[  304.501890]   Addressable:           [1;37m00[0m
+[  304.502540]   Partially addressable: [1;37m01 02 03 04 05 06 07 [0m
+[  304.503391]   Heap redzone:          [1;31mfa[0m
+[  304.504037]   Freed heap region:     [1;35mfd[0m
+}}}
+
+= on revision 1d4aa8bbf97ab1d725cf84328ef463dce29633b7 =
+
+{{{
+[ 1166.573372] ERROR: AddressSanitizer: heap-use-after-free on address ffff880032afae44
+[ 1166.575026] Accessed by thread T24895:
+[ 1166.575865]   #0 ffffffff810dd483 (asan_report_error+0x163/0x3b0)
+[ 1166.577165]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[ 1166.578443]   #2 ffffffff810dd713 (__tsan_read1+0x13/0x20)
+[ 1166.579629]   #3 ffffffff814d4edf (kobject_put+0x1f/0x80)
+[ 1166.580766]   #4 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.581923]   #5 ffffffff8161c80b (scsi_host_dev_release+0x13b/0x160)
+[ 1166.583272]   #6 ffffffff815f8573 (device_release+0x53/0x100)
+[ 1166.584464]   #7 ffffffff814d50df (kobject_release+0x6f/0xc0)
+[ 1166.585660]   #8 ffffffff814d4efa (kobject_put+0x3a/0x80)
+[ 1166.586836]   #9 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.587955]   #10 ffffffff81629b04 (scsi_target_dev_release+0x34/0x40)
+[ 1166.589395]   #11 ffffffff815f8573 (device_release+0x53/0x100)
+[ 1166.590672]   #12 ffffffff814d50df (kobject_release+0x6f/0xc0)
+[ 1166.591912]   #13 ffffffff814d4efa (kobject_put+0x3a/0x80)
+[ 1166.592668]   #14 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.593153]   #15 ffffffff8162e5ca (scsi_device_dev_release_usercontext+0x35a/0x370)
+[ 1166.593794]   #16 ffffffff81110bd9 (execute_in_process_context+0xc9/0xe0)
+[ 1166.594384]   #17 ffffffff8162e229 (scsi_device_dev_release+0x29/0x40)
+[ 1166.594929]   #18 ffffffff815f8573 (device_release+0x53/0x100)
+[ 1166.595440]   #19 ffffffff814d50df (kobject_release+0x6f/0xc0)
+[ 1166.595930]   #20 ffffffff814d4efa (kobject_put+0x3a/0x80)
+[ 1166.596414]   #21 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.596870]   #22 ffffffff81619472 (scsi_device_put+0x62/0x80)
+[ 1166.597389]   #23 ffffffff81679a4b (sg_remove_sfp_usercontext+0xdb/0x160)
+[ 1166.597955]   #24 ffffffff81111680 (process_one_work+0x2d0/0x750)
+[ 1166.598488]   #25 ffffffff81111d63 (worker_thread+0x263/0x640)
+[ 1166.598977]   #26 ffffffff8111c0d2 (kthread+0x132/0x140)
+[ 1166.599457]   #27 ffffffff819257dc (ret_from_fork+0x7c/0xb0)
+[ 1166.599923] 
+[ 1166.600083] Freed by thread T4068:
+[ 1166.600527]   #0 ffffffff810dc867 (asan_slab_free+0x77/0xb0)
+[ 1166.601571]   #1 ffffffff81280b7a (kfree+0x9a/0x240)
+[ 1166.602637]   #2 ffffffff812d27f0 (setxattr+0x170/0x1b0)
+[ 1166.603381]   #3 ffffffff812d2c50 (SyS_lsetxattr+0xc0/0x100)
+[ 1166.604187]   #4 ffffffff81925882 (system_call_fastpath+0x16/0x1b)
+[ 1166.604995] 
+[ 1166.605232] Allocated by thread T4068:
+[ 1166.605741]   #0 ffffffff810dc78a (asan_slab_alloc+0x4a/0xb0)
+[ 1166.606524]   #1 ffffffff8128251c (__kmalloc+0xbc/0x500)
+[ 1166.607255]   #2 ffffffff812d2724 (setxattr+0xa4/0x1b0)
+[ 1166.607965]   #3 ffffffff812d2c50 (SyS_lsetxattr+0xc0/0x100)
+[ 1166.608741]   #4 ffffffff81925882 (system_call_fastpath+0x16/0x1b)
+[ 1166.609571] 
+[ 1166.609784] Shadow bytes around the buggy address:
+[ 1166.610489]   ffff880032afab80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.611535]   ffff880032afac00: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.612566]   ffff880032afac80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.613592]   ffff880032afad00: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.614628]   ffff880032afad80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.615659] =>ffff880032afae00: fd fd fd fd fd fd fd fd[fd]fd fd fd fd fd fd fd
+[ 1166.616687]   ffff880032afae80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.617717]   ffff880032afaf00: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.619142]   ffff880032afaf80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.620639]   ffff880032afb000: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.622122]   ffff880032afb080: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.623124] Shadow byte legend (one shadow byte represents 8 application bytes):
+[ 1166.624554]   Addressable:           00
+[ 1166.625322]   Partially addressable: 01 02 03 04 05 06 07 
+[ 1166.626401]   Heap redzone:          fa
+[ 1166.627151]   Heap kmalloc redzone:  fb
+[ 1166.627884]   Freed heap region:     fd
+}}}
+
+{{{
+[ 1166.631626] ERROR: AddressSanitizer: heap-use-after-free on address ffff880032afae08
+[ 1166.633092] Accessed by thread T24895:
+[ 1166.633837]   #0 ffffffff810dd483 (asan_report_error+0x163/0x3b0)
+[ 1166.635014]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[ 1166.636149]   #2 ffffffff810dd773 (__tsan_read8+0x13/0x20)
+[ 1166.637218]   #3 ffffffff814d4f10 (kobject_put+0x50/0x80)
+[ 1166.638273]   #4 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.639314]   #5 ffffffff8161c80b (scsi_host_dev_release+0x13b/0x160)
+[ 1166.640555]   #6 ffffffff815f8573 (device_release+0x53/0x100)
+[ 1166.641685]   #7 ffffffff814d50df (kobject_release+0x6f/0xc0)
+[ 1166.642794]   #8 ffffffff814d4efa (kobject_put+0x3a/0x80)
+[ 1166.643840]   #9 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.644883]   #10 ffffffff81629b04 (scsi_target_dev_release+0x34/0x40)
+[ 1166.646143]   #11 ffffffff815f8573 (device_release+0x53/0x100)
+[ 1166.647267]   #12 ffffffff814d50df (kobject_release+0x6f/0xc0)
+[ 1166.648399]   #13 ffffffff814d4efa (kobject_put+0x3a/0x80)
+[ 1166.649458]   #14 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.650512]   #15 ffffffff8162e5ca (scsi_device_dev_release_usercontext+0x35a/0x370)
+[ 1166.651785]   #16 ffffffff81110bd9 (execute_in_process_context+0xc9/0xe0)
+[ 1166.652385]   #17 ffffffff8162e229 (scsi_device_dev_release+0x29/0x40)
+[ 1166.652943]   #18 ffffffff815f8573 (device_release+0x53/0x100)
+[ 1166.653458]   #19 ffffffff814d50df (kobject_release+0x6f/0xc0)
+[ 1166.653949]   #20 ffffffff814d4efa (kobject_put+0x3a/0x80)
+[ 1166.654753]   #21 ffffffff815f8b44 (put_device+0x24/0x30)
+[ 1166.655540]   #22 ffffffff81619472 (scsi_device_put+0x62/0x80)
+[ 1166.656362]   #23 ffffffff81679a4b (sg_remove_sfp_usercontext+0xdb/0x160)
+[ 1166.656945]   #24 ffffffff81111680 (process_one_work+0x2d0/0x750)
+[ 1166.657529]   #25 ffffffff81111d63 (worker_thread+0x263/0x640)
+[ 1166.658042]   #26 ffffffff8111c0d2 (kthread+0x132/0x140)
+[ 1166.658495]   #27 ffffffff819257dc (ret_from_fork+0x7c/0xb0)
+[ 1166.658960] 
+[ 1166.659133] Freed by thread T4068:
+[ 1166.659434]   #0 ffffffff810dc867 (asan_slab_free+0x77/0xb0)
+[ 1166.659912]   #1 ffffffff81280b7a (kfree+0x9a/0x240)
+[ 1166.660360]   #2 ffffffff812d27f0 (setxattr+0x170/0x1b0)
+[ 1166.660809]   #3 ffffffff812d2c50 (SyS_lsetxattr+0xc0/0x100)
+[ 1166.661762]   #4 ffffffff81925882 (system_call_fastpath+0x16/0x1b)
+[ 1166.662975] 
+[ 1166.663296] Allocated by thread T4068:
+[ 1166.664064]   #0 ffffffff810dc78a (asan_slab_alloc+0x4a/0xb0)
+[ 1166.665346]   #1 ffffffff8128251c (__kmalloc+0xbc/0x500)
+[ 1166.666989]   #2 ffffffff812d2724 (setxattr+0xa4/0x1b0)
+[ 1166.668350]   #3 ffffffff812d2c50 (SyS_lsetxattr+0xc0/0x100)
+[ 1166.669480]   #4 ffffffff81925882 (system_call_fastpath+0x16/0x1b)
+[ 1166.670704] 
+[ 1166.671214] Shadow bytes around the buggy address:
+[ 1166.672748]   ffff880032afab80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.675045]   ffff880032afac00: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.677325]   ffff880032afac80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.679598]   ffff880032afad00: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.681871]   ffff880032afad80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.684141] =>ffff880032afae00: fd[fd]fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.686402]   ffff880032afae80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.688671]   ffff880032afaf00: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.690937]   ffff880032afaf80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.693229]   ffff880032afb000: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.695518]   ffff880032afb080: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[ 1166.697732] Shadow byte legend (one shadow byte represents 8 application bytes):
+[ 1166.699966]   Addressable:           00
+[ 1166.701164]   Partially addressable: 01 02 03 04 05 06 07 
+[ 1166.702875]   Heap redzone:          fa
+[ 1166.704097]   Heap kmalloc redzone:  fb
+[ 1166.705277]   Freed heap region:     fd
+}}}
