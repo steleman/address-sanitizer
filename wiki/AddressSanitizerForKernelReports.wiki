@@ -1,0 +1,38 @@
+= on revision 73139c8774fd728a29917c2afd56dc8f97299174 =
+
+{{{`
+[ 1055.545055] [1;31mERROR: AddressSanitizer: heap-buffer-overflow on address ffff880025715926[0m
+[ 1055.547374] [1;34mAccessed by thread T30887:[0m
+[ 1055.548677]   #0 ffffffff810dd250 (asan_report_error+0xb0/0x250)
+[ 1055.549693]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[ 1055.550825]   #2 ffffffff810dd433 (__tsan_read1+0x13/0x20)
+[ 1055.551841]   #3 ffffffff816737f6 (sd_revalidate_disk+0x23d6/0x28d0)
+[ 1055.553014]   #4 ffffffff812f262b (revalidate_disk+0x4b/0xc0)
+[ 1055.554104]   #5 ffffffff8166f6ee (sd_rescan+0x3e/0x50)
+[ 1055.554737]   #6 ffffffff8162a414 (scsi_rescan_device+0x64/0x90)
+[ 1055.555899]   #7 ffffffff8162e563 (store_rescan_field+0x23/0x30)
+[ 1055.556849]   #8 ffffffff815f7bb9 (dev_attr_store+0x49/0x70)
+[ 1055.557993]   #9 ffffffff8134ce95 (sysfs_write_file+0x175/0x220)
+[ 1055.559371]   #10 ffffffff8129ba74 (do_loop_readv_writev+0x74/0xb0)
+[ 1055.560598]   #11 ffffffff8129e237 (do_readv_writev+0x2f7/0x310)
+[ 1055.561741]   #12 ffffffff8129e380 (vfs_writev+0x70/0xc0)
+[ 1055.562981]   #13 ffffffff8129e5a0 (SyS_writev+0x80/0x150)
+[ 1055.564035]   #14 ffffffff81925602 (system_call_fastpath+0x16/0x1b)
+[ 1055.565224] Shadow bytes around the buggy address:
+[ 1055.566119]   ffff88003b0e2ad0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.569436]   ffff88003b0e2ae0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.572675]   ffff88003b0e2af0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.576281]   ffff88003b0e2b00: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.580489]   ffff88003b0e2b10: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.584680] =>ffff88003b0e2b20: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m[[1;31mfa[0m][1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.587991]   ffff88003b0e2b30: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.590883]   ffff88003b0e2b40: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.594602]   ffff88003b0e2b50: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.599655]   ffff88003b0e2b60: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.603259]   ffff88003b0e2b70: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
+[ 1055.607062] Shadow byte legend (one shadow byte represents 8 application bytes):
+[ 1055.607918]   Addressable:           [1;37m00[0m
+[ 1055.608766]   Partially addressable: [1;37m01 02 03 04 05 06 07 [0m
+[ 1055.610001]   Heap redzone:          [1;31mfa[0m
+[ 1055.610871]   Freed heap region:     [1;35mfd[0m
+`}}}
