@@ -306,3 +306,81 @@
 [ 1166.704097]   Heap kmalloc redzone:  fb
 [ 1166.705277]   Freed heap region:     fd
 }}}
+
+{{{
+[  322.237696] ERROR: AddressSanitizer: heap-buffer-overflow on address ffff88000bc00004
+[  322.239199] Accessed by thread T5629:
+[  322.239944]   #0 ffffffff810dd483 (asan_report_error+0x163/0x3b0)
+[  322.241136]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[  322.242290]   #2 ffffffff810dcc8f (asan_memset+0x1f/0x50)
+[  322.243078]   #3 ffffffff812eabed (__block_write_begin+0x5cd/0x630)
+[  322.243904]   #4 ffffffff813af244 (ext4_da_write_begin+0x1c4/0x3c0)
+[  322.244746]   #5 ffffffff81215a37 (generic_file_buffered_write+0x1a7/0x420)
+[  322.245713]   #6 ffffffff812186e7 (__generic_file_aio_write+0x2f7/0x550)
+[  322.246616]   #7 ffffffff812189d7 (generic_file_aio_write+0x97/0x100)
+[  322.247502]   #8 ffffffff8139f061 (ext4_file_write+0x121/0x5e0)
+[  322.248639]   #9 ffffffff8129c181 (do_sync_write+0x111/0x170)
+[  322.249809]   #10 ffffffff8129cd1a (vfs_write+0x12a/0x300)
+[  322.250896]   #11 ffffffff8129de70 (SyS_write+0x80/0xe0)
+[  322.251940]   #12 ffffffff81925882 (system_call_fastpath+0x16/0x1b)
+[  322.253136] 
+[  322.253447] Allocated by thread T0:
+[  322.254088] 
+[  322.254296] Shadow bytes around the buggy address:
+[  322.254987]   ffff88000bbffd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.256076]   ffff88000bbffe00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.257124]   ffff88000bbffe80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.258157]   ffff88000bbfff00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.259206]   ffff88000bbfff80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.260486] =>ffff88000bc00000:[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+[  322.261981]   ffff88000bc00080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  322.263447]   ffff88000bc00100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  322.264921]   ffff88000bc00180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  322.266204]   ffff88000bc00200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  322.267237]   ffff88000bc00280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  322.268457] Shadow byte legend (one shadow byte represents 8 application bytes):
+[  322.269438]   Addressable:           00
+[  322.269977]   Partially addressable: 01 02 03 04 05 06 07 
+[  322.270766]   Heap redzone:          fa
+[  322.271297]   Heap kmalloc redzone:  fb
+[  322.271790]   Freed heap region:     fd
+}}}
+
+{{{
+[  349.845401] ERROR: AddressSanitizer: heap-buffer-overflow on address ffff880003800011
+[  349.846370] Accessed by thread T12840:
+[  349.846904]   #0 ffffffff810dd483 (asan_report_error+0x163/0x3b0)
+[  349.847708]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
+[  349.848508]   #2 ffffffff810dcc8f (asan_memset+0x1f/0x50)
+[  349.849255]   #3 ffffffff812eabed (__block_write_begin+0x5cd/0x630)
+[  349.850104]   #4 ffffffff813af244 (ext4_da_write_begin+0x1c4/0x3c0)
+[  349.850886]   #5 ffffffff81215a37 (generic_file_buffered_write+0x1a7/0x420)
+[  349.851827]   #6 ffffffff812186e7 (__generic_file_aio_write+0x2f7/0x550)
+[  349.852729]   #7 ffffffff812189d7 (generic_file_aio_write+0x97/0x100)
+[  349.853592]   #8 ffffffff8139f061 (ext4_file_write+0x121/0x5e0)
+[  349.854396]   #9 ffffffff8129c181 (do_sync_write+0x111/0x170)
+[  349.855176]   #10 ffffffff8129cd1a (vfs_write+0x12a/0x300)
+[  349.855897]   #11 ffffffff8129de70 (SyS_write+0x80/0xe0)
+[  349.856619]   #12 ffffffff81925882 (system_call_fastpath+0x16/0x1b)
+[  349.857463] 
+[  349.857677] Allocated by thread T0:
+[  349.858158] 
+[  349.858373] Shadow bytes around the buggy address:
+[  349.859073]   ffff8800037ffd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  349.860082]   ffff8800037ffe00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  349.861101]   ffff8800037ffe80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  349.862119]   ffff8800037fff00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  349.863145]   ffff8800037fff80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  349.864140] =>ffff880003800000: fa fa[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa
+[  349.865161]   ffff880003800080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  349.866167]   ffff880003800100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  349.867189]   ffff880003800180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  349.868210]   ffff880003800200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  349.869231]   ffff880003800280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  349.870207] Shadow byte legend (one shadow byte represents 8 application bytes):
+[  349.871184]   Addressable:           00
+[  349.871692]   Partially addressable: 01 02 03 04 05 06 07 
+[  349.872423]   Heap redzone:          fa
+[  349.872935]   Heap kmalloc redzone:  fb
+[  349.873443]   Freed heap region:     fd
+}}}
