@@ -35,8 +35,6 @@ The slowdown introduced by ASan led to a disadvantage in the single-threaded run
 We used Chrome's unit_tests target to benchmark real-world performance. Besides the total running time, we also measured the running time of user code (i.e. everything up to the leak checking phase), in order to get a better idea of the slowdown introduced.
 
 ||                       || user code || total  || 
-|| Heap Checker (no ASan)          || 12m7s     || 12m52s ||
-|| LSan on top of ASan        || 10m37s    || 13m27s ||
-|| LSan without ASan     || 9m4s      || 10m56s ||
-
-There is a [https://code.google.com/p/address-sanitizer/issues/detail?id=213 known issue] in LSan which causes the leak checking phase to take much longer than it should. We're planning to fix it soon, which should bring the total running time of LSan on top of ASan to below that of Heap Checker.
+|| Heap Checker (no ASan)          || 13m24s     || 14m11s ||
+|| LSan on top of ASan        || 10m52s    || 11m00s ||
+|| LSan without ASan     || 9m6s      || 9m13s ||
