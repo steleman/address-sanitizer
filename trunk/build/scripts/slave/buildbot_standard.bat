@@ -55,14 +55,14 @@ cd win_tests || goto :DIE
 cd win_tests
 C:\cyg-sgwin\bin\make PLATRM_F="/cygdrive/c/cygwin/bin/rm -f"Tclean || goto :DIE
 cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi-cl FILECHECK=../llvm-build/bin/Debug/FileCheck CFLAGS="-Xclang -fsanitize=address" EXTRA_OBJ=../compiler-rt/lib/asan/asan_rtl.libe-k || goto :DIE
+C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llvm-build/bi-cl FILECHECK=../llvm-build/bin/Debug/FileCheck CFLAGS="-fsanitize=address" EXTRA_OBJ=../compiler-rt/lib/asan/asan_rtl.libe-k || goto :DIE
 
 echo @@@BUILD_STEP asan DLL thunk test@@@
 cd dll_tests || goto :DIE
 cd win_tests
 C:\cyg-sgwin\bin\make PLATRM_F="/cygdrive/c/cygwin/bin/rm -f"Tclean || goto :DIE
 cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=W../llvm-build/bin/Debug/clang-cl FILECHECK=../../llvm-build/bin/Debug/FileCheck CFLAGS="-Xclang -fsanitize=address" EXTRA_HOST_LIBS=../../compiler-rt/lib/asan/asan_rtl.lib EXTRA_GUEST_LIBS="../../compiler-rt/lib/asan/asan_dll_thunk.lib" -k || goto :DIE
+C:\cyg-sgwin\bin\make PLATFORM=W../llvm-build/bin/Debug/clang-cl FILECHECK=../../llvm-build/bin/Debug/FileCheck CFLAGS="-fsanitize=address" EXTRA_HOST_LIBS=../../compiler-rt/lib/asan/asan_rtl.lib EXTRA_GUEST_LIBS="../../compiler-rt/lib/asan/asan_dll_thunk.lib" -k || goto :DIE
 cd %ROOT%
 
 :: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan _tests@@@
