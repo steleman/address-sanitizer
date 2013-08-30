@@ -38,6 +38,10 @@ CONFIG_ASAN
 
 Pre-alpha repository: https://github.com/xairy/linux
 
+== Reports ==
+
+To simplify reading the reports you can use our [https://code.google.com/p/address-sanitizer/source/browse/trunk/tools/kasan_symbolize.py symbolizer script].
+
 == Algorithm ==
 
 The description of the ASan algorithm for user-space applications can be found [https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm here].
