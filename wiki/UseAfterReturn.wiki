@@ -1,0 +1,15 @@
+#summary Detecting stack-use-after-return bugs
+
+= Introduction =
+
+*Stack-use-after-return* bug appear when a stack object is used after
+the function where this object is defined has exited.
+Example (see also ExampleUseAfterReturn): 
+{{{
+int *ptr;
+void FunctionThatEscapesLocalObject() {
+  int local[100];
+  ptr = &local[0];
+}
+// *ptr is used later
+}}}
