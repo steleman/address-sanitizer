@@ -73,6 +73,17 @@ Index: gcc/tsan.c
 ===================================================================
 --- gcc/tsan.c	(revision 200953)
 +++ gcc/tsan.c	(working copy)
+@@ -702,8 +702,8 @@
+   initialize_sanitizer_builtins ();
+   if (instrument_memory_accesses ())
+     {
+-      instrument_func_entry ();
+-      instrument_func_exit ();
++      //instrument_func_entry ();
++      //instrument_func_exit ();
+     }
+   return 0;
+ }
 @@ -724,11 +724,11 @@
    tree ctor_statements = NULL_TREE;
  
