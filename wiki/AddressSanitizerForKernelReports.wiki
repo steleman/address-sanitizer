@@ -1,43 +1,6 @@
 = on revision 73139c8774fd728a29917c2afd56dc8f97299174 =
 
 {{{
-[ 1055.545055] [1;31mERROR: AddressSanitizer: heap-buffer-overflow on address ffff880025715926[0m
-[ 1055.547374] [1;34mAccessed by thread T30887:[0m
-[ 1055.548677]   #0 ffffffff810dd250 (asan_report_error+0xb0/0x250)
-[ 1055.549693]   #1 ffffffff810dc6c0 (asan_check_region+0x30/0x40)
-[ 1055.550825]   #2 ffffffff810dd433 (__tsan_read1+0x13/0x20)
-[ 1055.551841]   #3 ffffffff816737f6 (sd_revalidate_disk+0x23d6/0x28d0)
-[ 1055.553014]   #4 ffffffff812f262b (revalidate_disk+0x4b/0xc0)
-[ 1055.554104]   #5 ffffffff8166f6ee (sd_rescan+0x3e/0x50)
-[ 1055.554737]   #6 ffffffff8162a414 (scsi_rescan_device+0x64/0x90)
-[ 1055.555899]   #7 ffffffff8162e563 (store_rescan_field+0x23/0x30)
-[ 1055.556849]   #8 ffffffff815f7bb9 (dev_attr_store+0x49/0x70)
-[ 1055.557993]   #9 ffffffff8134ce95 (sysfs_write_file+0x175/0x220)
-[ 1055.559371]   #10 ffffffff8129ba74 (do_loop_readv_writev+0x74/0xb0)
-[ 1055.560598]   #11 ffffffff8129e237 (do_readv_writev+0x2f7/0x310)
-[ 1055.561741]   #12 ffffffff8129e380 (vfs_writev+0x70/0xc0)
-[ 1055.562981]   #13 ffffffff8129e5a0 (SyS_writev+0x80/0x150)
-[ 1055.564035]   #14 ffffffff81925602 (system_call_fastpath+0x16/0x1b)
-[ 1055.565224] Shadow bytes around the buggy address:
-[ 1055.566119]   ffff88003b0e2ad0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.569436]   ffff88003b0e2ae0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.572675]   ffff88003b0e2af0: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.576281]   ffff88003b0e2b00: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.580489]   ffff88003b0e2b10: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.584680] =>ffff88003b0e2b20: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m[[1;31mfa[0m][1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.587991]   ffff88003b0e2b30: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.590883]   ffff88003b0e2b40: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.594602]   ffff88003b0e2b50: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.599655]   ffff88003b0e2b60: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.603259]   ffff88003b0e2b70: [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m [1;31mfa[0m
-[ 1055.607062] Shadow byte legend (one shadow byte represents 8 application bytes):
-[ 1055.607918]   Addressable:           [1;37m00[0m
-[ 1055.608766]   Partially addressable: [1;37m01 02 03 04 05 06 07 [0m
-[ 1055.610001]   Heap redzone:          [1;31mfa[0m
-[ 1055.610871]   Freed heap region:     [1;35mfd[0m
-}}}
-
-{{{
 [  282.843558] [1;31mERROR: AddressSanitizer: heap-use-after-free on address ffff880012601d2c[0m
 [  282.844766] [1;34mAccessed by thread T542:[0m
 [  282.845814]   #0 ffffffff810dd250 (asan_report_error+0xb0/0x250)
@@ -383,4 +346,61 @@
 [  349.872423]   Heap redzone:          fa
 [  349.872935]   Heap kmalloc redzone:  fb
 [  349.873443]   Freed heap region:     fd
+}}}
+
+{{{
+[  166.124485] ERROR: AddressSanitizer: heap-buffer-overflow on address ffff880024ab8600
+[  166.126613] ffff880024ab8600 is located 0 bytes to the right of 512-byte region [ffff880024ab8400, ffff880024ab8600)
+[  166.129583] Accessed by thread T2505:
+[  166.130732]   #0      inlined     describe_heap_address ./arch/x86/mm/asan/report.c:164
+[  166.130732]   #0 ffffffff810dd277 (asan_report_error+0x2f7/0x400) ./arch/x86/mm/asan/report.c:278
+[  166.132475]   #1 ffffffff810dc6a0 (asan_check_region+0x30/0x40) ./arch/x86/mm/asan/asan.c:37
+[  166.134485]   #2 ffffffff810dd3c3 (__tsan_read1+0x13/0x20) ??:0
+[  166.136397]   #3      inlined     sd_read_cache_type ./drivers/scsi/sd.c:2426
+[  166.136397]   #3 ffffffff81675546 (sd_revalidate_disk+0x23d6/0x28d0) ./drivers/scsi/sd.c:2720
+[  166.138531]   #4 ffffffff812f437b (revalidate_disk+0x4b/0xc0) ./fs/block_dev.c:975
+[  166.140449]   #5 ffffffff8167143e (sd_rescan+0x3e/0x50) ./drivers/scsi/sd.c:1473
+[  166.142539]   #6 ffffffff8162c164 (scsi_rescan_device+0x64/0x90) ./drivers/scsi/scsi_scan.c:1566
+[  166.144557]   #7 ffffffff81694e65 (ata_scsi_dev_rescan+0xf5/0x170) ./drivers/ata/libata-scsi.c:3986
+[  166.146680]   #8      inlined     trace_workqueue_execute_end ./kernel/workqueue.c:2186
+[  166.146680]   #8 ffffffff81111640 (process_one_work+0x2d0/0x750) ./kernel/workqueue.c:2191
+[  166.149012]   #9 ffffffff81111d23 (worker_thread+0x263/0x640) ./include/linux/list.h:188
+[  166.151061]   #10 ffffffff8111c092 (kthread+0x132/0x140) kthread.c:0
+[  166.152853]   #11 ffffffff8192841c (ret_from_fork+0x7c/0xb0) ./arch/x86/kernel/entry_64.S:570
+[  166.154790] 
+[  166.155389] Allocated by thread T2505:
+[  166.156801]   #0 ffffffff810dc768 (asan_slab_alloc+0x48/0xb0) ./arch/x86/mm/asan/asan.c:91
+[  166.158850]   #1      inlined     slab_alloc ./mm/slab.c:3475
+[  166.158850]   #1      inlined     __do_kmalloc ./mm/slab.c:3749
+[  166.158850]   #1 ffffffff812832ec (__kmalloc+0xbc/0x500) ./mm/slab.c:3763
+[  166.161364]   #2 ffffffff81673234 (sd_revalidate_disk+0xc4/0x28d0) ./drivers/scsi/sd.c:2698
+[  166.164302]   #3 ffffffff812f437b (revalidate_disk+0x4b/0xc0) ./fs/block_dev.c:975
+[  166.167012]   #4 ffffffff8167143e (sd_rescan+0x3e/0x50) ./drivers/scsi/sd.c:1473
+[  166.169478]   #5 ffffffff8162c164 (scsi_rescan_device+0x64/0x90) ./drivers/scsi/scsi_scan.c:1566
+[  166.172321]   #6 ffffffff81694e65 (ata_scsi_dev_rescan+0xf5/0x170) ./drivers/ata/libata-scsi.c:3986
+[  166.175156]   #7      inlined     trace_workqueue_execute_end ./kernel/workqueue.c:2186
+[  166.175156]   #7 ffffffff81111640 (process_one_work+0x2d0/0x750) ./kernel/workqueue.c:2191
+[  166.177222]   #8 ffffffff81111d23 (worker_thread+0x263/0x640) ./include/linux/list.h:188
+[  166.179193]   #9 ffffffff8111c092 (kthread+0x132/0x140) kthread.c:0
+[  166.180988]   #10 ffffffff8192841c (ret_from_fork+0x7c/0xb0) ./arch/x86/kernel/entry_64.S:570
+[  166.182931] 
+[  166.183537] Shadow bytes around the buggy address:
+[  166.185391]   ffff880024ab8380: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+[  166.187758]   ffff880024ab8400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  166.190227]   ffff880024ab8480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  166.192684]   ffff880024ab8500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  166.195152]   ffff880024ab8580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  166.197649] =>ffff880024ab8600:[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+[  166.199128]   ffff880024ab8680: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+[  166.200962]   ffff880024ab8700: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+[  166.203069]   ffff880024ab8780: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[  166.205202]   ffff880024ab8800: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[  166.207302]   ffff880024ab8880: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+[  166.209237] Shadow byte legend (one shadow byte represents 8 application bytes):
+[  166.211273]   Addressable:           00
+[  166.212358]   Partially addressable: 01 02 03 04 05 06 07 
+[  166.213871]   Heap redzone:          fa
+[  166.214979]   Heap kmalloc redzone:  fb
+[  166.216062]   Freed heap region:     fd
+[  166.217149]   Shadow gap:            fe
 }}}
