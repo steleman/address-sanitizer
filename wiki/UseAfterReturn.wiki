@@ -38,9 +38,9 @@ void foo() {
   char redzone1[32];
   int local;
   char redzone2[32+28];
-  void *fake_stack = __asan_stack_malloc(&local, 96);
-  poison_redzones(fake_stack);
-  escape_addr(&local);
+  char *fake_stack = __asan_stack_malloc(&local, 96);
+  poison_redzones(fake_stack);  // Done by the inlined instrumentation code.
+  escape_addr(fake_stack + 32);
   __asan_stack_free(stack, &local, 96)
 }
 }}}
