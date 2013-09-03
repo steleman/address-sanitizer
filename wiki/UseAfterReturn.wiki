@@ -45,9 +45,34 @@ void foo() {
 }
 }}}
 
-*__asan_stack_malloc(real_stack, frame_size)* does the following:
+*`__asan_stack_malloc(real_stack, frame_size)`* allocates a *fake frame*
+(`frame_size` bytes) from a thread-local heap-like structure (*fake stack*)`.
+The currently allocated fake frames are organized in a LIFO (stack) data structure.
+Every frame remembers the `real_stack` associated with it.
+Based on the value of current `real_stack` all retired stack frames are 
+popped from the LIFO and deallocated.
+Deallocated stack frames are put into a FIFO data structure (quarantine).
+Every fake frame comes unpoisoned and then the redzones are poisoned in the instrumented
+function code.
 
-*__asan_stack_free(fake_stack, real_stack, frame_size)* does the following:
+*`__asan_stack_free(fake_stack, real_stack, frame_size)`* poisons the entire fake frame.
+It does not update fake stack data structures. Generally, we can not rely
+on `__asan_stack_free` being called at the end of the function
+(due to exceptions, longjmp and other "never-return" statements).
 
+=Performance=
+Detecting stack-use-after-return is expensive in both CPU and RAM:
+  * Allocating fake frames introduces two function calls per every function with non-empty frame.
+  * The entire fake frames should be unpoisoned on entry and poisoned on exit, as opposed to poisoning just the redzones in the default mode.
+  * The thread-local quarantine uses lots of RAM (otherwise the bugs will not be caught).
+  * The current implementation of thread-local heap (fake stack) uses a linked list for FIFI and causes a cache miss on every Pop. This can probably be improved.
+
+TODO: get fresh numbers from e.g. SPEC.
+
+=Compatibility=
+The fake stack may be incompatible with some low-level code that 
+uses certain assumptions about the stack memory layout.
+  * Code that takes an address of a local variable and assumes the variable is localed on the real stack.
+  * TODO
 
 TODO
