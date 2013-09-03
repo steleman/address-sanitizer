@@ -2,9 +2,9 @@
 
 = Introduction =
 
-*Stack-use-after-return* bug appear when a stack object is used after
-the function where this object is defined has exited.
-Example (see also ExampleUseAfterReturn): 
+*Stack-use-after-return* bug appears when a stack object is used after
+the function where this object is defined has returned.
+Example (see also ExampleUseAfterReturn):
 {{{
 int *ptr;
 void FunctionThatEscapesLocalObject() {
@@ -13,3 +13,41 @@ void FunctionThatEscapesLocalObject() {
 }
 // *ptr is used later
 }}}
+
+AddressSanitizer currently does not attempt to detect these bugs by default,
+only with an additional flag: -fsanitize=use-after-return (Clang only)
+
+=Algorithm=
+Detection of stack-use-after-return is similar to detection of heap-use-after-free,
+but the *quarantine* should be implemented in a different way.
+
+Once a function has returned, its stack memory is reused by the next call instruction.
+So in order to implemented quarantine for the stack memory we need to promote stack to heap.
+The current implementation does it like this:
+
+Before:
+{{{
+void foo() {
+  int local;
+  escape_addr(&local);
+}
+}}}
+After:
+{{{
+void foo() {
+  char redzone1[32];
+  int local;
+  char redzone2[32+28];
+  void *fake_stack = __asan_stack_malloc(&local, 96);
+  poison_redzones(fake_stack);
+  escape_addr(&local);
+  __asan_stack_free(stack, &local, 96)
+}
+}}}
+
+*__asan_stack_malloc(real_stack, frame_size)* does the following:
+
+*__asan_stack_free(fake_stack, real_stack, frame_size)* does the following:
+
+
+TODO
