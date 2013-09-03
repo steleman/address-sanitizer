@@ -46,7 +46,7 @@ void foo() {
 }}}
 
 *`__asan_stack_malloc(real_stack, frame_size)`* allocates a *fake frame*
-(`frame_size` bytes) from a thread-local heap-like structure (*fake stack*)`.
+(`frame_size` bytes) from a thread-local heap-like structure (*fake stack*).
 The currently allocated fake frames are organized in a LIFO (stack) data structure.
 Every frame remembers the `real_stack` associated with it.
 Based on the value of current `real_stack` all retired stack frames are 
