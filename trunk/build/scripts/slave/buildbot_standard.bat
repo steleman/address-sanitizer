@@ -73,7 +73,7 @@ cd %ROOT%
 
 :: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan _test@@@BUILD_STEP build asan RTL with clang@@@
 cd %ASAN_PATH% || goto :DIE
-../../../../llvm-build/bin/clang-cl /GR- /I.. /I../../include /c *.cc ../interception/*.cc ../sanitizer_common/*.cc || goto :DIEsan _tests@@@
+..\..\..\..\llvm-build\bin\clang-cl /GR- /I.. /I../../include /c *.cc ../interception/*.cc ../sanitizer_common/*.cc || goto :DIEsan _tests@@@
 
 echo "ALL DONE"
 goto ::: TODO(timurrrr) : get the current process's PID?
