@@ -27,8 +27,7 @@ echo @@@BUILD_STEP build asan RTL@@@
 :: Build the RTL manually - useful to detect RTL build errors early.
 set ASAN_PATH=llvm\projects\compiler-rt\lib\asan
 cd %ASAN_PATH% || goto :DIE
-:: This only compiles, not links.
-del *.pdb *.obj *.lib || goto :DIE
+del *.pdb *.o *.obj *.lib || goto :DIE
 
 :: /WX <- treat warnings as errors
 :: /W3 <- warnings level 3
@@ -72,7 +71,9 @@ cd win_tests
 C:\cyg-sgwin\bin\make PLATFORM=W../llvm-build/bin/clang-cl FILECHECK=../../llvm-build/bin/FileCheck CFLAGS="-fsanitize=address" EXTRA_GUEST_LIBS=../../llvm-build/lib/clang/3.4/lib/windows/clang_rt.asan_dll_thunk-i386.lib -k || goto :DIE
 cd %ROOT%
 
-:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan _tests@@@
+:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan _test@@@BUILD_STEP build asan RTL with clang@@@
+cd %ASAN_PATH% || goto :DIE
+../../../../llvm-build/bin/clang-cl /GR- /I.. /I../../include /c *.cc ../interception/*.cc ../sanitizer_common/*.cc || goto :DIEsan _tests@@@
 
 echo "ALL DONE"
 goto ::: TODO(timurrrr) : get the current process's PID?
