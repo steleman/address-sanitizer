@@ -144,3 +144,5 @@ https://www.lkml.org/lkml/2013/8/21/431
 http://lxr.free-electrons.com/source/fs/dcache.c#L156
  * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c, not confirmed):
 https://www.lkml.org/lkml/2013/9/3/286
+ * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c, confirmed):
+http://www.spinics.net/lists/linux-scsi/msg68519.html
