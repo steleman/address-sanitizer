@@ -1,4 +1,4 @@
-#summary Discussion of Intel Memory Protection Extensions (MPX)
+#summary Discussion of Intel Memory Protection Extensions (MPX) and comparison with AddressSanitizer
 
 <wiki:toc max_depth="2" />
 
