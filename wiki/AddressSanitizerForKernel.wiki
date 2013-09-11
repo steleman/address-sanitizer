@@ -40,7 +40,25 @@ Pre-alpha repository: https://github.com/xairy/linux
 
 == Reports ==
 
-To simplify reading the reports you can use our [https://code.google.com/p/address-sanitizer/source/browse/trunk/tools/kasan_symbolize.py symbolizer script].
+To simplify reading the reports you can use our [https://code.google.com/p/address-sanitizer/source/browse/trunk/tools/kasan_symbolize.py symbolizer script]:
+{{{
+$ cat ./report
+...
+[    0.359730]   #0 ffffffff810d1964 (asan_slab_free+0x74/0xe0)
+[    0.360016]   #1 ffffffff81262a3a (kfree+0x9a/0x240)
+...
+}}}
+{{{
+$ cat ./report | ./kasan_symbolize.py ./vmlinux
+...
+  #0 ffffffff810d1964 (asan_slab_free+0x74/0xe0) ./arch/x86/mm/asan/asan.c:134
+  #1      inlined     (kfree+0x9a/0x240) virt_to_head_page ./include/linux/mm.h:420
+  #1      inlined     (kfree+0x9a/0x240) virt_to_slab ./mm/slab.c:462
+  #1      inlined     (kfree+0x9a/0x240) cache_free_alien ./mm/slab.c:1103
+  #1      inlined     (kfree+0x9a/0x240) __cache_free ./mm/slab.c:3606
+  #1 ffffffff81262a3a (kfree+0x9a/0x240) ./mm/slab.c:3830
+...
+}}}
 
 == Algorithm ==
 
