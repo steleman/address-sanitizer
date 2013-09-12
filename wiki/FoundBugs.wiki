@@ -136,6 +136,7 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
 
 =GCC=
   * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52629
+  * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58396
 
 =Tor=
   * https://trac.torproject.org/projects/tor/ticket/8844
