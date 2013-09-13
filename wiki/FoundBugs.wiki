@@ -121,6 +121,9 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
 =Percona Server with XtraDB (http://www.percona.com/software/percona-server)=
   * https://bugs.launchpad.net/percona-server/+bug/1067103
 
+=libpango=
+  * https://bugzilla.gnome.org/show_bug.cgi?id=708026
+
 =LLVM=
   * http://llvm.org/bugs/show_bug.cgi?id=12245
   * http://llvm.org/bugs/show_bug.cgi?id=12267
