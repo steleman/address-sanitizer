@@ -84,7 +84,7 @@ The only way to gather statistics from SDE we found is to dump the entire trace:
 {{{
 time $SDE_KIT/sde -ompx_trace trace.txt -mpx_trace_ins all  -mpx-mode -- ./a.out ...
 }}}
-We are waiting for Intel to release a version of SDE which will provide the statistics with a reasonable speed. 
+We are [http://software.intel.com/en-us/forums/topic/472849 waiting for Intel] to release a version of SDE which will provide the statistics with a reasonable speed. 
 
 W've collected stats on 401.bzip2 startup. At the very beginning the stats looks scary: 
 we execute one BNDLDX for every BNDCL. This should be very slow.
