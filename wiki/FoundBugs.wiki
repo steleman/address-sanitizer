@@ -83,7 +83,7 @@ Some (but not all) bugs found in [http://ffmpeg.org/ ffmpeg]:
 
 ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
 
-=FreeType=
+=!FreeType=
   * http://savannah.nongnu.org/search/?words=AddressSanitizer&type_of_search=bugs&Search=Search&exact=1#options (20+ bugs)
 
 =webrtc=
@@ -122,7 +122,7 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
   * https://bugs.launchpad.net/percona-server/+bug/1067103
 
 =libpango=
-  * https://bugzilla.gnome.org/show_bug.cgi?id=708026
+  * https://bugzilla.gnome.org/show_bug.cgi?id=708026 (initially found by DrASan)
 
 =LLVM=
   * http://llvm.org/bugs/show_bug.cgi?id=12245
