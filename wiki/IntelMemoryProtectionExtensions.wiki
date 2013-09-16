@@ -80,7 +80,7 @@ Every memory access that needs to be checked will be instrumented with BNDCU/BND
 Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of the number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX/BNDMOV.
 
 The SDE allows to collect the number of executed instructions using the [http://software.intel.com/en-us/articles/intel-software-development-emulator `-mix` switch].
-We've collected stats on SPEC 2006, see the [https://docs.google.com/spreadsheet/ccc?key=0Asb2KOp6b-AkdFAtWW5IYl9rNXk5OGM0YmROMmtnMXc#gid=0 spreadshit].
+We've collected stats on SPEC 2006, see the [https://docs.google.com/spreadsheet/ccc?key=0Asb2KOp6b-AkdFAtWW5IYl9rNXk5OGM0YmROMmtnMXc#gid=0 spreadsheet].
 
 For some benchmarks (e.g. 444.namd or 462.libquantum)  dozenes of BNDCU/BNDCL are executed per single BNDLDX/BNDSTX.
 For similar applications we can expect that MPX-based bug detection tools will be lightning fast.
