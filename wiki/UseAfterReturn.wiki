@@ -57,10 +57,31 @@ poisons the entire fake frame and deallocates it.
 Detecting stack-use-after-return is expensive in both CPU and RAM:
   * Allocating fake frames introduces two function calls per every function with non-empty frame.
   * The entire fake frames should be unpoisoned on entry and poisoned on exit, as opposed to poisoning just the redzones in the default mode.
-  * The thread-local quarantine uses lots of RAM (otherwise the bugs will not be caught).
-  * The current implementation of thread-local heap (fake stack) uses a linked list for FIFI and causes a cache miss on every Pop. This can probably be improved.
 
-TODO: get fresh numbers from e.g. SPEC.
+These are the performance numbers on SPEC 2006. We've compared pure -fsanitize=address vs -fsanitize=address,use-after-return, both with -O2. 
+4 benchmarks get 30% extra slowdown and one gets almost 2x extra slowdown. Other 14 benchmarks are not affected at all.
+||       400.perlbench||      1269.00||      1653.00||         *1.30*||
+||           401.bzip2||       845.00||       847.00||         1.00||
+||             403.gcc||       611.00||       629.00||         1.03||
+||             429.mcf||       582.00||       581.00||         1.00||  
+||           445.gobmk||       841.00||      1093.00||         *1.30*||
+||           456.hmmer||       902.00||       924.00||         1.02||  
+||           458.sjeng||       996.00||      1244.00||         *1.25*||
+||      462.libquantum||       541.00||       511.00||         0.94||
+||         464.h264ref||      1266.00||      1288.00||         1.02||
+||         471.omnetpp||       567.00||       564.00||         0.99||
+||           473.astar||       636.00||       642.00||         1.01||  
+||       483.xalancbmk||       465.00||       595.00||         *1.28*||
+||            433.milc||       651.00||       652.00||         1.00||
+||            444.namd||       599.00||       597.00||         1.00||
+||          447.dealII||       616.00||       610.00||         0.99||
+||          450.soplex||       358.00||       363.00||         1.01||
+||          453.povray||       432.00||       821.00||         *1.90*||
+||             470.lbm||       384.00||       378.00||         0.98||
+||         482.sphinx3||       930.00||       927.00||         1.00||
+
+
+
 
 =Compatibility=
 The fake stack may be incompatible with some low-level code that 
