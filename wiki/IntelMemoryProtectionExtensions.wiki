@@ -72,53 +72,24 @@ The emulator ($SDE_KIT/sde) is a PIN-based tool and has ~30x slowdown.
 
 =Performance=
 MPX has several different instructions that have very different performance properties: 
-  * BNDCU/BNDCL/BNDMK -- pure arithmetic, supposedly very fast
+  * BNDCU/BNDCL/BNDMK -- pure arithmetic, supposedly very fast.
   * BNDMOV -- move the BNDx registers from/to memory, mostly used to spill/fill registers. When accessing memory on stack should hit the L1 cache and thus be fast.
   * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two different cache like).
 
 Every memory access that needs to be checked will be instrumented with BNDCU/BNDCL (compiler optimizations may apply). 
 Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of the number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX/BNDMOV.
 
-Unfortunately, the SDE does not seem to allow collecting statistics in an efficient way.
-The only way to gather statistics from SDE we found is to dump the entire trace:
-{{{
-time $SDE_KIT/sde -ompx_trace trace.txt -mpx_trace_ins all  -mpx-mode -- ./a.out ...
-}}}
-We are [http://software.intel.com/en-us/forums/topic/472849 waiting for Intel] to release a version of SDE which will provide the statistics with a reasonable speed. 
+The SDE allows to collect the number of executed instructions using the [http://software.intel.com/en-us/articles/intel-software-development-emulator `-mix` switch].
+We've collected stats on SPEC 2006, see the [https://docs.google.com/spreadsheet/ccc?key=0Asb2KOp6b-AkdFAtWW5IYl9rNXk5OGM0YmROMmtnMXc#gid=0 spreadshit].
 
-W've collected stats on 401.bzip2 startup. At the very beginning the stats looks scary: 
-we execute one BNDLDX for every BNDCL. This should be very slow.
-{{{
- 232622 BNDMK
- 267373 BNDSTX
-1482635 BNDMOV
-2134686 BNDLDX
-2941285 BNDCL
-2941397 BNDCU
-}}}
+For some benchmarks (e.g. 444.namd or 462.libquantum)  dozenes of BNDCU/BNDCL are executed per single BNDLDX/BNDSTX.
+For similar applications we can expect that MPX-based bug detection tools will be lightning fast.
 
-However, as the process runs longer we see one BNDLDX for every 18 BNDCLs, which is much better:
-{{{
-   2061679 BNDSTX
-  10164003 BNDMK
-  18486202 BNDLDX
-  72090239 BNDMOV
- 338241718 BNDCL
- 340688594 BNDCU
-}}}
+For many other benchmarks (e.g. 400.perlbench, 429.mcf, 483.xalancbmk, 471.omnetpp)
+the number of expensive BNDMOV and very expensive BNDLDX/BNDSTX instruction is comparable to the number of checks.
+For these applications we expect MPX to be slower than alternative software-only solutions, such as AddressSanitizer.
 
-For 483.xalancbmk (full test run, built with O2) the statistic is quite different (much worse): 
-{{{
-   2929693 BNDMK
-   5827466 BNDSTX
-  14736793 BNDLDX
-  52422164 BNDMOV
-  34818525 BNDCL
-  59032822 BNDCU
-}}}
-
-Once we have SDE with reasonable statistics switch, we will gather stats for complete runs of all SPEC benchmarks. 
-Also, the data is preliminary because we've built the benchmarks with `-fno-mpx-use-fast-string-functions -fno-mpx-use-nochk-string-functions`
+Note that the data is preliminary because we've built the benchmarks
 and without the MPX-enabled glibc.
 
 =False positives=
