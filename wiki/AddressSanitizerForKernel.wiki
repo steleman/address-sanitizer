@@ -164,3 +164,12 @@ http://lxr.free-electrons.com/source/fs/dcache.c#L156
 https://www.lkml.org/lkml/2013/9/3/286
  * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c, fixed):
 http://www.spinics.net/lists/linux-scsi/msg68519.html
+ * Use-after-free in ext4_mb_new_blocks (not confirmed):
+http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
+ * out-of-bounds in ip6_finish_output2 (not confirmed):
+http://www.spinics.net/lists/netdev/msg250734.html
+ * Use-after-free in SyS_remap_file_pages (not confirmed):
+https://lkml.org/lkml/2013/9/17/30
+ * Use-after-free in aio_migratepage (confirmed):
+sent to  linux-aio mainling list, not visible on web, the report is here:
+https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
