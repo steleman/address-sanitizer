@@ -152,24 +152,27 @@ The kernel Makefile is changed so when you start building the kernel it will aut
 
 = Trophies =
 
- * Out-of-bounds read in net/ipv4 (fixed):
+*Fixed:*
+ * Out-of-bounds read in net/ipv4:
 http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515d7c32a34300312416c50314e755ea6f765
- * Use-after-free in drivers/net/ethernet/intel/e1000 (not confirmed):
+ * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c):
+https://www.lkml.org/lkml/2013/9/3/286
+ * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c):
+http://www.spinics.net/lists/linux-scsi/msg68519.html
+
+*Not confirmed:*:
+ * Use-after-free in drivers/net/ethernet/intel/e1000:
 http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
- * Use-after-free in kernel/kmod (not confirmed):
+ * Use-after-free in kernel/kmod:
 https://www.lkml.org/lkml/2013/8/21/431
  * Out-of-bounds read in fs/dcache:
 http://lxr.free-electrons.com/source/fs/dcache.c#L156
- * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c, fixed):
-https://www.lkml.org/lkml/2013/9/3/286
- * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c, fixed):
-http://www.spinics.net/lists/linux-scsi/msg68519.html
- * Use-after-free in ext4_mb_new_blocks (not confirmed):
+ * Use-after-free in ext4_mb_new_blocks:
 http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
- * out-of-bounds in ip6_finish_output2 (not confirmed):
+ * Out-of-bounds in ip6_finish_output2:
 http://www.spinics.net/lists/netdev/msg250734.html
- * Use-after-free in SyS_remap_file_pages (not confirmed):
+ * Use-after-free in SyS_remap_file_pages:
 https://lkml.org/lkml/2013/9/17/30
- * Use-after-free in aio_migratepage (confirmed):
+ * Use-after-free in aio_migratepage:
 sent to  linux-aio mainling list, not visible on web, the report is here:
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
