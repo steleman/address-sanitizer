@@ -567,39 +567,27 @@
 
 {{{
 ERROR: AddressSanitizer: heap-use-after-free on address ffff88005a8ccb08
-ffff88005a8ccb08 is located 8 bytes inside of 576-byte region
-[ffff88005a8ccb00, ffff88005a8ccd40)
+ffff88005a8ccb08 is located 8 bytes inside of 576-byte region [ffff88005a8ccb00, ffff88005a8ccd40)
 WRITE of size 8 at ffff88005a8ccb08 by thread T4740:
-  #0      inlined     (asan_report_error+0x367/0x480)
-asan_describe_heap_address ./arch/x86/mm/asan/report.c:175
-  #0 ffffffff810d9917 (asan_report_error+0x367/0x480)
-./arch/x86/mm/asan/report.c:292
-  #1 ffffffff810d8bd2 (asan_check_region.part.1+0x192/0x200)
-./arch/x86/mm/asan/asan.c:244
+  #0      inlined     (asan_report_error+0x367/0x480) asan_describe_heap_address ./arch/x86/mm/asan/report.c:175
+  #0 ffffffff810d9917 (asan_report_error+0x367/0x480) ./arch/x86/mm/asan/report.c:292
+  #1 ffffffff810d8bd2 (asan_check_region.part.1+0x192/0x200) ./arch/x86/mm/asan/asan.c:244
   #2 ffffffff810d8de3 (__tsan_write8+0x23/0x30) ./arch/x86/mm/asan/asan.c:262
-  #3      inlined     (aio_migratepage+0xd1/0x140)
-spin_unlock_irqrestore ./include/linux/spinlock.h:348
+  #3      inlined     (aio_migratepage+0xd1/0x140) spin_unlock_irqrestore ./include/linux/spinlock.h:348
   #3 ffffffff812f7d71 (aio_migratepage+0xd1/0x140) ./fs/aio.c:230
   #4 ffffffff812761b6 (move_to_new_page+0xd6/0x2f0) ./mm/migrate.c:702
-  #5      inlined     (migrate_pages+0x81a/0x920) __unmap_and_move
-./mm/migrate.c:844
-  #5      inlined     (migrate_pages+0x81a/0x920) unmap_and_move
-./mm/migrate.c:885
+  #5      inlined     (migrate_pages+0x81a/0x920) __unmap_and_move ./mm/migrate.c:844
+  #5      inlined     (migrate_pages+0x81a/0x920) unmap_and_move ./mm/migrate.c:885
   #5 ffffffff81276d9a (migrate_pages+0x81a/0x920) ./mm/migrate.c:1048
-  #6      inlined     (compact_zone+0x4cb/0x700) update_nr_listpages
-./mm/compaction.c:772
+  #6      inlined     (compact_zone+0x4cb/0x700) update_nr_listpages ./mm/compaction.c:772
   #6 ffffffff8123915b (compact_zone+0x4cb/0x700) ./mm/compaction.c:986
-  #7 ffffffff8123949a (compact_zone_order+0x10a/0x160) ./mm/compaction.c:1032
+  #7 ffffffff8123949a (compact_zone_order+0x10a/0x160)  ./mm/compaction.c:1032
   #8 ffffffff8123999b (try_to_compact_pages+0xeb/0x130) ./mm/compaction.c:1082
-  #9 ffffffff818cdcfb (__alloc_pages_direct_compact+0x129/0x2d0)
-./mm/page_alloc.c:2234
-  #10      inlined     (__alloc_pages_nodemask+0x91d/0xdc0)
-__alloc_pages_slowpath ./mm/page_alloc.c:2568
-  #10 ffffffff8121285d (__alloc_pages_nodemask+0x91d/0xdc0)
-./mm/page_alloc.c:2731
+  #9 ffffffff818cdcfb (__alloc_pages_direct_compact+0x129/0x2d0) ./mm/page_alloc.c:2234
+  #10      inlined     (__alloc_pages_nodemask+0x91d/0xdc0) __alloc_pages_slowpath ./mm/page_alloc.c:2568
+  #10 ffffffff8121285d (__alloc_pages_nodemask+0x91d/0xdc0) ./mm/page_alloc.c:2731
   #11 ffffffff8126fc7f (kmem_getpages+0x5f/0x1d0) ./mm/slab.c:1759
-  #12 ffffffff81270897 (fallback_alloc+0x177/0x250)
-././arch/x86/include/asm/irqflags.h:39
+  #12 ffffffff81270897 (fallback_alloc+0x177/0x250) ././arch/x86/include/asm/irqflags.h:39
   #13 ffffffff812706eb (____cache_alloc_node+0x11b/0x150) ./mm/slab.c:3352
   #14      inlined     (__kmalloc+0x367/0x500) __do_cache_alloc ./mm/slab.c:3430
   #14      inlined     (__kmalloc+0x367/0x500) slab_alloc ./mm/slab.c:3462
@@ -608,41 +596,30 @@ __alloc_pages_slowpath ./mm/page_alloc.c:2568
   #15 ffffffff812be7c4 (seq_read+0x254/0x7b0) ./fs/seq_file.c:235
   #16 ffffffff8128bdea (vfs_read+0xfa/0x240) ??:0
   #17 ffffffff8128d062 (SyS_read+0x72/0xd0) ??:0
-  #18 ffffffff818ea235 (sysenter_dispatch+0x7/0x1a)
-./arch/x86/ia32/ia32entry.S:164
+  #18 ffffffff818ea235 (sysenter_dispatch+0x7/0x1a) ./arch/x86/ia32/ia32entry.S:164
 
 freed by thread T2002 here:
   #0      inlined     (kmem_cache_free+0x55/0x2e0) __cache_free ./mm/slab.c:3590
   #0 ffffffff81270a35 (kmem_cache_free+0x55/0x2e0) ./mm/slab.c:3799
   #1 ffffffff812f6d31 (free_ioctx_rcu+0x41/0x50) ./fs/aio.c:398
-  #2      inlined     (rcu_process_callbacks+0x2a2/0x890) rcu_do_batch
-./kernel/rcutree.c:1992
-  #2      inlined     (rcu_process_callbacks+0x2a2/0x890)
-invoke_rcu_callbacks ./kernel/rcutree.c:2236
-  #2      inlined     (rcu_process_callbacks+0x2a2/0x890)
-__rcu_process_callbacks ./kernel/rcutree.c:2206
-  #2 ffffffff811afff2 (rcu_process_callbacks+0x2a2/0x890)
-./kernel/rcutree.c:2220
-  #3      inlined     (__do_softirq+0x172/0x380) trace_softirq_exit
-./kernel/softirq.c:251
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x890) rcu_do_batch ./kernel/rcutree.c:1992
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x890) invoke_rcu_callbacks ./kernel/rcutree.c:2236
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x890) __rcu_process_callbacks ./kernel/rcutree.c:2206
+  #2 ffffffff811afff2 (rcu_process_callbacks+0x2a2/0x890) ./kernel/rcutree.c:2220
+  #3      inlined     (__do_softirq+0x172/0x380) trace_softirq_exit ./kernel/softirq.c:251
   #3 ffffffff810ea742 (__do_softirq+0x172/0x380) ./kernel/softirq.c:252
-  #4      inlined     (irq_exit+0x10d/0x120) invoke_softirq
-./kernel/softirq.c:332
+  #4      inlined     (irq_exit+0x10d/0x120) invoke_softirq ./kernel/softirq.c:332
   #4 ffffffff810eab8d (irq_exit+0x10d/0x120) ./kernel/softirq.c:365
-  #5 ffffffff818ea90e (smp_apic_timer_interrupt+0x5e/0x70)
-./arch/x86/kernel/apic/apic.c:933
-  #6 ffffffff818e96ca (apic_timer_interrupt+0x6a/0x70)
-./arch/x86/kernel/entry_64.S:1181
+  #5 ffffffff818ea90e (smp_apic_timer_interrupt+0x5e/0x70) ./arch/x86/kernel/apic/apic.c:933
+  #6 ffffffff818e96ca (apic_timer_interrupt+0x6a/0x70) ./arch/x86/kernel/entry_64.S:1181
   #7 ffffffff812d3e0c (free_buffer_head+0x3c/0x70) ./fs/buffer.c:3341
   #8 ffffffff812d4008 (try_to_free_buffers+0xb8/0x110) ./fs/buffer.c:3256
-  #9 ffffffff8140e28b (jbd2_journal_try_to_free_buffers+0xfb/0x190)
-./fs/jbd2/transaction.c:1907
+  #9 ffffffff8140e28b (jbd2_journal_try_to_free_buffers+0xfb/0x190) ./fs/jbd2/transaction.c:1907
   #10 ffffffff8138cb3e (ext4_releasepage+0x8e/0x110) ./fs/ext4/inode.c:3005
   #11 ffffffff81206008 (try_to_release_page+0x68/0x90) ./mm/filemap.c:2603
   #12 ffffffff812d5b02 (block_invalidatepage+0x142/0x170) ./fs/buffer.c:1549
   #13 ffffffff8138d8d4 (ext4_invalidatepage+0x84/0xf0) ./fs/ext4/inode.c:2965
-  #14 ffffffff8138e2e6 (ext4_da_invalidatepage+0x56/0x500)
-./fs/ext4/inode.c:2811
+  #14 ffffffff8138e2e6 (ext4_da_invalidatepage+0x56/0x500) ./fs/ext4/inode.c:2811
   #15 ffffffff8121a9e8 (truncate_inode_page+0xc8/0xd0) ??:0
 
 previously allocated by thread T5840 here:
@@ -651,8 +628,7 @@ previously allocated by thread T5840 here:
   #1      inlined     (SyS_io_setup+0x10c/0xce0) ioctx_alloc ./fs/aio.c:563
   #1      inlined     (SyS_io_setup+0x10c/0xce0) SYSC_io_setup ./fs/aio.c:1100
   #1 ffffffff812f7fec (SyS_io_setup+0x10c/0xce0) ./fs/aio.c:1083
-  #2 ffffffff818e8b02 (system_call_fastpath+0x16/0x1b)
-./arch/x86/kernel/entry_64.S:645
+  #2 ffffffff818e8b02 (system_call_fastpath+0x16/0x1b) ./arch/x86/kernel/entry_64.S:645
 
 Shadow bytes around the buggy address:
   ffff88005a8cc880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
