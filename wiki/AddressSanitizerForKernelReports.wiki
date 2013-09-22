@@ -271,3 +271,55 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
   Freed heap region:     fd
   Shadow gap:            fe
 }}}
+
+{{{
+ERROR: AddressSanitizer: heap-buffer-overflow on address ffff880031f23b34
+ffff880031f23b34 is located 0 bytes to the right of 52-byte region [ffff880031f23b00, ffff880031f23b34)
+READ of size 8 at ffff880031f23b34 by thread T1168:
+  #0      inlined     (asan_report_error+0x3e7/0x500) asan_describe_heap_address ./arch/x86/mm/asan/report.c:191
+  #0 ffffffff810d9fc7 (asan_report_error+0x3e7/0x500) ./arch/x86/mm/asan/report.c:309
+  #1 ffffffff810d8a44 (asan_check_region.part.1+0x144/0x2a0) ./arch/x86/mm/asan/asan.c:263
+  #2      inlined     (__tsan_read8+0x20/0x30) asan_check_region ./arch/x86/mm/asan/asan.c:276
+  #2 ffffffff810d8c50 (__tsan_read8+0x20/0x30) ./arch/x86/mm/asan/asan.c:276
+  #3 ffffffff812b180f (__d_lookup_rcu+0x19f/0x250) ./fs/dcache.c:215
+  #4 ffffffff8129c597 (lookup_fast+0x67/0x510) ./fs/namei.c:1369
+  #5      inlined     (path_lookupat+0x1ef/0xed0) walk_component ./fs/namei.c:1540
+  #5      inlined     (path_lookupat+0x1ef/0xed0) lookup_last ./fs/namei.c:1938
+  #5 ffffffff8129ef0f (path_lookupat+0x1ef/0xed0) ./fs/namei.c:1972
+  #6 ffffffff8129fc2b (filename_lookup+0x3b/0x110) ./fs/namei.c:2011
+  #7 ffffffff812a5af4 (user_path_at_empty+0x54/0xa0) ./fs/namei.c:2159
+  #8 ffffffff812a5b51 (user_path_at+0x11/0x20) ./fs/namei.c:2170
+  #9 ffffffff81293b82 (vfs_fstatat+0x52/0xa0) ??:0
+  #10 ffffffff81293c0e (vfs_lstat+0x1e/0x20) ??:0
+  #11 ffffffff810dadaa (sys32_lstat64+0x1a/0x40) ??:0
+  #12 ffffffff8188fb89 (ia32_sysret+0x0/0x5) ./arch/x86/ia32/ia32entry.S:428
+
+allocated by thread T1136 here:
+  #0      inlined     (__kmalloc+0xbc/0x500) slab_alloc ./mm/slab.c:3471
+  #0      inlined     (__kmalloc+0xbc/0x500) __do_kmalloc ./mm/slab.c:3748
+  #0 ffffffff81272e7c (__kmalloc+0xbc/0x500) ./mm/slab.c:3762
+  #1      inlined     (__d_alloc+0x295/0x2e0) kmalloc ./include/linux/slab.h:413
+  #1 ffffffff812b1185 (__d_alloc+0x295/0x2e0) ./fs/dcache.c:1574
+  #2 ffffffff812b11fd (d_alloc+0x2d/0xf0) ./fs/dcache.c:1624
+  #3 ffffffff8129bf2b (lookup_dcache+0xbb/0x100) ./fs/namei.c:1301
+  #4 ffffffff8129bf91 (__lookup_hash+0x21/0x70) ./fs/namei.c:1341
+  #5      inlined     (SYSC_renameat+0x492/0x580) lookup_hash ./fs/namei.c:2094
+  #5 ffffffff812a2552 (SYSC_renameat+0x492/0x580) ./fs/namei.c:4159
+  #6 ffffffff812a665e (SyS_renameat+0xe/0x10) ./fs/namei.c:4091
+  #7      inlined     (SyS_rename+0x1b/0x20) SYSC_rename ./fs/namei.c:4200
+  #7 ffffffff812a667b (SyS_rename+0x1b/0x20) ./fs/namei.c:4198
+  #8 ffffffff8188f775 (sysenter_dispatch+0x7/0x1a) ./arch/x86/ia32/ia32entry.S:163
+
+Shadow bytes around the buggy address:
+  ffff880031f23880: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff880031f23900: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff880031f23980: fd fd fd fd fd fd fd fd fa fa fa fa fa fa fa fa
+  ffff880031f23a00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff880031f23a80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>ffff880031f23b00: 00 00 00 00 00 00[04]fb fa fa fa fa fa fa fa fa
+  ffff880031f23b80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff880031f23c00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff880031f23c80: fd fd fd fd fd fd fd fd fa fa fa fa fa fa fa fa
+  ffff880031f23d00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff880031f23d80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+}}}
