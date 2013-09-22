@@ -166,7 +166,7 @@ http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
  * Use-after-free in kernel/kmod:
 https://www.lkml.org/lkml/2013/8/21/431
  * Out-of-bounds read in fs/dcache:
-http://lxr.free-electrons.com/source/fs/dcache.c#L156
+https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
  * Use-after-free in ext4_mb_new_blocks:
 http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
  * Out-of-bounds in ip6_finish_output2:
