@@ -323,3 +323,80 @@ Shadow bytes around the buggy address:
   ffff880031f23d00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
   ffff880031f23d80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
 }}}
+
+= On revision 2457aaf73a97a97c8596ed3903bd09601976f3bc =
+
+{{{
+ERROR: AddressSanitizer: heap-use-after-free on address ffff8800244d94c9
+ffff8800244d94c9 is located 73 bytes inside of 216-byte region [ffff8800244d9480, ffff8800244d9558)
+READ of size 8 at ffff8800244d94c9 by thread T6094:
+  #0      inlined     (asan_report_error+0x3e6/0x500) asan_describe_heap_address ./arch/x86/mm/asan/report.c:191
+  #0 ffffffff810d9fd6 (asan_report_error+0x3e6/0x500) ./arch/x86/mm/asan/report.c:309
+  #1 ffffffff810d8a54 (asan_check_region.part.1+0x144/0x2a0) ./arch/x86/mm/asan/asan.c:263
+  #2      inlined     (__tsan_read8+0x20/0x30) asan_check_region ./arch/x86/mm/asan/asan.c:276
+  #2 ffffffff810d8c60 (__tsan_read8+0x20/0x30) ./arch/x86/mm/asan/asan.c:276
+  #3 ffffffff81250708 (mm_find_pmd+0x38/0xd0) ./mm/rmap.c:571
+  #4 ffffffff812507d9 (__page_check_address+0x39/0x160) ./mm/rmap.c:608
+  #5      inlined     (try_to_unmap_one+0x4f/0x520) page_check_address ./include/linux/rmap.h:207
+  #5 ffffffff8125169f (try_to_unmap_one+0x4f/0x520) ./mm/rmap.c:1191
+  #6 ffffffff81251cb4 (try_to_unmap_file+0x144/0x8d0) ./mm/rmap.c:1528
+  #7 ffffffff81253799 (try_to_munlock+0x29/0x40) ./mm/rmap.c:1663
+  #8 ffffffff812462d9 (__munlock_isolated_page+0x29/0x50) mlock.c:0
+  #9 ffffffff81246640 (__munlock_pagevec+0x2e0/0x4c0) mlock.c:0
+  #10 ffffffff81246f1f (munlock_vma_pages_range+0x38f/0x3e0) ??:0
+  #11 ffffffff8124d3d0 (exit_mmap+0x90/0x1e0) ./mm/internal.h:168
+  #12 ffffffff810de7cf (mmput+0x5f/0x150) ./kernel/fork.c:612
+  #13      inlined     (do_exit+0x3e4/0x11b0) exit_mm ./kernel/exit.c:491
+  #13 ffffffff810e6584 (do_exit+0x3e4/0x11b0) ./kernel/exit.c:776
+  #14 ffffffff810e740b (do_group_exit+0x7b/0x130) ./kernel/exit.c:920
+  #15 ffffffff810fd5c1 (get_signal_to_deliver+0x281/0x870) ./kernel/signal.c:2370
+  #16 ffffffff8107d064 (do_signal+0x54/0xb40) signal.c:0
+  #17 ffffffff8107dbcd (do_notify_resume+0x7d/0xa0) ??:0
+  #18 ffffffff8188e91a (int_signal+0x12/0x17) ./arch/x86/kernel/entry_64.S:806
+
+freed by thread T3 here:
+  #0      inlined     (kmem_cache_free+0x55/0x2e0) __cache_free ./mm/slab.c:3590
+  #0 ffffffff812704f5 (kmem_cache_free+0x55/0x2e0) ./mm/slab.c:3799
+  #1 ffffffff8128eb64 (file_free_rcu+0x44/0x50) ./fs/file_table.c:51
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x8a0) __rcu_reclaim ./kernel/rcu.h:111
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x8a0) rcu_do_batch ./kernel/rcutree.c:1988
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x8a0) invoke_rcu_callbacks ./kernel/rcutree.c:2236
+  #2      inlined     (rcu_process_callbacks+0x2a2/0x8a0) __rcu_process_callbacks ./kernel/rcutree.c:2206
+  #2 ffffffff811b0702 (rcu_process_callbacks+0x2a2/0x8a0) ./kernel/rcutree.c:2220
+  #3 ffffffff810eaea2 (__do_softirq+0x172/0x380) ./kernel/softirq.c:251
+  #4 ffffffff810eb0d8 (run_ksoftirqd+0x28/0x40) ./kernel/softirq.c:765
+  #5 ffffffff81122637 (smpboot_thread_fn+0x187/0x260) ./kernel/smpboot.c:160
+  #6 ffffffff81115e36 (kthread+0x126/0x130) kthread.c:0
+  #7 ffffffff8188e5ec (ret_from_fork+0x7c/0xb0) ./arch/x86/kernel/entry_64.S:554
+
+previously allocated by thread T12678 here:
+  #0      inlined     (kmem_cache_alloc+0x9a/0x4c0) slab_alloc ./mm/slab.c:3471
+  #0 ffffffff812722aa (kmem_cache_alloc+0x9a/0x4c0) ./mm/slab.c:3629
+  #1      inlined     (get_empty_filp+0x8f/0x2a0) kmem_cache_zalloc ./include/linux/slab.h:635
+  #1 ffffffff8128f01f (get_empty_filp+0x8f/0x2a0) ./fs/file_table.c:125
+  #2 ffffffff812a4c76 (path_openat+0x56/0xa90) ./fs/namei.c:3189
+  #3 ffffffff812a6159 (do_filp_open+0x49/0xa0) ./fs/namei.c:3258
+  #4 ffffffff8128b433 (do_sys_open+0x1a3/0x2c0) ??:0
+  #5 ffffffff8130537b (compat_SyS_open+0x1b/0x20) ??:0
+  #6 ffffffff8188fdb5 (sysenter_dispatch+0x7/0x1a) ./arch/x86/ia32/ia32entry.S:163
+
+Shadow bytes around the buggy address:
+  ffff8800244d9200: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  ffff8800244d9280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8800244d9300: 00 00 00 fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff8800244d9380: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff8800244d9400: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>ffff8800244d9480: fd fd fd fd fd fd fd fd fd[fd]fd fd fd fd fd fd
+  ffff8800244d9500: fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa fa
+  ffff8800244d9580: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff8800244d9600: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff8800244d9680: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+  ffff8800244d9700: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap redzone:          fa
+  Heap kmalloc redzone:  fb
+  Freed heap region:     fd
+  Shadow gap:            fe
+}}}
