@@ -53,6 +53,11 @@ function code.
 *`__asan_stack_free(fake_stack, real_stack, frame_size)`*
 poisons the entire fake frame and deallocates it.
 
+The *Fake Stack* allocator uses a fixed amount of memory per thread.
+By default this amount is proportional to the size of the thread's real stack.
+Setting `ASAN_OPTIONS=uar_stack_size_log=N` `(N in 16 .. 28)` will override it to the value proportional to `2^N`.
+The bigger the Fake Stack the better your chances to catch use-after-return and get a correct report.
+
 =Performance=
 Detecting stack-use-after-return is expensive in both CPU and RAM:
   * Allocating fake frames introduces two function calls per every function with non-empty frame.
