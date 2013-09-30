@@ -400,3 +400,66 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
   Freed heap region:     fd
   Shadow gap:            fe
 }}}
+
+
+{{{
+ERROR: AddressSanitizer: heap-use-after-free on address ffff88002994a678
+ffff88002994a678 is located 56 bytes inside of 4096-byte region [ffff88002994a640, ffff88002994b640)
+READ of size 8 at ffff88002994a678 by thread T478:
+  #0      inlined     (asan_report_error+0x406/0x530) asan_describe_heap_address ./arch/x86/mm/asan/report.c:191
+  #0 ffffffff810d9b26 (asan_report_error+0x406/0x530) ./arch/x86/mm/asan/report.c:309
+  #1 ffffffff810d8bf2 (asan_check_region.part.1+0x192/0x200) ./arch/x86/mm/asan/asan.c:263
+  #2      inlined     (__tsan_read8+0x28/0x30) asan_check_region ./arch/x86/mm/asan/asan.c:276
+  #2 ffffffff810d8d18 (__tsan_read8+0x28/0x30) ./arch/x86/mm/asan/asan.c:276
+  #3      inlined     (page_evictable+0x25/0x60) mapping_unevictable ././arch/x86/include/asm/bitops.h:329
+  #3 ffffffff8121fd95 (page_evictable+0x25/0x60) ./mm/vmscan.c:3681
+  #4 ffffffff812200cc (shrink_page_list+0x24c/0xf90) ./mm/vmscan.c:812
+  #5 ffffffff812217aa (shrink_inactive_list+0x22a/0x7a0) ./mm/vmscan.c:1475
+  #6      inlined     (shrink_lruvec+0x539/0xaa0) shrink_list ./mm/vmscan.c:1807
+  #6 ffffffff81222879 (shrink_lruvec+0x539/0xaa0) ./mm/vmscan.c:2031
+  #7 ffffffff81222f3e (__shrink_zone+0x15e/0x360) ./mm/vmscan.c:2204
+  #8 ffffffff812231d5 (shrink_zone+0x95/0xa0) ./mm/vmscan.c:2257
+  #9      inlined     (balance_pgdat+0x577/0x8f0) kswapd_shrink_zone ./mm/vmscan.c:2901
+  #9 ffffffff81224ca7 (balance_pgdat+0x577/0x8f0) ./mm/vmscan.c:3075
+  #10 ffffffff812252bb (kswapd+0x29b/0x630) ./mm/vmscan.c:3283
+  #11 ffffffff81115996 (kthread+0x126/0x130) kthread.c:0
+  #12 ffffffff818e929c (ret_from_fork+0x7c/0xb0) ./arch/x86/kernel/entry_64.S:569
+
+freed by thread T7697 here:
+  #0      inlined     (kmem_cache_free+0x55/0x2e0) __cache_free ./mm/slab.c:3590
+  #0 ffffffff81270095 (kmem_cache_free+0x55/0x2e0) ./mm/slab.c:3799
+  #1 ffffffff8129d469 (final_putname+0x39/0x80) ./fs/namei.c:126
+  #2 ffffffff8129d748 (putname+0x48/0x60) ./fs/namei.c:219
+  #3 ffffffff8128b060 (do_sys_open+0x230/0x2c0) ??:0
+  #4 ffffffff8130249b (compat_SyS_open+0x1b/0x20) ??:0
+  #5 ffffffff818eaa75 (sysenter_dispatch+0x7/0x1a) ./arch/x86/ia32/ia32entry.S:163
+
+previously allocated by thread T7697 here:
+  #0      inlined     (kmem_cache_alloc+0x9a/0x4c0) slab_alloc ./mm/slab.c:3471
+  #0 ffffffff81271e4a (kmem_cache_alloc+0x9a/0x4c0) ./mm/slab.c:3629
+  #1 ffffffff8129d51f (getname_flags+0x6f/0x230) ./fs/namei.c:144
+  #2 ffffffff8129d6f2 (getname+0x12/0x20) ./fs/namei.c:210
+  #3 ffffffff8128afa3 (do_sys_open+0x173/0x2c0) ??:0
+  #4 ffffffff8130249b (compat_SyS_open+0x1b/0x20) ??:0
+  #5 ffffffff818eaa75 (sysenter_dispatch+0x7/0x1a) ./arch/x86/ia32/ia32entry.S:163
+
+Shadow bytes around the buggy address:
+  ffff88002994a380: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff88002994a400: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff88002994a480: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff88002994a500: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  ffff88002994a580: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>ffff88002994a600: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd[fd]
+  ffff88002994a680: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  ffff88002994a700: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  ffff88002994a780: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  ffff88002994a800: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  ffff88002994a880: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap redzone:          fa
+  Heap kmalloc redzone:  fb
+  Freed heap region:     fd
+  Shadow gap:            fe
+}}}
