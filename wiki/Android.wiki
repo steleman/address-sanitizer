@@ -51,7 +51,7 @@ LOCAL_LDFLAGS += -fsanitize=address
 
 Copy libclang_rt.asan-arm-android.so (in Clang library directory) somewhere on the device.
 
-Preload it into Dalvik VM.
+Preload it into Dalvik VM by setting the wrap._program_name_ system property as detailed below.
 
 `adb shell setprop wrap._name_ _wrapper_` will spawn a new Dalvik process (fork+exec) for any instance of a given application, with `_wrapper_` prepended to the command line. System properties on Android are limited in length, so write a script like
 {{{
