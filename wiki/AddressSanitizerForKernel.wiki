@@ -78,60 +78,34 @@ SHADOW_OFFSET = 0x0000000036400600
 
 == Instrumentation ==
 
-To instrument the kernel gcc-tsan instrumentation is used, but it requires a slight modification.
+To instrument the kernel you need to use a custom GCC, which you can download [https://address-sanitizer.googlecode.com/files/gcc-r203101-snapshot.tar.gz here].
 
-Checkout gcc:
+You need to set GCC path in the wrapper script linux/gcc.py:
 {{{
-svn checkout -r 200953 svn://gcc.gnu.org/svn/gcc/trunk $GCC_KASAN
+gcc = '$GCC_KASAN/install/bin/gcc'
 }}}
 
-Apply the following patch:
+The kernel Makefile is changed so when you start building the kernel it will automatically use the wrapper script.
+
+If you would like to build GCC yourself read the instructions below.
+
+Checkout GCC:
 {{{
-Index: gcc/tsan.c
-===================================================================
---- gcc/tsan.c	(revision 200953)
-+++ gcc/tsan.c	(working copy)
-@@ -702,8 +702,8 @@
-   initialize_sanitizer_builtins ();
-   if (instrument_memory_accesses ())
-     {
--      instrument_func_entry ();
--      instrument_func_exit ();
-+      //instrument_func_entry ();
-+      //instrument_func_exit ();
-     }
-   return 0;
- }
-@@ -724,11 +724,11 @@
-   tree ctor_statements = NULL_TREE;
- 
-   initialize_sanitizer_builtins ();
--  tree init_decl = builtin_decl_implicit (BUILT_IN_TSAN_INIT);
--  append_to_statement_list (build_call_expr (init_decl, 0),
--			    &ctor_statements);
--  cgraph_build_static_cdtor ('I', ctor_statements,
--			     MAX_RESERVED_INIT_PRIORITY - 1);
-+//  tree init_decl = builtin_decl_implicit (BUILT_IN_TSAN_INIT);
-+//  append_to_statement_list (build_call_expr (init_decl, 0),
-+//			    &ctor_statements);
-+//  cgraph_build_static_cdtor ('I', ctor_statements,
-+//			     MAX_RESERVED_INIT_PRIORITY - 1);
- }
- 
- /* The pass descriptor.  */
+svn checkout -r 203101 svn://gcc.gnu.org/svn/gcc/trunk $GCC_KASAN
 }}}
-to the gcc:
+
+Apply [https://address-sanitizer.googlecode.com/files/gcc-r203101-kasan.patch this patch] to GCC:
 {{{
 cd $GCC_KASAN
-patch -p0 -i patch_name
+patch -p0 -i gcc-r203101-kasan.patch
 }}}
 
-Install gcc prerequisites:
+Install GCC prerequisites:
 {{{
 sudo apt-get install flex bison libc6-dev libc6-dev-i386 libgmp3-dev libmpfr-dev libmpc-dev
 }}}
 
-Build gcc:
+Build GCC:
 {{{
 cd $GCC_KASAN
 mkdir build
@@ -141,14 +115,6 @@ cd build
 make
 make install
 }}}
-
-Set gcc path in the wrapper script linux/gcc.py:
-{{{
-gcc = '$GCC_KASAN/install/bin/gcc'
-}}}
-
-The kernel Makefile is changed so when you start building the kernel it will automatically use the wrapper script.
-
 
 = Trophies =
 
