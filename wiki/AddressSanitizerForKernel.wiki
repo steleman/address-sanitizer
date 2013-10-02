@@ -126,6 +126,13 @@ https://www.lkml.org/lkml/2013/9/3/286
  * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c):
 http://www.spinics.net/lists/linux-scsi/msg68519.html
 
+* Confirmed: *
+ * Use-after-free in aio_migratepage:
+sent to  linux-aio mainling list, not visible on web, the report is here:
+https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
+
+http://www.spinics.net/lists/linux-fsdevel/msg68989.html
+
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
 http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
@@ -139,10 +146,6 @@ http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
 http://www.spinics.net/lists/netdev/msg250734.html
  * Use-after-free in SyS_remap_file_pages:
 https://lkml.org/lkml/2013/9/17/30
- * Use-after-free in aio_migratepage:
-sent to  linux-aio mainling list, not visible on web, the report is here:
-https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
-http://www.spinics.net/lists/linux-fsdevel/msg68989.html
   * Use-after-free in ata_qc_issue (drivers/ata/libata-core.c):
 http://www.spinics.net/lists/linux-ide/msg46213.html
   * Out-of-bounds in ftrace_regex_release (kernel/trace/ftrace.c):
