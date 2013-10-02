@@ -142,7 +142,8 @@ https://lkml.org/lkml/2013/9/17/30
  * Use-after-free in aio_migratepage:
 sent to  linux-aio mainling list, not visible on web, the report is here:
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
-  * Use-after-free in ata_qc_issue:
+http://www.spinics.net/lists/linux-fsdevel/msg68989.html
+  * Use-after-free in ata_qc_issue (drivers/ata/libata-core.c):
 http://www.spinics.net/lists/linux-ide/msg46213.html
-  * Out-of-bounds in ftrace_regex_release:
+  * Out-of-bounds in ftrace_regex_release (kernel/trace/ftrace.c):
 http://www.spinics.net/lists/kernel/msg1612400.html
