@@ -1,5 +1,5 @@
 #summary Detecting stack-use-after-return bugs
-
+<wiki:toc max_depth="1" />
 = Introduction =
 
 *Stack-use-after-return* bug appears when a stack object is used after
