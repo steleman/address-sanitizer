@@ -136,9 +136,9 @@ http://www.spinics.net/lists/linux-fsdevel/msg68989.html
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
 http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
- * Use-after-free in kernel/kmod:
+ * Use-after-free in ____call_usermodehelper (kernel/kmod.c):
 http://www.lkml.org/lkml/2013/8/21/431
- * Out-of-bounds read in fs/dcache:
+ * Out-of-bounds read in __d_lookup_rcu (fs/dcache.c):
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
  * Use-after-free in ext4_mb_new_blocks:
 http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
