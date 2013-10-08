@@ -125,8 +125,6 @@ http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515
 http://www.lkml.org/lkml/2013/9/3/286
  * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c):
 http://www.spinics.net/lists/linux-scsi/msg68519.html
-
-* Confirmed: *
  * Use-after-free in aio_migratepage:
 Sent to  linux-aio mainling list, not visible on web.
 
@@ -134,9 +132,9 @@ https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReport
 
 http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=5e9ae2e5da0beb93f8557fc92a8f4fbc05ea448f
 
+*Confirmed:*
  * Out-of-bounds in ip6_finish_output2:
 http://www.spinics.net/lists/netdev/msg250734.html
-
  * Out-of-bounds read in __d_lookup_rcu (fs/dcache.c):
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
 
