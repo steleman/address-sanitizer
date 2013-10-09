@@ -457,3 +457,175 @@ Legend:
  r - redzone bytes
  x=1..7 - x allocated bytes + (8-x) redzone bytes
 }}}
+
+{{{
+=========================================================================
+AddressSanitizer: heap-buffer-overflow on address ffff880000092640
+Read of size 8 by thread T10488:
+ [<     inlined    >] page_evictable+0x25/0x60 mapping_unevictable ././arch/x86/include/asm/bitops.h:329
+ [<ffffffff8121fd75>] page_evictable+0x25/0x60 ./mm/vmscan.c:3681
+ [<ffffffff812200a4>] shrink_page_list+0x244/0xf70 ./mm/vmscan.c:812
+ [<ffffffff81221772>] shrink_inactive_list+0x232/0x7b0 ./mm/vmscan.c:1475
+ [<     inlined    >] shrink_lruvec+0x539/0xa90 shrink_list ./mm/vmscan.c:1807
+ [<ffffffff81222829>] shrink_lruvec+0x539/0xa90 ./mm/vmscan.c:2031
+ [<ffffffff81222ede>] __shrink_zone+0x15e/0x360 ./mm/vmscan.c:2204
+ [<ffffffff81223175>] shrink_zone+0x95/0xa0 ./mm/vmscan.c:2257
+ [<     inlined    >] do_try_to_free_pages+0x1ca/0x910 shrink_zones ./mm/vmscan.c:2365
+ [<ffffffff8122334a>] do_try_to_free_pages+0x1ca/0x910 ./mm/vmscan.c:2427
+ [<ffffffff81223c2c>] try_to_free_pages+0x19c/0x290 ./mm/vmscan.c:2632
+ [<     inlined    >] __alloc_pages_nodemask+0x9f8/0xdc0 __alloc_pages_direct_reclaim ./mm/page_alloc.c:2309
+ [<     inlined    >] __alloc_pages_nodemask+0x9f8/0xdc0 __alloc_pages_slowpath ./mm/page_alloc.c:2583
+ [<ffffffff81212a08>] __alloc_pages_nodemask+0x9f8/0xdc0 ./mm/page_alloc.c:2731
+ [<     inlined    >] kmem_getpages+0x5f/0x1d0 __alloc_pages ./include/linux/gfp.h:307
+ [<     inlined    >] kmem_getpages+0x5f/0x1d0 alloc_pages_exact_node ./include/linux/gfp.h:325
+ [<ffffffff8126fecf>] kmem_getpages+0x5f/0x1d0 ./mm/slab.c:1758
+ [<ffffffff81271d67>] fallback_alloc+0x177/0x250 ./mm/slab.c:3261
+ [<ffffffff81271bbb>] ____cache_alloc_node+0x11b/0x150 ./mm/slab.c:3348
+ [<     inlined    >] __kmalloc+0x36a/0x500 __do_cache_alloc ./mm/slab.c:3430
+ [<     inlined    >] __kmalloc+0x36a/0x500 slab_alloc ./mm/slab.c:3462
+ [<     inlined    >] __kmalloc+0x36a/0x500 __do_kmalloc ./mm/slab.c:3748
+ [<ffffffff81272b2a>] __kmalloc+0x36a/0x500 ./mm/slab.c:3762
+ [<     inlined    >] seq_read+0x254/0x7b0 kmalloc ./include/linux/slab.h:413
+ [<ffffffff812c1624>] seq_read+0x254/0x7b0 ./fs/seq_file.c:235
+ [<ffffffff8128c22a>] vfs_read+0xfa/0x240 ??:0
+ [<ffffffff8128d4a2>] SyS_read+0x72/0xd0 ??:0
+ [<ffffffff81843af5>] sysenter_dispatch+0x7/0x1a ./arch/x86/ia32/ia32entry.S:163
+
+Allocated by thread T0:
+ [<     inlined    >] setup_cpu_cache+0x196/0x2f0 kmalloc_node ./include/linux/slab.h:446
+ [<ffffffff81820986>] setup_cpu_cache+0x196/0x2f0 ./mm/slab.c:2181
+ [<ffffffff812746c5>] __kmem_cache_create+0x295/0x350 ./mm/slab.c:2399
+ [<ffffffff81d0ea00>] create_boot_cache+0x73/0x9d ./mm/slab_common.c:309
+ [<ffffffff81d0ea79>] create_kmalloc_cache+0x4f/0x84 ./mm/slab_common.c:326
+ [<ffffffff81d0eafe>] create_kmalloc_caches+0x50/0x11a ./mm/slab_common.c:459
+ [<ffffffff81d116da>] kmem_cache_init+0x34a/0x34f ./mm/slab.c:1629
+ [<ffffffff81cdaed9>] start_kernel+0x1ef/0x4d7 ./init/main.c:468
+ [<ffffffff81cda5e5>] x86_64_start_reservations+0x3a/0x3d ./arch/x86/kernel/head64.c:193
+ [<ffffffff81cda75f>] x86_64_start_kernel+0x177/0x186 ./arch/x86/kernel/head64.c:182
+
+The buggy address ffff880000092640 is located 0 bytes to the right
+ of 128-byte region [ffff8800000925c0, ffff880000092640)
+
+Memory state around the buggy address:
+ ffff880000092100: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092200: rrrrrrrr ........ ........ rrrrrrrr
+ ffff880000092300: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092400: ........ ........ rrrrrrrr rrrrrrrr
+ ffff880000092500: rrrrrrrr rrrrrrrr rrrrrrrr ........
+>ffff880000092600: ........ rrrrrrrr rrrrrrrr rrrrrrrr
+                            ^
+ ffff880000092700: rrrrrrrr rrrrrrrr ........ ........
+ ffff880000092800: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092900: rrrrrrrr ........ ........ rrrrrrrr
+ ffff880000092a00: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092b00: ........ ........ rrrrrrrr rrrrrrrr
+Legend:
+ f - 8 freed bytes
+ r - 8 redzone bytes
+ . - 8 allocated bytes
+ x=1..7 - x allocated bytes + (8-x) redzone bytes
+=========================================================================
+=========================================================================
+AddressSanitizer: heap-buffer-overflow on address ffff880000092648
+Read of size 8 by thread T10488:
+ [<ffffffff81220203>] shrink_page_list+0x3a3/0xf70 ./mm/vmscan.c:845
+ [<ffffffff81221772>] shrink_inactive_list+0x232/0x7b0 ./mm/vmscan.c:1475
+ [<     inlined    >] shrink_lruvec+0x539/0xa90 shrink_list ./mm/vmscan.c:1807
+ [<ffffffff81222829>] shrink_lruvec+0x539/0xa90 ./mm/vmscan.c:2031
+ [<ffffffff81222ede>] __shrink_zone+0x15e/0x360 ./mm/vmscan.c:2204
+ [<ffffffff81223175>] shrink_zone+0x95/0xa0 ./mm/vmscan.c:2257
+ [<     inlined    >] do_try_to_free_pages+0x1ca/0x910 shrink_zones ./mm/vmscan.c:2365
+ [<ffffffff8122334a>] do_try_to_free_pages+0x1ca/0x910 ./mm/vmscan.c:2427
+ [<ffffffff81223c2c>] try_to_free_pages+0x19c/0x290 ./mm/vmscan.c:2632
+ [<     inlined    >] __alloc_pages_nodemask+0x9f8/0xdc0 __alloc_pages_direct_reclaim ./mm/page_alloc.c:2309
+ [<     inlined    >] __alloc_pages_nodemask+0x9f8/0xdc0 __alloc_pages_slowpath ./mm/page_alloc.c:2583
+ [<ffffffff81212a08>] __alloc_pages_nodemask+0x9f8/0xdc0 ./mm/page_alloc.c:2731
+ [<     inlined    >] kmem_getpages+0x5f/0x1d0 __alloc_pages ./include/linux/gfp.h:307
+ [<     inlined    >] kmem_getpages+0x5f/0x1d0 alloc_pages_exact_node ./include/linux/gfp.h:325
+ [<ffffffff8126fecf>] kmem_getpages+0x5f/0x1d0 ./mm/slab.c:1758
+ [<ffffffff81271d67>] fallback_alloc+0x177/0x250 ./mm/slab.c:3261
+ [<ffffffff81271bbb>] ____cache_alloc_node+0x11b/0x150 ./mm/slab.c:3348
+ [<     inlined    >] __kmalloc+0x36a/0x500 __do_cache_alloc ./mm/slab.c:3430
+ [<     inlined    >] __kmalloc+0x36a/0x500 slab_alloc ./mm/slab.c:3462
+ [<     inlined    >] __kmalloc+0x36a/0x500 __do_kmalloc ./mm/slab.c:3748
+ [<ffffffff81272b2a>] __kmalloc+0x36a/0x500 ./mm/slab.c:3762
+ [<     inlined    >] seq_read+0x254/0x7b0 kmalloc ./include/linux/slab.h:413
+ [<ffffffff812c1624>] seq_read+0x254/0x7b0 ./fs/seq_file.c:235
+ [<ffffffff8128c22a>] vfs_read+0xfa/0x240 ??:0
+ [<ffffffff8128d4a2>] SyS_read+0x72/0xd0 ??:0
+ [<ffffffff81843af5>] sysenter_dispatch+0x7/0x1a ./arch/x86/ia32/ia32entry.S:163
+
+Allocated by thread T0:
+ [<     inlined    >] setup_cpu_cache+0x196/0x2f0 kmalloc_node ./include/linux/slab.h:446
+ [<ffffffff81820986>] setup_cpu_cache+0x196/0x2f0 ./mm/slab.c:2181
+ [<ffffffff812746c5>] __kmem_cache_create+0x295/0x350 ./mm/slab.c:2399
+ [<ffffffff81d0ea00>] create_boot_cache+0x73/0x9d ./mm/slab_common.c:309
+ [<ffffffff81d0ea79>] create_kmalloc_cache+0x4f/0x84 ./mm/slab_common.c:326
+ [<ffffffff81d0eafe>] create_kmalloc_caches+0x50/0x11a ./mm/slab_common.c:459
+ [<ffffffff81d116da>] kmem_cache_init+0x34a/0x34f ./mm/slab.c:1629
+ [<ffffffff81cdaed9>] start_kernel+0x1ef/0x4d7 ./init/main.c:468
+ [<ffffffff81cda5e5>] x86_64_start_reservations+0x3a/0x3d ./arch/x86/kernel/head64.c:193
+ [<ffffffff81cda75f>] x86_64_start_kernel+0x177/0x186 ./arch/x86/kernel/head64.c:182
+
+The buggy address ffff880000092648 is located 8 bytes to the right
+ of 128-byte region [ffff8800000925c0, ffff880000092640)
+
+Memory state around the buggy address:
+ ffff880000092100: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092200: rrrrrrrr ........ ........ rrrrrrrr
+ ffff880000092300: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092400: ........ ........ rrrrrrrr rrrrrrrr
+ ffff880000092500: rrrrrrrr rrrrrrrr rrrrrrrr ........
+>ffff880000092600: ........ rrrrrrrr rrrrrrrr rrrrrrrr
+                             ^
+ ffff880000092700: rrrrrrrr rrrrrrrr ........ ........
+ ffff880000092800: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092900: rrrrrrrr ........ ........ rrrrrrrr
+ ffff880000092a00: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff880000092b00: ........ ........ rrrrrrrr rrrrrrrr
+Legend:
+ f - 8 freed bytes
+ r - 8 redzone bytes
+ . - 8 allocated bytes
+ x=1..7 - x allocated bytes + (8-x) redzone bytes
+=========================================================================
+}}}
+
+{{{
+AddressSanitizer: heap-buffer-overflow on address ffff8800205f0e40
+Write of size 1 by thread T14005:
+ [<ffffffff811e2542>] ftrace_event_write+0xe2/0x130 ./kernel/trace/trace_events.c:583
+ [<ffffffff8128c497>] vfs_write+0x127/0x2f0 ??:0
+ [<ffffffff8128d572>] SyS_write+0x72/0xd0 ??:0
+ [<ffffffff818423d2>] system_call_fastpath+0x16/0x1b ./arch/x86/kernel/entry_64.S:629
+
+Allocated by thread T14005:
+ [<     inlined    >] trace_parser_get_init+0x28/0x70 kmalloc ./include/linux/slab.h:413
+ [<ffffffff811cc258>] trace_parser_get_init+0x28/0x70 ./kernel/trace/trace.c:759
+ [<ffffffff811e24d2>] ftrace_event_write+0x72/0x130 ./kernel/trace/trace_events.c:572
+ [<ffffffff8128c497>] vfs_write+0x127/0x2f0 ??:0
+ [<ffffffff8128d572>] SyS_write+0x72/0xd0 ??:0
+ [<ffffffff818423d2>] system_call_fastpath+0x16/0x1b ./arch/x86/kernel/entry_64.S:629
+
+The buggy address ffff8800205f0e40 is located 0 bytes to the right
+ of 128-byte region [ffff8800205f0dc0, ffff8800205f0e40)
+
+Memory state around the buggy address:
+ ffff8800205f0900: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff8800205f0a00: rrrrrrrr ........ ........ rrrrrrrr
+ ffff8800205f0b00: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff8800205f0c00: ........ .......5 rrrrrrrr rrrrrrrr
+ ffff8800205f0d00: rrrrrrrr rrrrrrrr rrrrrrrr ........
+>ffff8800205f0e00: ........ rrrrrrrr rrrrrrrr rrrrrrrr
+                            ^
+ ffff8800205f0f00: rrrrrrrr rrrrrrrr rrrrrrrr rrrrrrrr
+ ffff8800205f1000: ........ ........ ........ ........
+ ffff8800205f1100: ........ ........ ........ ........
+ ffff8800205f1200: ........ ........ ........ ........
+ ffff8800205f1300: ........ ........ ........ ........
+Legend:
+ f - 8 freed bytes
+ r - 8 redzone bytes
+ . - 8 allocated bytes
+ x=1..7 - x allocated bytes + (8-x) redzone bytes
+}}}
