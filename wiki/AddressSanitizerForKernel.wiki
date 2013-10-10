@@ -125,6 +125,9 @@ http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515
 http://www.lkml.org/lkml/2013/9/3/286
  * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c):
 http://www.spinics.net/lists/linux-scsi/msg68519.html
+
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=984f1733fcee3fbc78d47e26c5096921c5d9946a
+
  * Use-after-free in aio_migratepage:
 Sent to  linux-aio mainling list, not visible on web.
 
