@@ -67,26 +67,25 @@ int main() {
 % ../clang_build_Linux/Release+Asserts/bin/clang -fsanitize=address -O1 -fno-omit-frame-pointer -g   tests/use-after-free.c
 }}}
 
-Now, run the executable.
+Now, run the executable. [CallStack CallStack page] describes how to obtain symbolized stack traces.
 
 {{{
 % ./a.out
-==22420== ERROR: AddressSanitizer crashed on address 0x0000200000703c18 at pc 0x401947
-READ of size 1 at 0x0000200000703c18; shadow: 0x0000100000381e0c; mem: 0x0000000001c0f065 thread: 0x787d4720
-    #0 0x401947 main use-after-free.c:5
-    #1 0x7ff87792cc4d __libc_start_main ??:0
-    #2 0x401839 _start ??:0
-0x0000000001c0f065 is located 5 bytes inside of 80-byte region [0x0000000001c0f060,0x0000000001c0f0b0)
-freed by thread 0x787d4720 here:
-    #0 0x404b9b free asan_rtl.cc:1203
-    #1 0x40191b main use-after-free.c:5
-    #2 0x7ff87792cc4d __libc_start_main ??:0
-    #3 0x401839 _start ??:0
-previously allocated by thread 0x787d4720 here:
-    #0 0x405c27 malloc asan_rtl.cc:1196
-    #1 0x401910 main use-after-free.c:3
-    #2 0x7ff87792cc4d __libc_start_main ??:0
-    #3 0x401839 _start ??:0
+==9901==ERROR: AddressSanitizer: heap-use-after-free on address 0x60700000dfb5 at pc 0x45917b bp 0x7fff4490c700 sp 0x7fff4490c6f8
+READ of size 1 at 0x60700000dfb5 thread T0
+    #0 0x45917a in main use-after-free.c:5
+    #1 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226
+    #2 0x459074 in _start (a.out+0x459074)
+0x60700000dfb5 is located 5 bytes inside of 80-byte region [0x60700000dfb0,0x60700000e000)
+freed by thread T0 here:
+    #0 0x4441ee in __interceptor_free projects/compiler-rt/lib/asan/asan_malloc_linux.cc:64
+    #1 0x45914a in main use-after-free.c:4
+    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226
+previously allocated by thread T0 here:
+    #0 0x44436e in __interceptor_malloc projects/compiler-rt/lib/asan/asan_malloc_linux.cc:74
+    #1 0x45913f in main use-after-free.c:3
+    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226
+SUMMARY: AddressSanitizer: heap-use-after-free use-after-free.c:5 main
 }}}
 
 =Interaction with other tools=
@@ -120,7 +119,7 @@ See the separate [Flags Flags page].
 
 =Call stack=
 
-See the separate CallStack page.
+See the separate [CallStack CallStack page].
 
 =Incompatibility= 
 
@@ -133,20 +132,20 @@ In some cases a particular function should be ignored (not instrumented) by Addr
   * Don't report a know problem. 
 In either case, be *very careful*. 
 
-To ignore certain functions, one can use the *no_address_safety_analysis*
-attribute supported by Clang (3.1+) and GCC (4.8+). You can define the following macro:
+To ignore certain functions, one can use the *no_sanitize_address*
+attribute supported by Clang (3.3+) and GCC (4.8+). You can define the following macro:
 {{{
 #if defined(__clang__) || defined (__GNUC__)
-# define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS __attribute__((no_address_safety_analysis))
+# define ATTRIBUTE_NO_SANITIZE_ADDRESS __attribute__((no_sanitize_address))
 #else
-# define ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
+# define ATTRIBUTE_NO_SANITIZE_ADDRESS
 #endif
 ...
-ATTRIBUTE_NO_ADDRESS_SAFETY_ANALYSIS
+ATTRIBUTE_NO_SANITIZE_ADDRESS
 void ThisFunctionWillNotBeInstrumented() {...}
 }}}
 
-Clang 3.3 supports `__attribute__((no_sanitize_address))` instead.
+Clang 3.1 and 3.2 supported `__attribute__((no_address_safety_analysis))` instead.
 
 You may also ignore certain functions using a blacklist: create a file `my_ignores.txt` and pass it to AddressSanitizer
 at compile time using `-fsanitize-blacklist=my_ignores.txt` (This flag is new and is only supported by Clang now):
