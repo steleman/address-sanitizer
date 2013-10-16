@@ -9,7 +9,7 @@ AddressSanitizer collects call stacks on the following events:
 AddressSanitizer uses a simple unwinder that relies on frame pointers.
 
 If you don't care about `malloc`/`free` call stacks, simply disable the unwinder completely
-(`malloc_context_size=0`).
+(use `malloc_context_size=0` [Flags runtime flag]).
 
 Each stack frame needs to be symbolized (of course, if the binary is compiled with debug info).
 Given a PC, we need to print
@@ -19,10 +19,14 @@ Given a PC, we need to print
 <wiki:comment>
 [http://llvm.org/bugs/show_bug.cgi?id=7554 LLVM issue].
 </wiki:comment>
-Currently, AddressSanitizer does not have an in-process symbolizer.
-You will need to filter the log file through `scripts/asan_symbolize.py` to get the symbols.
-This script takes an optional parameter -- a file prefix.
-The substring `.*prefix` will be removed from the file names.
+
+AddressSanitizer uses [http://llvm.org/docs/CommandGuide/llvm-symbolizer.html llvm-symbolizer] binary from Clang 3.3+ distribution to symbolize the stack traces. Just make sure llvm-symbolizer is in `PATH` before running the binary or provide it in separate `ASAN_SYMBOLIZER_PATH` environment variable:
+{{{
+export ASAN_SYMBOLIZER_PATH=/path/to/llvm_build/bin/llvm-symbolizer
+./a.out
+}}}
+
+You may also filter the log file through `scripts/asan_symbolize.py` to get the symbols. This script takes an optional parameter -- a file prefix. The substring `.*prefix` will be removed from the file names.
 {{{
 % ./a.out
     ...
@@ -37,11 +41,4 @@ The substring `.*prefix` will be removed from the file names.
    #0 0x402c77 in main address-sanitizer/asan/use-after-free.c:5
    ...
 }}}
-To demangle functions names either add `-d` to `asan_symbolize.py` or use `c++filt`. 
-
-
-There is also an out-of-process symbolizer based on LLVM libraries that can be run by AddressSanitizer in a separate subprocess and symbolize stack traces online:
-{{{
-export ASAN_SYMBOLIZER_PATH=/path/to/llvm_build/bin/llvm-symbolizer
-./a.out
-}}}
+To demangle functions names either add `-d` to `asan_symbolize.py` or use `c++filt`.
