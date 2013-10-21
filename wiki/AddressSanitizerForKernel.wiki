@@ -142,15 +142,15 @@ http://seclists.org/oss-sec/2013/q3/683
 
 http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=2811ebac2521ceac84f2bdae402455baa6a7fb47
 
+  * Out-of-bounds in ftrace_regex_release (kernel/trace/ftrace.c):
+http://www.spinics.net/lists/kernel/msg1612400.html
+
 *Confirmed:*
 
  * Out-of-bounds read in __d_lookup_rcu (fs/dcache.c):
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
 
 http://lkml.org/lkml/2013/10/3/493
-
-  * Out-of-bounds in ftrace_regex_release (kernel/trace/ftrace.c):
-http://www.spinics.net/lists/kernel/msg1612400.html
 
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
