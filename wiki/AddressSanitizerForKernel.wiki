@@ -24,19 +24,24 @@ To simplify reading the reports you can use our [https://code.google.com/p/addre
 {{{
 $ cat ./report
 ...
-[    0.359730]   #0 ffffffff810d1964 (asan_slab_free+0x74/0xe0)
-[    0.360016]   #1 ffffffff81262a3a (kfree+0x9a/0x240)
+[  107.327411]  [<ffffffff8110424c>] call_usermodehelper_freeinfo+0x2c/0x30
+[  107.328668]  [<ffffffff811049d5>] call_usermodehelper_exec+0xa5/0x1c0
+[  107.329816]  [<ffffffff811052b0>] call_usermodehelper+0x40/0x60
+[  107.330987]  [<ffffffff8146c15e>] kobject_uevent_env+0x5ee/0x620
+[  107.332035]  [<ffffffff8146c19b>] kobject_uevent+0xb/0x10
+[  107.333108]  [<ffffffff8173bd7f>] net_rx_queue_update_kobjects+0xaf/0x150
 ...
 }}}
 {{{
 $ cat ./report | ./kasan_symbolize.py ./vmlinux
 ...
-  #0 ffffffff810d1964 (asan_slab_free+0x74/0xe0) ./arch/x86/mm/asan/asan.c:134
-  #1      inlined     (kfree+0x9a/0x240) virt_to_head_page ./include/linux/mm.h:420
-  #1      inlined     (kfree+0x9a/0x240) virt_to_slab ./mm/slab.c:462
-  #1      inlined     (kfree+0x9a/0x240) cache_free_alien ./mm/slab.c:1103
-  #1      inlined     (kfree+0x9a/0x240) __cache_free ./mm/slab.c:3606
-  #1 ffffffff81262a3a (kfree+0x9a/0x240) ./mm/slab.c:3830
+ [<ffffffff8110424c>] call_usermodehelper_freeinfo+0x2c/0x30 ./kernel/kmod.c:265
+ [<ffffffff811049d5>] call_usermodehelper_exec+0xa5/0x1c0 ./kernel/kmod.c:612
+ [<ffffffff811052b0>] call_usermodehelper+0x40/0x60 ./kernel/kmod.c:642
+ [<ffffffff8146c15e>] kobject_uevent_env+0x5ee/0x620 ./lib/kobject_uevent.c:311
+ [<ffffffff8146c19b>] kobject_uevent+0xb/0x10 ./lib/kobject_uevent.c:333
+ [<     inlined    >] net_rx_queue_update_kobjects+0xaf/0x150 rx_queue_add_kobject ./net/core/net-sysfs.c:771
+ [<ffffffff8173bd7f>] net_rx_queue_update_kobjects+0xaf/0x150 ./net/core/net-sysfs.c:786
 ...
 }}}
 
