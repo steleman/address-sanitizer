@@ -125,6 +125,8 @@ http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=2811eb
   * Out-of-bounds in ftrace_regex_release (kernel/trace/ftrace.c):
 http://www.spinics.net/lists/kernel/msg1612400.html
 
+https://lkml.org/lkml/2013/10/20/126
+
 *Confirmed:*
 
  * Out-of-bounds read in __d_lookup_rcu (fs/dcache.c):
