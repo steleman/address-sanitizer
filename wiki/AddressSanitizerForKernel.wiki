@@ -5,7 +5,7 @@
 A dynamic memory error detector for Linux kernel.
 Currently works only on x86_64, supports only SLAB allocator.
 
-AddressSanitizer:
+AddressSanitizer for Linux kernel:
  * Is based on compiler instrumentation (fast)
  * Detects OOB for both writes and reads
  * Provides strong UAF detection (based on delayed memory reuse)
