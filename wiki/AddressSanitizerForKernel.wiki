@@ -101,8 +101,7 @@ make install
 *Fixed:*
  * Out-of-bounds read in net/ipv4:
 http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=aab515d7c32a34300312416c50314e755ea6f765
- * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c):
-http://www.lkml.org/lkml/2013/9/3/286
+
  * Out-of-bounds in sd_revalidate_disk (drivers/scsi/sd.c):
 http://www.spinics.net/lists/linux-scsi/msg68519.html
 
@@ -133,6 +132,9 @@ https://lkml.org/lkml/2013/10/20/126
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
 
 http://lkml.org/lkml/2013/10/3/493
+
+ * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c):
+http://www.lkml.org/lkml/2013/9/3/286
 
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
