@@ -16,7 +16,7 @@ AddressSanitizer:
 
 Pre-alpha repository: https://github.com/xairy/linux
 
-More documentation: https://github.com/xairy/linux/blob/asan/Documentation/asan.txt
+More extensive documentation: https://github.com/xairy/linux/blob/asan/Documentation/asan.txt
 
 == Reports ==
 
@@ -43,22 +43,6 @@ $ cat ./report | ./kasan_symbolize.py ./vmlinux
  [<     inlined    >] net_rx_queue_update_kobjects+0xaf/0x150 rx_queue_add_kobject ./net/core/net-sysfs.c:771
  [<ffffffff8173bd7f>] net_rx_queue_update_kobjects+0xaf/0x150 ./net/core/net-sysfs.c:786
 ...
-}}}
-
-== Algorithm ==
-
-The description of the ASan algorithm for user-space applications can be found [https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm here].
-In kernel-space we are tracking only the part of the virtual address space, which is directly mapped to the physical memory (0xffff880000000000 - 0xffffc7ffffffffff).
-
-== Mapping ==
-
-{{{
-Shadow = ((Mem - PAGE_OFFSET) >> 3) + PAGE_OFFSET + SHADOW_OFFSET;
-}}}
-where:
-{{{
-PAGE_OFFSET   = 0xffff880000000000
-SHADOW_OFFSET = 0x0000000036400600
 }}}
 
 == Instrumentation ==
