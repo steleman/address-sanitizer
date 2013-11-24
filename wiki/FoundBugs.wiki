@@ -111,6 +111,7 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
 
 =php=
   * https://bugs.php.net/bug.php?id=63700
+  * https://bugs.php.net/bug.php?id=65564
 
 =parrot (http://www.parrot.org/)=
   * https://github.com/parrot/parrot/commit/df12f34e946553
