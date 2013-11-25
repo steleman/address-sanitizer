@@ -74,7 +74,7 @@ The emulator ($SDE_KIT/sde) is a PIN-based tool and has ~30x slowdown.
 MPX has several different instructions that have very different performance properties: 
   * BNDCU/BNDCL/BNDMK -- pure arithmetic, supposedly very fast.
   * BNDMOV -- move the BNDx registers from/to memory, mostly used to spill/fill registers. When accessing memory on stack should hit the L1 cache and thus be fast.
-  * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two different cache like).
+  * BNDLDX/BNDSTX -- access the Bound Table, a 2-layer cache-like data structure. Supposedly very slow (accesses two different cache lines).
 
 Every memory access that needs to be checked will be instrumented with BNDCU/BNDCL (compiler optimizations may apply). 
 Since BNDCU/BNDCL are expected to be very fast, the slowdown will be defined by the ratio of the number of executed BNDCU/BNDCL vs BNDLDX/BNDSTX/BNDMOV.
