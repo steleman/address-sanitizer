@@ -39,8 +39,7 @@ one `*.sancov` file will be also created for every DSO.
 =Postprocess=
 The format of `*.sancov` files is very simple: they contain 4-byte offsets in the corresponding binary/DSO that were executed during the run. Only the function entry blocks are instrumented currently. 
 
-A simple script `$LLVM/projects/compiler-rt/lib/sanitizer_common/scripts/sancov.py`
- is provided to dump these offsets: 
+A simple script `$LLVM/projects/compiler-rt/lib/sanitizer_common/scripts/sancov.py` is provided to dump these offsets: 
 {{{
 % sancov.py print a.out.22679.sancov a.out.22673.sancov
 sancov.py: read 2 PCs from a.out.22679.sancov
