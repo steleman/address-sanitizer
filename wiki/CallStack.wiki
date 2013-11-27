@@ -26,6 +26,11 @@ export ASAN_SYMBOLIZER_PATH=/path/to/llvm_build/bin/llvm-symbolizer
 ./a.out
 }}}
 
+If you want to disable symbolization for some reason, you may do so by providing empty string as `ASAN_SYMBOLIZER_PATH` value:
+{{{
+ASAN_SYMBOLIZER_PATH= ./a.out
+}}}
+
 You may also filter the log file through `scripts/asan_symbolize.py` to get the symbols. This script takes an optional parameter -- a file prefix. The substring `.*prefix` will be removed from the file names.
 {{{
 % ./a.out
