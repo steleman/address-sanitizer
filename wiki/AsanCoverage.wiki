@@ -1,0 +1,59 @@
+#summary AddressSanitizer coverage tool
+
+AddressSanitizer (as of Clang [http://llvm.org/viewvc/llvm-project?rev=194790&view=rev r194790]) 
+has a very simple *experimental* coverage tool built in.
+It allows to get function-level coverage at a very low cost.
+
+=Build and run=
+  * Compile with `-fsanitize=address -mllvm -asan-coverage=1`
+  * Run with ASAN_OPTIONS=coverage=1
+{{{
+% cat cov.cc 
+#include <stdio.h>
+__attribute__((noinline))
+void foo() { printf("foo\n"); }
+
+int main(int argc, char **argv) {
+  if (argc == 2)
+    foo();
+  printf("main\n");
+}
+% clang++ -g cov.cc -fsanitize=address -mllvm -asan-coverage=1 
+% ASAN_OPTIONS=coverage=1 ./a.out; ls -l *sancov
+main
+-rw-r----- 1 kcc eng 4 Nov 27 12:21 a.out.22673.sancov
+% ASAN_OPTIONS=coverage=1 ./a.out foo ; ls -l *sancov
+foo
+main
+-rw-r----- 1 kcc eng 4 Nov 27 12:21 a.out.22673.sancov
+-rw-r----- 1 kcc eng 8 Nov 27 12:21 a.out.22679.sancov
+% 
+}}}
+
+
+Every time you run an executable instrumented with AsanCoverage
+one `*.sancov` file is created during the process shutdown.
+If the executable is dynamically linked against instrumented DSOs, 
+one `*.sancov` file will be also created for every DSO. 
+
+=Postprocess=
+The format of `*.sancov` files is very simple: they contain 4-byte offsets in the corresponding binary/DSO that were executed during the run. Only the function entry blocks are instrumented currently. 
+
+A simple script `$LLVM/projects/compiler-rt/lib/sanitizer_common/scripts/sancov.py`
+ is provided to dump these offsets: 
+{{{
+% sancov.py print a.out.22679.sancov a.out.22673.sancov
+sancov.py: read 2 PCs from a.out.22679.sancov
+sancov.py: read 1 PCs from a.out.22673.sancov
+sancov.py: 2 files merged; 2 PCs total
+0x465250
+0x4652a0
+}}}
+
+You can then filter the output of `sancov.py` through `addr2line`
+(or llvm-symbolizer, but see issue 242) to get file names and line numbers:
+{{{
+% sancov.py print a.out.22679.sancov a.out.22673.sancov 2> /dev/null | addr2line -e a.out
+cov.cc:3
+cov.cc:5
+}}}
