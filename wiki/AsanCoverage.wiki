@@ -8,16 +8,16 @@ It allows to get function-level coverage at a very low cost.
   * Compile with `-fsanitize=address -mllvm -asan-coverage=1`
   * Run with ASAN_OPTIONS=coverage=1
 {{{
-% cat cov.cc 
-#include <stdio.h>
-__attribute__((noinline))
-void foo() { printf("foo\n"); }
-
-int main(int argc, char **argv) {
-  if (argc == 2)
-    foo();
-  printf("main\n");
-}
+% cat -n cov.cc 
+     1  #include <stdio.h>
+     2  __attribute__((noinline))
+     3  void foo() { printf("foo\n"); }
+     4  
+     5  int main(int argc, char **argv) {
+     6    if (argc == 2)
+     7      foo();
+     8    printf("main\n");
+     9  }
 % clang++ -g cov.cc -fsanitize=address -mllvm -asan-coverage=1 
 % ASAN_OPTIONS=coverage=1 ./a.out; ls -l *sancov
 main
