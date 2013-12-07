@@ -115,6 +115,12 @@ http://www.spinics.net/lists/kernel/msg1612400.html
 
 https://lkml.org/lkml/2013/10/20/126
 
+ * Use-after-free in ext4_mb_new_blocks:
+
+http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
+
+http://permalink.gmane.org/gmane.comp.file-systems.ext4/41108
+
 *Confirmed:*
 
  * Out-of-bounds read in __d_lookup_rcu (fs/dcache.c):
@@ -130,8 +136,6 @@ http://www.lkml.org/lkml/2013/9/3/286
 http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
  * Use-after-free in ____call_usermodehelper (kernel/kmod.c):
 http://www.lkml.org/lkml/2013/8/21/431
- * Use-after-free in ext4_mb_new_blocks:
-http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
  * Use-after-free in SyS_remap_file_pages:
 https://lkml.org/lkml/2013/9/17/30
   * Use-after-free in ata_qc_issue (drivers/ata/libata-core.c):
