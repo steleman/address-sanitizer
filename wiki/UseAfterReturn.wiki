@@ -56,9 +56,17 @@ poisons the entire fake frame and deallocates it.
 =Memory consumption=
 
 The *Fake Stack* allocator uses a fixed amount of memory per each thread.
-By default this amount is 11 times the size of the thread's real stack, i.e. with the default settings on linux each thread will cost additional 88M.
-Setting `ASAN_OPTIONS=uar_stack_size_log=N` `(N in 16 .. 28)` will override it to the value proportional to `2^N` bytes.
-The bigger the Fake Stack the better your chances to catch use-after-return and get a correct report, but the greater is the memory consumption.
+The allocator has 11 size classes (from `2**6` bytes to `2**16` bytes),
+every size class has fixed amount of chunks.
+If the given size class is fully used, the allocator will return 0 and thus regular stack will be used
+(i.e. stack-use-after-return detection will not work for the given function call).
+The amount of memory given to every size class is proportional to the size of thread's real stack,
+but not more than `2**max_uar_stack_size_log` (by default, `2**20`)
+and not less than `2**min_uar_stack_size_log` (by default, `2**16`). See also: [Flags].
+
+So, with the default 8Mb stack size and default [Flags] each size class will get `2**20` bytes and thus every thread will mmap ~11Mb for Fake Stack.
+
+The bigger the Fake Stack the better your chances to catch a stack-use-after-return and get a correct report, but the greater is the memory consumption.
 
 =Performance=
 Detecting stack-use-after-return is expensive in both CPU and RAM:
