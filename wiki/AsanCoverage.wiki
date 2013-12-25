@@ -49,10 +49,10 @@ sancov.py: 2 files merged; 2 PCs total
 0x4652a0
 }}}
 
-You can then filter the output of `sancov.py` through `addr2line`
-(or llvm-symbolizer, but see issue 242) to get file names and line numbers:
+You can then filter the output of `sancov.py` through `addr2line --exe ObjectFile`
+or `llvm-symbolizer --obj ObjectFile` to get file names and line numbers:
 {{{
-% sancov.py print a.out.22679.sancov a.out.22673.sancov 2> /dev/null | addr2line -e a.out
+% sancov.py print a.out.22679.sancov a.out.22673.sancov 2> /dev/null | llvm-symbolizer --obj a.out
 cov.cc:3
 cov.cc:5
 }}}
