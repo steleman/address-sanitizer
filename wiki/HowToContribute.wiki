@@ -1,6 +1,6 @@
 #summary How To Contribute to AddressSanitizer
 
   * AddressSanitizer run-time library and the LLVM compiler module are being developed in the LLVM source tree. Please see the [http://llvm.org/docs/DeveloperPolicy.html LLVM Developer Policy]
-    * In short, please send patches to `llvmdev@cs.uiuc.edu`. For non-trivial patches please consider using [Phabricator http://llvm.org/docs/Phabricator.html] -- this will help us reply faster.
+    * In short, please send patches to `llvmdev@cs.uiuc.edu`. For non-trivial patches please consider using [http://llvm.org/docs/Phabricator.html Phabricator] -- this will help us reply faster.
   * The GCC version of AddressSanitizer run-time is a verbatim copy of the LLVM version, please do not commit changes to GCC trunk w/o committing them to LLVM trunk first. See also `libsanitizer/README.gcc` in the GCC trunk. 
   * The GCC compiler module is developed according to the [http://gcc.gnu.org/contribute.html general GCC rules].
