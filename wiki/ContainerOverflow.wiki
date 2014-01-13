@@ -24,3 +24,21 @@ int main() {
 }}}
 
 [http://lists.cs.uiuc.edu/pipermail/cfe-dev/2013-November/033649.html Work is in progress] to annotate containers in LLVM's libc++.
+We will also work on annotations for libstdc++.
+
+Another side effect of container annotations will be improved sensitivity of LeakSanitizer.
+In the following example we have a leak because a pointer is removed from a global vector using `pop_back`,
+but w/o the annotations LeakSanitizer will treat the pointer as live because it still remains inside the vector's storage.
+
+{{{
+#include <vector>
+std::vector<int *> *v;
+int main(int argc, char **argv) {
+  v = new std::vector<int *>;
+  v->push_back(new int [10]);
+  v->push_back(new int [20]);
+  v->push_back(new int [30]);
+  v->push_back(new int [40]);
+  v->pop_back();  // The last element leaks now.
+}
+}}}
