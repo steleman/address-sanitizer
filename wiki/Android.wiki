@@ -49,6 +49,23 @@ LOCAL_LDFLAGS += -fsanitize=address
 
 == Running NDK applications with ASan ==
 
+The "old" way (see below) add a huge (10-20s) delay at the start of any ASan process, because the entire VM needs to be restarted and set up from scratch in order to preload the ASan runtime library. The new way, described in this section, is superior in most respect, except for slightly higher memory usage.
+
+ * No need to set system properties for every app you want to run with ASan.
+ * -eng build is not required. -userdebug works perfectly well. Even -user would work if you somehow can edit /system partition (ex. by patching the system image before flashing it to the device).
+ * No startup delay. Applications start almost instantly (at the usual 2x slowdown compared to native run).
+
+Drawbacks:
+ * One-time device setup step is required. It can be repeated to update ASan runtime library.
+ * Slightly higher memory usage in all VM processes. We've observed +85Mb used memory after reboot (20% increase).
+ * At the moment there are issues with using logwrapper on ASan processes, which makes reading ASan reports problematic. This will be fixed one way or the other.
+
+The idea is to preload ASan runtime library into *zygote* process. This way, all VM processes run ASan. To not run out of memory right away, we tune down ASan allocator to the absolute minimum by reducing redzones, disabling quarantine, heap poisoning and allocation stack traces. All these features are re-enabled automatically when zygote forks to specialize into your application, and dlopens the first ASan-instrumented library.
+
+TODO: usage instructions ;)
+
+== Running NDK applications with ASan (old way) ==
+
 Copy libclang_rt.asan-arm-android.so (in Clang library directory) somewhere on the device.
 
 Preload it into Dalvik VM by setting the wrap._program_name_ system property as detailed below.
