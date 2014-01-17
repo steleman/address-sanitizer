@@ -1,6 +1,6 @@
 #summary AddressSanitizer coverage tool
 
-AddressSanitizer (as of Clang [http://llvm.org/viewvc/llvm-project?rev=194790&view=rev r199488]) 
+AddressSanitizer (as of Clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r199488]) 
 has a very simple *experimental* coverage tool built in.
 It allows to get function-level and basic-block-level coverage at a very low cost.
 
