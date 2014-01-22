@@ -64,6 +64,13 @@ The idea is to preload ASan runtime library into *zygote* process. This way, all
 
 TODO: usage instructions ;)
 
+== Getting good stack traces ==
+
+AddressSanitizer relies on frame pointers to get stack trace in malloc() and other interceptors. To work properly, this requires
+`-marm -fno-omit-frame-pointer`.
+
+Alternatively, pass `--extra_options=fast_unwind_on_malloc=0` to asan_device_setup.sh. This will enable dwarf-based unwinder for allocation stack traces, which is more reliable, but very slow. It would be wise to also pass something like `malloc_context_size=3`.
+
 == Running NDK applications with ASan (old way) ==
 
 Copy libclang_rt.asan-arm-android.so (in Clang library directory) somewhere on the device.
