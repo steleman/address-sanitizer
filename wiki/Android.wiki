@@ -62,7 +62,12 @@ Drawbacks:
 
 The idea is to preload ASan runtime library into *zygote* process. This way, all VM processes run ASan. To not run out of memory right away, we tune down ASan allocator to the absolute minimum by reducing redzones, disabling quarantine, heap poisoning and allocation stack traces. All these features are re-enabled automatically when zygote forks to specialize into your application, and dlopens the first ASan-instrumented library.
 
-TODO: usage instructions ;)
+This behavior is enabled with ASAN_OPTIONS=start_deactivated=1.
+
+A [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/scripts/asan_device_setup.sh?view=markup script] can be used to prepare device to run ASan applications. You may need to pass --lib option if it fails to find ASan runtime library.
+
+This script replaces zygote with a wrapper script that preloads ASan runtime library into the process. As a result, ASan packages (.apk) simply work. The script also installs a wrapper in /system/bin/asanwrapper to run ASan binaries.
+
 
 == Getting good stack traces ==
 
