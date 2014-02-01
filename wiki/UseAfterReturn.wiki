@@ -102,6 +102,6 @@ These are the performance numbers on SPEC 2006. We've compared pure asan against
 The fake stack may be incompatible with some low-level code that 
 uses certain assumptions about the stack memory layout.
   * Code that takes an address of a local variable and assumes the variable is localed on the real stack.
-  * TODO
+  * Implementations of C++ garbage collection may require special attention. TODO
 
 TODO
