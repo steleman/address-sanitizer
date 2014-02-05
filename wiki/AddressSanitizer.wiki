@@ -31,7 +31,7 @@ See also:
 
 =Getting !AddressSanitizer=
 
-AddressSanitizer is a part of [http://llvm.org LLVM] starting with version 3.1 and a part of [http://gcc/gnu.org GCC] starting with version 4.8 <BR>
+AddressSanitizer is a part of [http://llvm.org LLVM] starting with version 3.1 and a part of [http://gcc.gnu.org GCC] starting with version 4.8 <BR>
 If you prefer to build from source, see HowToBuild.
 
 
