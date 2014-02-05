@@ -122,3 +122,15 @@ projects/compiler-rt/lib/sanitizer_common/scripts/check_lint.sh
 
 ==Ninja==
 If you want to get even faster incremental builds, use ninja: http://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
+
+== Chrome ==
+The Chromium team periodically bakes fresh LLVM/Clang binaries, which include AddressSanitizer support. 
+Simply execute the following:
+{{{
+mkdir -p tools/clang
+cd tools/clang
+svn co http://src.chromium.org/svn/trunk/src/tools/clang/scripts
+cd ../../
+tools/clang/scripts/update.sh
+# Now use third_party/llvm-build/Release+Asserts/bin/{clang,clang++}
+}}}
