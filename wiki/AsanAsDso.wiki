@@ -1,0 +1,35 @@
+#summary AddressSanitizer as a shared library
+
+== ASAN as a shared library ==
+Today, ASAN in Clang on Linux is offered only in the form of static library.
+(e.g. `libclang_rt.asan-x86_64.a`)
+On most other platforms ASAN is offered only in the form of DSO due to platform limitations.
+The GCC variant of ASAN offers both static and DSO variants and DSO is the default.
+
+It is easy to build a usable ASAN-DSO from LLVM tree: 
+{{{
+cd $LLVM/projects/compiler-rt/lib
+clang -o asan.so  -DASAN_USE_PREINIT_ARRAY=0 -fno-exceptions -fno-rtti -I. -O2 -fPIC -shared \
+  asan/*.cc sanitizer_common/*.cc interception/*.cc lsan/lsan_common*.cc -ldl -lpthread -lm 
+}}}
+
+However, if we are going to officially support ASAN-DSO on Linux, 
+we need to understand and document all its properties.
+
+Cons: 
+  * Worse performance (ASAN run-time is called via PLT even in the main executable)
+  * issue 147 (can't use -static-libstdc++)
+  * Potential version conflicts (the binary is linked against incompatible DSO version)
+  * Harder deployment (need to carry the DSO around)
+Pros:
+  * Smaller disk usage
+  * Potential ability to bring old ASAN-ified binaries to new systems
+  * Ability to LD_PRELOAD ASAN-DSO, see below.
+
+==ASAN and LD_PRELOAD ==
+It is possible to use AddressSanitizer in this scenario: 
+  * There is third-party executable binary which can not be recompiled 
+  * It loads shared libraries that can be recompiled and we want to instrument them with AddressSanitizer
+
+A simple solution is to build ASAN-DSO and LD_PRELOAD it into the process, however the devil is in the detail.
+TODO (stay tuned)
