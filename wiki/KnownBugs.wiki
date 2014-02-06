@@ -1,4 +1,0 @@
-#summary Known bugs in AddressSanitizer
-
-=Unaligned accesses=
-There is a known [http://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm#Unaligned_accesses issue with unaligned accesses] (ASan may miss some rare bugs).
