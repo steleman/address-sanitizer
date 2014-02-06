@@ -1,5 +1,0 @@
-#summary TODO items for AddressSanitizer
-
-TODO items in no particular order:
-
-  * Implement CompileTimeOptimizations.
