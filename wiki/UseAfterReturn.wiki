@@ -96,12 +96,14 @@ These are the performance numbers on SPEC 2006. We've compared pure asan against
 ||         482.sphinx3||       930.00||       927.00||         1.00||
 
 
-
+=Garbage collection=
+We have an experimental API to support interoperability of AddressSanitizer's fake stack with garbage collection. 
+See http://llvm.org/viewvc/llvm-project?view=revision&revision=200908 and stay tuned for more news. 
 
 =Compatibility=
 The fake stack may be incompatible with some low-level code that 
 uses certain assumptions about the stack memory layout.
   * Code that takes an address of a local variable and assumes the variable is localed on the real stack.
-  * Implementations of C++ garbage collection may require special attention. TODO
+  * Implementations of C++ garbage collection may require special attention. See above.
 
 TODO
