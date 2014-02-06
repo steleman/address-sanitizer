@@ -21,15 +21,17 @@ Cons:
   * issue 147 (can't use -static-libstdc++)
   * Potential version conflicts (the binary is linked against incompatible DSO version)
   * Harder deployment (need to carry the DSO around)
+  * `__asan_init` is not called from `preinit_array` and so there is a risk that an instrumented code will get called before `__asan_init`
 Pros:
   * Smaller disk usage
   * Potential ability to bring old ASAN-ified binaries to new systems
   * Ability to LD_PRELOAD ASAN-DSO, see below.
 
 ==ASAN and LD_PRELOAD ==
-It is possible to use AddressSanitizer in this scenario: 
+It is possible to use ASAN in this scenario: 
   * There is third-party executable binary which can not be recompiled 
-  * It loads shared libraries that can be recompiled and we want to instrument them with AddressSanitizer
+  * It loads shared libraries that can be recompiled and we want to test them with ASAN
 
 A simple solution is to build ASAN-DSO and LD_PRELOAD it into the process, however the devil is in the detail.
-TODO (stay tuned)
+  * If the process creates sub-processes, the will also have ASAN-DSO preloaded, which may be undesirable.
+  * TODO (stay tuned)
