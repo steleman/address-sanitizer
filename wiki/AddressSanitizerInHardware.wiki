@@ -214,3 +214,5 @@ The benefit is that no instrumentation will be required and all legacy code will
 if linked with the AddressSanitizer run-time library.
 The downside is that no compiler optimizations (eliminations of ASANCHK) will be possible.
 
+==  Links ==
+  * The paper [http://www.cs.rutgers.edu/~santosh.nagarakatte/papers/cgo2014-final.pdf WatchdogLite: Hardware-Accelerated Compiler-Based Pointer Checking] proposes a similar set of extra instructions, although they are much closer in spirit to [IntelMemoryProtectionExtensions MPX] than to AddressSanitizer
