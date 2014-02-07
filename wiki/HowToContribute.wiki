@@ -4,3 +4,4 @@
     * In short, please send patches to `llvm-commits@cs.uiuc.edu`. For non-trivial patches please consider using [http://llvm.org/docs/Phabricator.html Phabricator] -- this will help us reply faster.
   * The GCC version of AddressSanitizer run-time is a verbatim copy of the LLVM version, please do not commit changes to GCC trunk w/o committing them to LLVM trunk first. See also `libsanitizer/README.gcc` in the GCC trunk. 
   * The GCC compiler module is developed according to the [http://gcc.gnu.org/contribute.html general GCC rules].
+  * If you are adding support for a new architecture/platform, we encourage you to [http://llvm.org/docs/HowToAddABuilder.html set up a public build bot], otherwise we can not guarantee that we will keep your code in working conditions.
