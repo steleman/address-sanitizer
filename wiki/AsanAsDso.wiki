@@ -21,9 +21,9 @@ Cons:
   * issue 147 (can't use -static-libstdc++)
   * Potential version conflicts (the binary is linked against incompatible DSO version)
   * Harder deployment (need to carry the DSO around)
-  * `__asan_init` is not called from `preinit_array` and so there is a risk that an instrumented code will get called before `__asan_init`
+  * `__asan_init` is not called from `preinit_array` and so there is a risk that an instrumented code will get called before `__asan_init` (may cause SEGV at startup; still unlikely)
 Pros:
-  * Smaller disk usage
+  * Smaller disk usage and memory footprint when multiple processes are running with asan.
   * Potential ability to bring old ASAN-ified binaries to new systems
   * Ability to LD_PRELOAD ASAN-DSO, see below.
 
