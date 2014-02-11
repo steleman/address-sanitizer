@@ -2,7 +2,7 @@
 
 The AddressSanitizer run-time library and the LLVM compiler module are being developed in the LLVM source tree. Please see the [http://llvm.org/docs/DeveloperPolicy.html LLVM Developer Policy]
 
-The Address sanitizer is on the [http://compiler-rt.llvm.org/ Compiler-RT] tree, under `lib/asan` as well as some shared files under `lib/sanitizer_common`.
+The run-time library resides in the [http://compiler-rt.llvm.org/ Compiler-RT] tree, under `lib/asan` as well as some shared files under `lib/sanitizer_common`, etc.
 
 To request a merge into the sanitizer's code-base, please send patches based on the LLVM tree to `llvm-commits@cs.uiuc.edu`. For non-trivial patches please consider using [http://llvm.org/docs/Phabricator.html Phabricator] -- this will help us reply faster.
 
@@ -15,7 +15,7 @@ We're creating a set of guidelines for GCC developers to contribute back with ea
  # Develop and test in GCC's sanitizer tree
  # Take a diff one directory up (to avoid "libsanitizer")
  # Apply the patch on an LLVM sanitizer's tree (inside compiler-rt/lib) and re-work the build to LLVM style.
- # Test in the LLVM tree. This is *hard* and you might need help (I do). We are working to make it much easier, but in the interim please ask for help in the LLVM list.
+ # Test in the LLVM tree. For new architectures this is *hard* and you might need help. We are working to make it much easier, but in the interim please ask for help in the LLVM list.
  # Submit the patch to LLVM's tree via list/Phabricator (see above)
  # Commit to compiler-rt (or ask someone to do that for you).
  # Merge back into GCC's libsanitizer, and apply the missing patches.
