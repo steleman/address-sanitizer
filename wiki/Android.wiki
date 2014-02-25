@@ -6,9 +6,7 @@ AddressSanitizer is fully supported in AOSP starting with JellyBean release. To 
 
 To build any part of Android system with ASan, add LOCAL_ADDRESS_SANITIZER:=true to the appropriate Android.mk.
 
-Running:
- * To run a standalone native binary, prefix it with asanwrapper: `/system/bin/asanwrapper _path_to_your_binary_ _options_`
- * To run an app from an APK, do `setprop wrap._name_ "logwrapper asanwrapper"` , where _name_ is the name of your app as seen in "adb shell ps"
+To run a standalone native binary, prefix it with asanwrapper: `/system/bin/asanwrapper _path_to_your_binary_ _options_`
 
 NOTE: if you get an assertion failure about INTERCEPT(something), this means ASan interceptors have not kicked in. Verify that you are running the program with asanwrapper.
 
