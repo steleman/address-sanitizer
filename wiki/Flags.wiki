@@ -44,3 +44,4 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 || strict_init_order || 0 || When set to 1, [ExampleInitOrderFiasco InitOrderFiasco] also finds potential init order problems. ||
 || strip_path_prefix || "" || When `strip_path_prefix=PREFIX` the substring `.*PREFIX` will be removed from the reported file names. ||
 || detect_leaks || 0 || If 1, enables memory leak detection. See LeakSanitizer. ||
+|| color || auto || Print reports in color. Possible values: auto|always|never. By default, color is enabled if printing to terminal. ||
