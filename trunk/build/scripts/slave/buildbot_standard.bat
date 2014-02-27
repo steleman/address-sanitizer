@@ -23,22 +23,6 @@ call svn co http://address-sanitizer.googlecode.com/svn/trunk/win/tests win_test
 
 set ROOT=%cd%
 
-echo @@@BUILD_STEP build asan RTL@@@
-:: Build the RTL manually - useful to detect RTL build errors early.
-set ASAN_PATH=llvm\projects\compiler-rt\lib\asan
-cd %ASAN_PATH% || goto :DIE
-del *.pdb *.o *.obj *.lib || goto :DIE
-
-:: /WX <- treat warnings as errors
-:: /W3 <- warnings level 3
-:: /MP <- parallel buidling (currently disabled)
-:: /MT <- Multi-Threaded CRT with static linking
-:: /Zi <- generate debug info
-cl /nologo /WX /W3 /MT /Zi /D__func__=__FUNCTION__ /I.. /I../../include /c *.cc ../P="" /c *.cc inter../sanitizer_commcc interception/*.cc || goto :DIE
-ignore:4221
-lib /nologo /OUT:asan_rtl.lib *.obj ||l /nologo /WX /W3 /MT /Zi /D__func__=__FUNCTION__ /DASAN_DLL_THUNK /c asan_dll_thunk.cc || goto :DIE
-lib /nologo /ignore:4221 /OUT:asan_dll_thunk.lib asan_dll_thunk.obj || g%ROOT%
-
 echo @@@BUILD_STEP cmake llvm@@@
 mkdir llvm-build
 cd llvm-build || goto :DIE
@@ -48,10 +32,13 @@ del CMakeCache.txt
 rmdir /S /Q CMakeFiles
 
 cmake -GNinja -DLLVM_ENABLE_ASSERTIONS=ON -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=X86 ..\llvm || goto :DIE
+
+echo @@@BUILD_STEP build compiler-rt@@@
+:: Build compiler-rt separately first, as this should help us find ASan RTL
+:: compile-time bugs quicker.
+ninja compiler-rt
+
 echo @@@BUILD_STEP build llvm@@@
-ninja || goto :DIE
-:: TODO(timurrrr): Run ninja second time to work around
-:: http://public.kitware.com/Bug/view.php?id=14167
 ninja || goto :DIE
 cd %ROOT%
 
@@ -72,10 +59,8 @@ cd win_tests
 C:\cyg-sgwin\bin\make PLATFORM=W../llvm-build/bin/clang-cl FILECHECK=../../llvm-build/bin/FileCheck CFLAGS="-fsanitize=address -Zi" -k || goto :DIE
 cd %ROOT%
 
-:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan :: TODO(timurrrr): Re-enable once http://llvm.org/PR17098 is fixed
-:: echo @@@BUILD_STEP build asan RTL with clang@@@
-:: cd %ASAN_PATH% || goto :DIE
-:: %ROOT%\llvm-build\bin\clang-cl /GR- /I.. /I../../include /c *.cc ..\interception\*.cc ..\sanitizer_common\*.cc || goto :DIEsa:: cd %ROOT%san _tests@@@
+:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan :: TODO(timurrrr)
+:: echo @@@BUILD_STEP build asan RTL with clang@@@san _tests@@@
 
 echo "ALL DONE"
 goto ::: TODO(timurrrr) : get the current process's PID?
