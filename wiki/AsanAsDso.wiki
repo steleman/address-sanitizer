@@ -30,7 +30,7 @@ Pros:
   * Ability to LD_PRELOAD ASAN-DSO, see below.
 
 ==ASAN and LD_PRELOAD ==
-It is possible to use ASAN in this scenario: 
+It is possible to use ASAN in this scenario (e.g. JVM+JNI, Python+SWIG): 
   * There is third-party executable binary which can not be recompiled 
   * It loads shared libraries that can be recompiled and we want to test them with ASAN
 
