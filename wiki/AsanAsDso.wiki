@@ -1,25 +1,18 @@
 #summary AddressSanitizer as a shared library
 
 == ASAN as a shared library ==
-Today, ASAN in Clang on Linux is offered only in the form of static library.
-(e.g. `libclang_rt.asan-x86_64.a`)
+
+Until recently, ASAN runtime in Clang on Linux was offered only in the form of static library (e.g. `libclang_rt.asan-x86_64.a`). This has recently been changed and you can now ask for shared runtime (aka ASAN-DSO) by cmaking with
+-DCOMPILER_RT_BUILD_SHARED_ASAN=ON (and then compiling your code with `-fsanitize=address -shared-libasan`).
+
 On most other platforms ASAN is offered only in the form of DSO due to platform limitations.
 The GCC variant of ASAN offers both static and DSO variants and DSO is the default.
 
-It is easy to build a usable ASAN-DSO from LLVM tree: 
-{{{
-cd $LLVM/projects/compiler-rt/lib
-clang -o asan.so  -DASAN_USE_PREINIT_ARRAY=0 -fno-exceptions -fno-rtti -I. -O2 -fPIC -shared \
-  asan/*.cc sanitizer_common/*.cc interception/*.cc lsan/lsan_common*.cc -ldl -lpthread -lm 
-}}}
-
-However, if we are going to officially support ASAN-DSO on Linux, 
-we need to understand and document all its properties.
+ASAN-DSO is _not_ (yet?) officially supported. Use it at your own risk.
 
 Cons: 
   * Worse performance (ASAN run-time is called via PLT even in the main executable)
-  * issue 147 (can't use -static-libstdc++)
-  * Potential version conflicts (the binary is linked against incompatible DSO version)
+  * Issue 147 (can't use -static-libstdc++)
   * Harder deployment (need to carry the DSO around)
   * `__asan_init` is not called from `preinit_array` and so there is a risk that an instrumented code will get called before `__asan_init` (may cause SEGV at startup; still unlikely)
   * Spurious warnings from libsanitizer when debug output is enabled (e.g. "AddressSanitizer: failed to intercept 'memcpy'")
@@ -30,10 +23,11 @@ Pros:
   * Ability to LD_PRELOAD ASAN-DSO, see below.
 
 ==ASAN and LD_PRELOAD ==
+
 It is possible to use ASAN in this scenario (e.g. JVM+JNI, Python+SWIG): 
   * There is third-party executable binary which can not be recompiled 
   * It loads shared libraries that can be recompiled and we want to test them with ASAN
 
 A simple solution is to build ASAN-DSO and LD_PRELOAD it into the process, however the devil is in the detail.
-  * If the process creates sub-processes, the will also have ASAN-DSO preloaded, which may be undesirable.
+  * If the process creates sub-processes, they will also have ASAN-DSO preloaded, which may be undesirable.
   * TODO (stay tuned)
