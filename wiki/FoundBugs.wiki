@@ -40,6 +40,7 @@
   * http://googlechromereleases.blogspot.com/2014/02/stable-channel-update_20.html
   * http://googlechromereleases.blogspot.com/2014/03/stable-channel-update.html
   * http://googlechromereleases.blogspot.com/2014/03/stable-channel-update_11.html
+  * http://googlechromereleases.blogspot.com/2014/04/stable-channel-update.html
   * http://support.apple.com/kb/HT5000
   * http://support.apple.com/kb/HT5192
   * http://support.apple.com/kb/HT5400
