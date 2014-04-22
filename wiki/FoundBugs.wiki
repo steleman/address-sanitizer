@@ -135,6 +135,10 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
   * http://bugs.mysql.com/bug.php?id=67243
   * http://bugs.mysql.com/bug.php?id=67244
 
+=RocksDB=
+  * https://github.com/facebook/rocksdb/commit/ec0acfbca115fc6cda85d2246474ee5148d80af8
+  * https://github.com/facebook/rocksdb/commit/469a9f32a7583b1650e904b8e5d603dc81f762b7
+
 =PostgreSQL=
 http://postgresql.1045698.n5.nabble.com/pgsql-Avoid-potential-buffer-overflow-crash-td5779963.html
 
