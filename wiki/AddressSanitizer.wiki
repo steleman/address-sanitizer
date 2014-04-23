@@ -118,7 +118,7 @@ Sometimes an AddressSanitizer build may behave differently than the regular one.
 In some cases a particular function should be ignored (not instrumented) by AddressSanitizer:
   * Ignore a very hot function known to be correct to speedup the app.
   * Ignore a function that does some low-level magic (e.g. walking through the thread's stack bypassing the frame boundaries). 
-  * Don't report a know problem. 
+  * Don't report a known problem. 
 In either case, be *very careful*. 
 
 To ignore certain functions, one can use the *no_sanitize_address*
