@@ -1,7 +1,7 @@
 #summary AddressSanitizer coverage tool
 
 AddressSanitizer (as of Clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r199488]) 
-has a very simple *experimental* coverage tool built in.
+has a very simple coverage tool built in.
 It allows to get function-level and basic-block-level coverage at a very low cost.
 
 =Build and run=
@@ -85,3 +85,8 @@ With basic-block-level (`-mllvm -asan-coverage=2`) the overhead varies between 0
 ||          453.povray||       427.00||       434.00||         1.02||       495.00||         1.16||         1.14|| 
 ||             470.lbm||       357.00||       375.00||         1.05||       370.00||         1.04||         0.99|| 
 ||         482.sphinx3||       927.00||       928.00||         1.00||      1000.00||         1.08||         1.08|| 
+
+=Why another coverage?= 
+Why did we implement yet another code coverage?
+  * We needed something that is lightning fast, plays well with AddressSanitizer, and does not significantly increase the binary size.
+  * Traditional coverage implementations based in global counters [https://groups.google.com/forum/#!topic/llvm-dev/cDqYgnxNEhY suffer from contention on counters]. 
