@@ -2,19 +2,19 @@
 
 =Summary =
 
-||                                         || AddressSanitizer || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  ||
-|| technology                              || CTI              || DBI               || DBI            || CTI           || Library   ||
-|| ARCH                                    || x86              || x86,ARM,PPC       || x86            || all(?)        || all(?)    ||
-|| OS                                      || Linux, Mac       || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   ||
-|| Slowdown                                || *2x*             || 20x               || 10x            || 2x-40x        || ?         ||
-|| Detects:                                ||                  ||                   ||                ||               ||           ||
-|| [ExampleHeapOutOfBounds Heap OOB]       || *yes*            || yes               || yes            || yes           || some      ||
-|| [ExampleStackOutOfBounds Stack OOB]     || *yes*            || no                || no             || some          || no        ||
-|| [ExampleGlobalOutOfBounds Global OOB]   || *yes*            || no                || no             || ?             || no        ||
-|| [ExampleUseAfterFree UAF]               || *yes*            || yes               || yes            || yes           || yes       ||
-|| [ExampleUseAfterReturn UAR]             || *some*           || no                || no             || no            || no        ||
-|| UMR                                     || no               || yes               || yes            || ?             || no        ||
-|| Leaks                                   || not yet          || yes               || yes            || ?             || no        ||
+||                                         || AddressSanitizer           || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  || [https://code.google.com/p/gperftools/ gperftools] ||
+|| technology                              || CTI                        || DBI               || DBI            || CTI           || Library   || Library ||
+|| ARCH                                    || x86                        || x86,ARM,PPC       || x86            || all(?)        || all(?)    || all(?)  ||
+|| OS                                      || Linux, Mac                 || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   || Linux, Windows   ||
+|| Slowdown                                || *2x*                       || 20x               || 10x            || 2x-40x        || ?         || ?       ||
+|| Detects:                                ||                            ||                   ||                ||               ||           ||         ||
+|| [ExampleHeapOutOfBounds Heap OOB]       || *yes*                      || yes               || yes            || yes           || some      || some    ||
+|| [ExampleStackOutOfBounds Stack OOB]     || *yes*                      || no                || no             || some          || no        || no      ||
+|| [ExampleGlobalOutOfBounds Global OOB]   || *yes*                      || no                || no             || ?             || no        || no      ||
+|| [ExampleUseAfterFree UAF]               || *yes*                      || yes               || yes            || yes           || yes       || yes     ||
+|| [ExampleUseAfterReturn UAR]             || *some*                     || no                || no             || no            || no        || no      ||
+|| UMR                                     || no                         || yes               || yes            || ?             || no        || no      ||
+|| Leaks                                   || *yes* (with LeakSanitizer) || yes               || yes            || ?             || no        || yes     ||
 
 
 *DBI*: dynamic binary instrumentation <BR>
@@ -25,6 +25,7 @@
 *OOB*: out-of-bounds  <BR>
 *x86*: includes 32- and 64-bit. <BR>
 *Guard Page*: a family of memory error detectors ([http://perens.com/FreeSoftware/ Electric fence] or [http://duma.sourceforge.net/ DUMA] on Linux, Page Heap on Windows, Guard Malloc in Mac)
+*gperftools*: various performance tools/error detectors bundled with TCMalloc. [http://gperftools.googlecode.com/svn/trunk/doc/heap_checker.html Heap checker] (leak detector) is only available on Linux. [https://code.google.com/p/gperftools/source/browse/src/debugallocation.cc Debug allocator] provides both guard pages and canary values for more precise detection of OOB writes, so it's better than guard page-only detectors.
 
 =Performance numbers on SPEC cpu2006=
   * AddressSanitizer: see PerformanceNumbers
