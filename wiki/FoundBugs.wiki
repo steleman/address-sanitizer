@@ -100,6 +100,9 @@ Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
 
 See also http://blog.mozilla.com/decoder/2012/01/27/trying-new-code-analysis-techniques/#more-14
 
+= Opera =
+[http://blogs.opera.com/desktop/changelog21/ DNA-15927]
+
 =ffmpeg=
 Some (but not all) bugs found in [http://ffmpeg.org/ ffmpeg]: 
   * http://git.videolan.org/?p=ffmpeg.git;a=commit;h=1149fbc7631a8c2258386f9aa247806715493b10
