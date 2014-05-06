@@ -2,7 +2,7 @@
 
 = OpenSSL  =
 
-  * [ http://heartbleed.com/ Heartbleed] -- A detailed write-up is [http://www.dwheeler.com/essays/heartbleed.html here]. In short, use of a custom freelist hid the bug from testing tools.
+  * [http://heartbleed.com/ Heartbleed] -- A detailed write-up is [http://www.dwheeler.com/essays/heartbleed.html here]. In short, use of a custom freelist hid the bug from testing tools.
 
 
 = Microsoft Internet Explorer =
