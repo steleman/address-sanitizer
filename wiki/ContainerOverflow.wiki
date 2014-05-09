@@ -23,8 +23,10 @@ int main() {
 }
 }}}
 
-[http://lists.cs.uiuc.edu/pipermail/cfe-dev/2013-November/033649.html Work is in progress] to annotate containers in LLVM's libc++.
-We are also working on annotations for libstdc++: [http://gcc.gnu.org/viewcvs/gcc?view=revision&revision=207517 first step]
+`std::vector` is annotated in LLVM's libc++ as of [http://llvm.org/viewvc/llvm-project?view=revision&revision=208319 r208319].
+(See also [http://lists.cs.uiuc.edu/pipermail/cfe-dev/2013-November/033649.html the discussion]).
+We are also working on annotations for libstdc++: [http://gcc.gnu.org/viewcvs/gcc?view=revision&revision=207517 first step].
+Next steps are to annotate `std::string` and `std::deque`.
 
 Another side effect of container annotations will be improved sensitivity of LeakSanitizer.
 In the following example we have a leak because a pointer is removed from a global vector using `pop_back`,
