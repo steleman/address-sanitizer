@@ -110,6 +110,8 @@ http://seclists.org/oss-sec/2013/q3/683
 
 http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=2811ebac2521ceac84f2bdae402455baa6a7fb47
 
+http://www.spinics.net/lists/netdev/msg282080.html
+
   * Out-of-bounds in ftrace_regex_release (kernel/trace/ftrace.c):
 http://www.spinics.net/lists/kernel/msg1612400.html
 
