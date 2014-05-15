@@ -9,7 +9,6 @@ echo @@@BUILD_STEP update@@@
 ::  rmdir /S /Q llvm || goto :DIE
 ::  rmdir /S /Q llvm-build || goto :DIE
 ::  mkdir llvm-build || goto :DIE
-::  rmdir /S /Q win_tests || goto :DIE
 ::fi
 
 set REV_ARG=
@@ -19,7 +18,6 @@ if NOT "%BUILDBOT_REVISION%" == "" set REV_ARG="-r%BUILDBOT_REVISION%"
 call svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm %REV_ARG% || goto :DIE
 call svn co http://llvm.org/svn/llvm-project/cfe/trunk llvm/tools/clang %REV_ARG% || goto :DIE
 call svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk llvm/projects/compiler-rt %REV_ARG% || goto :DIE
-call svn co http://address-sanitizer.googlecode.com/svn/trunk/win/tests win_tests || echo "Failed to update Windows tests, alas..."
 
 set ROOT=%cd%
 
@@ -36,27 +34,12 @@ ninja compiler-rt
 echo @@@BUILD_STEP build llvm@@@
 ninja || goto :DIE
 
-echo @@@BUILD_STEP run upstream tests@@@
+echo @@@BUILD_STEP run tests@@@
 ninja check-asan check-sanitizer || goto :DIE
 
 cd %ROOT%
 
-echo @@@BUILD_STEP asan test@@@
-cd win_tests || goto :DIE
-cd win_tests
-C:\cyg-sgwin\bin\make PLATRM_F="/cygdrive/c/cygwin/bin/rm -f"Tclean || goto :DIE
-cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=Windows CC=../llclang-cl FILECHECK=../llvm-build/bin/FileCheck CFLAGS="-fsanitize=address -Zi" UAR_FLAG="-fsanitize=use-after-return" -k || goto :DIE
-
-echo @@@BUILD_STEP asan DLL thunk test@@@
-cd dll_tests || goto :DIE
-cd win_tests
-C:\cyg-sgwin\bin\make PLATRM_F="/cygdrive/c/cygwin/bin/rm -f"Tclean || goto :DIE
-cd win_tests
-C:\cyg-sgwin\bin\make PLATFORM=W../llvm-build/bin/clang-cl FILECHECK=../../llvm-build/bin/FileCheck CFLAGS="-fsanitize=address -Zi" -k || goto :DIE
-cd %ROOT%
-
-:: TODO(timurrrr) echo @@@BUILD_STEP @@BUILD_STEP asan :: TODO(timurrrr)
+:: TODO(timurrrr)
 :: echo @@@BUILD_STEP build asan RTL with clang@@@san _tests@@@
 
 echo "ALL DONE"
