@@ -11,7 +11,7 @@
 ASan-specific compile-time flags are passed via clang flag `-mllvm <flag>`. In most cases you don't need them.
 || flag|| default || description ||
 || -asan-stack   || 1 || Detect overflow/underflow for stack objects ||
-|| -asan-globals || 1 || Detect overflow/underflow for global objects (see [KnownBugs])   ||
+|| -asan-globals || 1 || Detect overflow/underflow for global objects ||
 
 =Run-time flags=
 
