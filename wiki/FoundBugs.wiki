@@ -139,6 +139,8 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
   * https://github.com/parrot/parrot/commit/b58a50c2b147c
   * https://github.com/parrot/parrot/commit/1e5f20eefce263
 
+=libreoffice=
+  * http://whatofhow.wordpress.com/2014/05/22/stacked-bugs/ (nice UseAfterReturn bug)
 =MySQL=
   * http://bugs.mysql.com/bug.php?id=67242
   * http://bugs.mysql.com/bug.php?id=67243
