@@ -70,6 +70,30 @@ This can be changed with ASAN_OPTIONS=coverage_dir=/path
 -rw-r----- 1 kcc eng 8 Nov 27 12:21 a.out.22679.sancov
 }}}
 
+=Sudden death=
+
+Normally, coverage data is collected in memory and saved to disk when the program exits (with an atexit() handler), when a SIGSEGV is caught, or when __sanitizer_cov_dump is called.
+
+If the program ends with a signal that ASan does not handle (or can not handle at all, like SIGKILL), coverage data will be lost. This is a big problem on Android, where SIGKILL is a normal way of evicting applications from memory.
+
+With ASAN_OPTIONS=coverage=1,coverage_direct=1 coverage data is written to a memory-mapped file as soon as it collected.
+{{{
+% ASAN_OPTIONS=coverage=1,coverage_direct=1 ./a.out 
+main
+% ls
+7036.sancov.map  7036.sancov.raw  a.out
+% sancov.py rawunpack 7036.sancov.raw 
+sancov.py: reading map 7036.sancov.map
+sancov.py: unpacking 7036.sancov.raw
+writing 1 PCs to a.out.7036.sancov
+% sancov.py print a.out.7036.sancov 
+sancov.py: read 1 PCs from a.out.7036.sancov
+sancov.py: 1 files merged; 1 PCs total
+0x4b2bae
+}}}
+
+Note that on 64-bit platforms, this method writes 2x more data then the default, because it stores full PC values instead of 32-bit offsets.
+
 =Performance=
 
 This coverage implementation is *fast*. <BR>
