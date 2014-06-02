@@ -59,6 +59,17 @@ cov.cc:3
 cov.cc:5
 }}}
 
+=Output directory=
+
+By default, .sancov files are created in the current working directory.
+This can be changed with ASAN_OPTIONS=coverage_dir=/path
+{{{
+% ASAN_OPTIONS=coverage=1,coverage_dir=/tmp/cov ./a.out foo
+% ls -l /tmp/cov/*sancov
+-rw-r----- 1 kcc eng 4 Nov 27 12:21 a.out.22673.sancov
+-rw-r----- 1 kcc eng 8 Nov 27 12:21 a.out.22679.sancov
+}}}
+
 =Performance=
 
 This coverage implementation is *fast*. <BR>
