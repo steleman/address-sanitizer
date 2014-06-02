@@ -92,7 +92,7 @@ sancov.py: 1 files merged; 1 PCs total
 0x4b2bae
 }}}
 
-Note that on 64-bit platforms, this method writes 2x more data then the default, because it stores full PC values instead of 32-bit offsets.
+Note that on 64-bit platforms, this method writes 2x more data than the default, because it stores full PC values instead of 32-bit offsets.
 
 =Performance=
 
