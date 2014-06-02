@@ -46,3 +46,6 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 || detect_leaks || 0 || If 1, enables memory leak detection. See LeakSanitizer. ||
 || use_sigaltstack || 1 || If 1, `sigaltstack` is called at start up time. This will provide verbose reports in case of stack overflow.  ||
 || color || auto || Print reports in color. Possible values: auto|always|never. By default, color is enabled if printing to terminal. ||
+|| coverage || 0 || Enables coverage collection. See AsanCoverage. ||
+|| coverage_dir || ./ || Controls the path at which coverage is saved. ||
+|| coverage_direct || 0 || Enables writing coverage directly to a memory-mapped file (compared to once at the end of the program). See AsanCoverage. ||
