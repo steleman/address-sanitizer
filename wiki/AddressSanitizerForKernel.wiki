@@ -125,6 +125,9 @@ http://permalink.gmane.org/gmane.comp.file-systems.ext4/41108
 
 *Confirmed:*
 
+ * Use-after-free in __put_anon_vma:
+https://lkml.org/lkml/2014/6/6/186
+
  * Out-of-bounds read in __d_lookup_rcu (fs/dcache.c):
 https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReports
 
