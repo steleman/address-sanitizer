@@ -125,6 +125,9 @@ http://permalink.gmane.org/gmane.comp.file-systems.ext4/41108
 
 *Confirmed:*
 
+ * Race (use-after-free) in ip4_datagram_release_cb:
+http://www.spinics.net/lists/netdev/msg285419.html
+
  * Use-after-free in __put_anon_vma:
 https://lkml.org/lkml/2014/6/6/186
 
