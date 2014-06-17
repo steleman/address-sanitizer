@@ -14,9 +14,9 @@ AddressSanitizer for Linux kernel:
 
 = Details =
 
-Pre-alpha repository: https://github.com/xairy/linux
+Pre-alpha repository: https://github.com/google/kasan
 
-More extensive documentation: https://github.com/xairy/linux/blob/asan/Documentation/asan.txt
+More extensive documentation: https://github.com/google/kasan/blob/asan/Documentation/asan.txt
 
 == Reports ==
 
