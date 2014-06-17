@@ -49,12 +49,12 @@ $ cat ./report | ./kasan_symbolize.py ./vmlinux
 
 To instrument the kernel you need to use a custom GCC, which you can download [https://address-sanitizer.googlecode.com/files/gcc-r203101-snapshot.tar.gz here].
 
-You need to set GCC path in the wrapper script linux/gcc.py:
+You need to set GCC path in the make command line:
 {{{
-gcc = '$GCC_KASAN/install/bin/gcc'
+make CC='$GCC_KASAN/bin/gcc'
 }}}
 
-The kernel Makefile is changed so when you start building the kernel it will automatically use the wrapper script.
+You will also need to enable SLAB allocator (General setup > Choose SLAB allocator) and AddressSanitizer (Kernel hacking > Memory Debugging) during kernel configuration.
 
 If you would like to build GCC yourself read the instructions below.
 
