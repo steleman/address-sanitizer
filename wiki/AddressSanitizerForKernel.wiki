@@ -148,4 +148,5 @@ http://www.lkml.org/lkml/2013/8/21/431
 https://lkml.org/lkml/2013/9/17/30
   * Use-after-free in ata_qc_issue (drivers/ata/libata-core.c):
 http://www.spinics.net/lists/linux-ide/msg46213.html
-  * Racey use-after-free in list_del_event https://lkml.org/lkml/2014/6/18/318
+  * Racy use-after-free in list_del_event
+https://lkml.org/lkml/2014/6/18/318
