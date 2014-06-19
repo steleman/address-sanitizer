@@ -137,7 +137,7 @@ https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerForKernelReport
 http://lkml.org/lkml/2013/10/3/493
 
  * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c):
-http://www.lkml.org/lkml/2013/9/3/286
+http://lkml.org/lkml/2013/9/3/286
 
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
