@@ -19,7 +19,7 @@ Then do one of the following:
   * (make build) Read http://src.chromium.org/viewvc/chrome/trunk/src/tools/clang/scripts/update.sh?revision=HEAD&view=markup and do the same (search for "android"). 
   * (cmake build) Read https://code.google.com/p/address-sanitizer/source/browse/trunk/build/scripts/slave/buildbot_cmake.sh and do the same (search for "ANDROID"). 
 
-Either of the above will get you Clang with arm-android ASan runtime library. Cmake build (the second bullet) will also build ASan tests for Android.
+Either of the above will get you Clang with arm-android ASan runtime library. Cmake build (the second bullet) will also build ASan tests for Android and put asan_device_setup binary under bin/.
 
 Find the GCC-based ARM toolchain in `<ndk>/toolchains/arm-linux-androideabi-4.4.3`, and copy Clang build over it:
 {{{
@@ -47,7 +47,7 @@ LOCAL_LDFLAGS += -fsanitize=address
 
 == Running NDK applications with ASan ==
 
-The "old" way (see below) add a huge (10-20s) delay at the start of any ASan process, because the entire VM needs to be restarted and set up from scratch in order to preload the ASan runtime library. The new way, described in this section, is superior in most respect, except for slightly higher memory usage.
+The "old" way (see below) adds a huge (10-20s) delay at the start of any ASan process, because the entire VM needs to be restarted and set up from scratch in order to preload the ASan runtime library. The new way, described in this section, is superior in most respects, except for slightly higher memory usage.
 
  * No need to set system properties for every app you want to run with ASan.
  * -eng build is not required. -userdebug works perfectly well. Even -user would work if you somehow can edit /system partition (ex. by patching the system image before flashing it to the device).
@@ -62,7 +62,7 @@ The idea is to preload ASan runtime library into *zygote* process. This way, all
 
 This behavior is enabled with ASAN_OPTIONS=start_deactivated=1.
 
-A [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/scripts/asan_device_setup.sh?view=markup script] can be used to prepare device to run ASan applications. You may need to pass --lib option if it fails to find ASan runtime library.
+A [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/scripts/asan_device_setup?view=markup script] can be used to prepare device to run ASan applications. You may need to pass --lib option if it fails to find ASan runtime library.
 
 This script replaces zygote with a wrapper script that preloads ASan runtime library into the process. As a result, ASan packages (.apk) simply work. The script also installs a wrapper in /system/bin/asanwrapper to run ASan binaries.
 
