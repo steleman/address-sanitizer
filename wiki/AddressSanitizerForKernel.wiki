@@ -123,10 +123,12 @@ http://permalink.gmane.org/gmane.comp.file-systems.ext4/40353
 
 http://permalink.gmane.org/gmane.comp.file-systems.ext4/41108
 
-*Confirmed:*
-
  * Race (use-after-free) in ip4_datagram_release_cb:
 http://www.spinics.net/lists/netdev/msg285419.html
+
+http://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/commit/?id=9709674e68646cee5a24e3000b3558d25412203a
+
+*Confirmed:*
 
  * Use-after-free in __put_anon_vma:
 https://lkml.org/lkml/2014/6/6/186
