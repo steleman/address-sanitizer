@@ -141,6 +141,9 @@ http://lkml.org/lkml/2013/10/3/493
  * Out-of-bounds in get_wchan (arch/x86/kernel/process_64.c):
 http://lkml.org/lkml/2013/9/3/286
 
+ * Stack-out-of-bounds in idr_for_each
+https://lkml.org/lkml/2014/6/23/516
+
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
 http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
