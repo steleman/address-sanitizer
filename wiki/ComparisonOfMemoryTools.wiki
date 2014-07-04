@@ -4,17 +4,17 @@
 
 ||                                         || AddressSanitizer           || [http://valgrind.org Valgrind/Memcheck] || [http://dynamorio.org/drmemory.html Dr. Memory] || [http://gcc.gnu.org/wiki/Mudflap_Pointer_Debugging Mudflap] || Guard Page  || [https://code.google.com/p/gperftools/ gperftools] ||
 || technology                              || CTI                        || DBI               || DBI            || CTI           || Library   || Library ||
-|| ARCH                                    || x86                        || x86,ARM,PPC       || x86            || all(?)        || all(?)    || all(?)  ||
-|| OS                                      || Linux, Mac                 || Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   || Linux, Windows   ||
+|| ARCH                                    || x86,ARM,PPC,...            || x86,ARM,PPC       || x86            || all(?)        || all(?)    || all(?)  ||
+|| OS                                      || Linux, Mac, Windows, FreeBSD, Android|| Linux, Mac        || Windows, Linux || Linux, Mac(?) || All (1)   || Linux, Windows   ||
 || Slowdown                                || *2x*                       || 20x               || 10x            || 2x-40x        || ?         || ?       ||
 || Detects:                                ||                            ||                   ||                ||               ||           ||         ||
 || [ExampleHeapOutOfBounds Heap OOB]       || *yes*                      || yes               || yes            || yes           || some      || some    ||
 || [ExampleStackOutOfBounds Stack OOB]     || *yes*                      || no                || no             || some          || no        || no      ||
 || [ExampleGlobalOutOfBounds Global OOB]   || *yes*                      || no                || no             || ?             || no        || no      ||
 || [ExampleUseAfterFree UAF]               || *yes*                      || yes               || yes            || yes           || yes       || yes     ||
-|| [ExampleUseAfterReturn UAR]             || [UseAfterReturn *yes*]     || no                || no             || no            || no        || no      ||
+|| [ExampleUseAfterReturn UAR]             || *yes* (UseAfterReturn)     || no                || no             || no            || no        || no      ||
 || UMR                                     || no                         || yes               || yes            || ?             || no        || no      ||
-|| Leaks                                   || *yes* (with LeakSanitizer) || yes               || yes            || ?             || no        || yes     ||
+|| Leaks                                   || *yes* (LeakSanitizer) || yes               || yes            || ?             || no        || yes     ||
 
 
 *DBI*: dynamic binary instrumentation <BR>
