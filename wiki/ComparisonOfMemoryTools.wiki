@@ -12,9 +12,9 @@
 || [ExampleStackOutOfBounds Stack OOB]     || *yes*                      || no                || no             || some          || no        || no      ||
 || [ExampleGlobalOutOfBounds Global OOB]   || *yes*                      || no                || no             || ?             || no        || no      ||
 || [ExampleUseAfterFree UAF]               || *yes*                      || yes               || yes            || yes           || yes       || yes     ||
-|| [ExampleUseAfterReturn UAR]             || *yes* (UseAfterReturn)     || no                || no             || no            || no        || no      ||
-|| UMR                                     || no                         || yes               || yes            || ?             || no        || no      ||
-|| Leaks                                   || *yes* (LeakSanitizer) || yes               || yes            || ?             || no        || yes     ||
+|| [ExampleUseAfterReturn UAR]             || *yes* (see UseAfterReturn)     || no                || no             || no            || no        || no      ||
+|| UMR                                     || no (see [https://code.google.com/p/memory-sanitizer/ MemorySanitizer])                        || yes               || yes            || ?             || no        || no      ||
+|| Leaks                                   || *yes* (see LeakSanitizer) || yes               || yes            || ?             || no        || yes     ||
 
 
 *DBI*: dynamic binary instrumentation <BR>
