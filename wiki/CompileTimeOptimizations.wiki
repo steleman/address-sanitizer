@@ -30,7 +30,7 @@ if (...)
 *a = ...
 }}}
 
-Instrument only `a[0]` and `a[n-1]`
+Instrument this loop with `__asan_region_is_poisoned(a, n*sizeof(*a))` and avoid instrumenting individual accesses.
 {{{
 for (int i = 0; i < n; i++)
   a[i] = ...;
