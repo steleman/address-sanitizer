@@ -47,6 +47,8 @@ $ cat ./report | ./kasan_symbolize.py ./vmlinux
 
 == Instrumentation ==
 
+NB: These steps are also can be reproduced using dedicated vagrant VM: KasanOnVagrant.
+
 To instrument the kernel you need to use a custom GCC, which you can download [https://address-sanitizer.googlecode.com/files/gcc-r203101-snapshot.tar.gz here].
 
 You need to set GCC path in the make command line:
