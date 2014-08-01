@@ -32,6 +32,7 @@ Run the tests and check result:
 {{{
 # run on guest as root
 echo asan_run_tests > /proc/kasan_tests
+echo asan_run_stack > /proc/kasan_tests
 cat /proc/kasan_stats
 dmesg
 }}}
