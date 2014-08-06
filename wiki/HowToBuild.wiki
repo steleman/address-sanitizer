@@ -25,50 +25,12 @@ svn switch --relocate http://llvm.org/svn/llvm-project/llvm/trunk https://$CNAME
 ==Host compiler==
 In order to build fresh Clang you need some other compiler (e.g. GCC or an older version of Clang).
 Since January 2014 Clang will not build with old compilers (at least GCC 4.7 is required),
-so on older systems you may need to install a newer compiler separately. For Ubuntu 12.04 we recommend this:
-{{{
-sudo apt-get install --yes libgmp-dev  libmpfr-dev  libmpc-dev unzip zip
-wget http://www.netgull.com/gcc/releases/gcc-4.8.2/gcc-4.8.2.tar.bz2
-tar xf gcc-4.8.2.tar.bz2
-cd gcc-4.8.2/
-./configure --prefix=/usr/local/gcc-4.8.2
-make -j20
-sudo make install
-}}}
-==Building AddressSanitizer with configure+make==
-This is the simplest way to get usable AddressSanitizer on older systems (e.g. Ubuntu 12.04)
-{{{
-cd /path/to/llvm
-mkdir build
-(cd build && ../configure --enable-optimized && make -j 10)
-}}}
-Note that building and running ASan tests is supported in CMake build
-only (see instructions below).
-
-To build Clang/LLVM using AddressSanitizer (bootstrap)
-{{{
-# Build fresh clang with AddressSanitizer as explained above
-LLVM=/absolute/path/to/llvm/
-CLANG="$LLVM/build/Release+Asserts/bin/clang"
-CC="$CLANG -fsanitize=address" CXX="$CLANG++ -fsanitize=address  " $LLVM/configure --enable-optimized
-make -j10 TOOL_NO_EXPORTS= HAVE_LINK_VERSION_SCRIPT=0
-}}}
-
-To update an existing checkout:
-{{{
-cd llvm/build
-make update
-}}}
-
-*Note*: if you're hacking the runtime library, you'll need to run:
-{{{
-(cd build && make -j 10)
-}}}
-to rebuild it. Just running `make` in the `asan` subdirectory does not work.
+so on older systems you may need to install a newer compiler separately. Follow [http://llvm.org/docs/GettingStarted.html#getting-a-modern-host-c-toolchain these instructions] to use new GCC as your host compiler.
 
 ==Building AddressSanitizer with CMake (LLVM 3.2 or later) ==
   * Download and install [http://www.cmake.org/cmake/resources/software.html CMake] (you'll need at least CMake 2.8.8).
   * Get llvm, clang and compiler-rt sources (see above).
+  * Make sure you have a modern C++ toolchain (see above).
   * Set configuration and build LLVM.
 {{{
 mkdir llvm_cmake_build && cd llvm_cmake_build
@@ -90,13 +52,9 @@ make check-asan -j12 # build and run ASan unit and output tests
   To build only ASan runtime library:
 {{{
 # On Linux:
-make -j12 clang_rt.asan-x86_64
-make -j12 clang_rt.asan-i386
-# On Mac:
-make -j12 clang_rt.asan_osx
-make -j12 clang_rt.asan_osx_dynamic # optional
+make -j12 asan
 # The runtime libraries are built at:
-# llvm_cmake_build/lib/clang/3.3/lib/{linux,darwin}/
+# llvm_cmake_build/lib/clang/<llvm_version>/lib/{linux,darwin}/
 }}}
   To build/run only ASan unit tests:
 {{{
@@ -122,10 +80,7 @@ cd llvm_cmake_build_asan
 export CC=clang
 export CXX=clang++
 
-cmake -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_C_FLAGS="-fno-omit-frame-pointer -gline-tables-only -fsanitize=address" \
-      -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -gline-tables-only -fsanitize=address" \
-   /path/to/llvm/checkout
+cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_USE_SANITIZER=Address /path/to/llvm/checkout
 }}}
 
 To run lint:
