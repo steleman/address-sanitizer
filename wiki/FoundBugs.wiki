@@ -195,6 +195,9 @@ http://www.mail-archive.com/vim_dev@googlegroups.com/msg15549.html
   * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58396
   * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60024
 
+=Go=
+  * https://code.google.com/p/go/issues/list?can=1&q=AddressSanitizer&sort=-id&colspec=ID%20Status%20Stars%20Release%20Owner%20Repo%20Summary
+
 =Tor=
   * https://trac.torproject.org/projects/tor/ticket/8844
   * https://trac.torproject.org/projects/tor/ticket/8845
