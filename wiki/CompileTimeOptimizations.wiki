@@ -81,6 +81,7 @@ And copies:
 *p;
 q = p;
 *q; // Eliminable
+}}}
 
 And phi-functions:
 {{{
