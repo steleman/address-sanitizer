@@ -1,4 +1,5 @@
 #summary Compile-time optimizations for AddressSanitizer
+<wiki:toc max_depth="2" />
 
 =Introduction=
 AddressSanitizer does not need to instrument all memory accesses to find all bugs.
@@ -130,5 +131,17 @@ for (i = 0; i < n; ++i)
 
 All mentioned optimization could potentially be done for memory ranges with symbolic lengths (in addition to scalar memory accesses) but this is not yet planned.
 
+=Complete tests=
+
+==Escape analysis for use-after-return==
+Here we can prove that `a` does not escape `foo()` and thus we may avoid putting it on fake stack.
+{{{
+int bar();
+int foo(unsigned i) {
+  int a[3] = {bar(), bar(), bar()};
+  return a[i % 3];
+}
+
+}}}
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com
