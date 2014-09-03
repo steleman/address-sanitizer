@@ -2,11 +2,12 @@
 
 AddressSanitizer (as of Clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r199488]) 
 has a very simple coverage tool built in.
-It allows to get function-level and basic-block-level coverage at a very low cost.
+It allows to get function-level, basic-block-level, and edge-level coverage at a very low cost.
 
 =Build and run=
   * Compile with `-fsanitize=address -mllvm -asan-coverage=1` for function-level coverage (very fast)
   * Compile with `-fsanitize=address -mllvm -asan-coverage=2` for basic-block-level coverage (may have up to 30% slowdown on top of AddressSanitizer)
+  * Compile with `-fsanitize=address -mllvm -asan-coverage=3` for edge-level coverage (a bit more slow). Requires clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r217106]) 
   * Run with ASAN_OPTIONS=coverage=1
 {{{
 % cat -n cov.cc 
@@ -57,6 +58,39 @@ or `llvm-symbolizer --obj ObjectFile` to get file names and line numbers:
 % sancov.py print a.out.22679.sancov a.out.22673.sancov 2> /dev/null | llvm-symbolizer --obj a.out
 cov.cc:3
 cov.cc:5
+}}}
+
+=Edge coverage=
+Consider this code:
+{{{
+void foo(int *a) {
+  if (a)
+    *a = 0;
+}
+}}}
+
+It contains 3 basic blocks, let's name them A, B, C:
+{{{
+A
+|\
+| \
+|  B
+| /
+|/
+C
+}}}
+If blocks A, B, and C are all covered we know for certain that the edges A=>B and B=>C were executed, 
+but we still don't know if the edge A=>C was executed. 
+Such edges of control flow graph are called [http://en.wikipedia.org/wiki/Control_flow_graph#Special_edges critical]. 
+The edge-level coverage (-asan-coverage=3) simply splits all critical edges by introducing new dummy blocks and then instrumenting those blocks:
+{{{
+A
+|\
+| \
+D  B
+| /
+|/
+C
 }}}
 
 =Output directory=
