@@ -82,7 +82,7 @@ C
 If blocks A, B, and C are all covered we know for certain that the edges A=>B and B=>C were executed, 
 but we still don't know if the edge A=>C was executed. 
 Such edges of control flow graph are called [http://en.wikipedia.org/wiki/Control_flow_graph#Special_edges critical]. 
-The edge-level coverage (-asan-coverage=3) simply splits all critical edges by introducing new dummy blocks and then instrumenting those blocks:
+The edge-level coverage (-asan-coverage=3) simply splits all critical edges by introducing new dummy blocks and then instruments those blocks:
 {{{
 A
 |\
