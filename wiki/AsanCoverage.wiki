@@ -7,7 +7,7 @@ It allows to get function-level, basic-block-level, and edge-level coverage at a
 =Build and run=
   * Compile with `-fsanitize=address -mllvm -asan-coverage=1` for function-level coverage (very fast)
   * Compile with `-fsanitize=address -mllvm -asan-coverage=2` for basic-block-level coverage (may have up to 30% slowdown on top of AddressSanitizer)
-  * Compile with `-fsanitize=address -mllvm -asan-coverage=3` for edge-level coverage (a bit more slow). Requires clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r217106]) 
+  * Compile with `-fsanitize=address -mllvm -asan-coverage=3` for edge-level coverage (up to 40% slowdown). Requires clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r217106]) 
   * Run with ASAN_OPTIONS=coverage=1
 {{{
 % cat -n cov.cc 
