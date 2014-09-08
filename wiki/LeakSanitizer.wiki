@@ -4,13 +4,13 @@
 
 LeakSanitizer is a memory leak detector which is integrated into AddressSanitizer. The tool is supported on x86_64 Linux.
 
-LeakSanitizer is present in all ASan builds, and can be enabled by passing a run-time option to ASan. Doing so does not introduce any additional slowdown compared to a plain ASan run. LSan lies dormant until the very end of the process, at which point there is an extra leak detection phase. In performance-critical scenarios, LSan can also be used without ASan instrumentation.
+LeakSanitizer is enabled by default in all ASan builds. LSan lies dormant until the very end of the process, at which point there is an extra leak detection phase. In performance-critical scenarios, LSan can also be used without ASan instrumentation.
 
 See also: LeakSanitizerDesignDocument, LeakSanitizerVsHeapChecker
 
 = Using LeakSanitizer =
 
-To use LSan, build your program with AddressSanitizer:
+To use LSan, simply build your program with AddressSanitizer:
 
 {{{
 $ cat memory-leak.c 
@@ -24,11 +24,7 @@ int main() {
   return 0;
 }
 $ clang -fsanitize=address -g memory-leak.c
-}}}
-
-Now run with `ASAN_OPTIONS="detect_leaks=1"`. (To get symbolized stack traces, make sure to have llvm-symbolizer in PATH.)
-{{{
-$ ASAN_OPTIONS="detect_leaks=1" ./a.out 
+$ ./a.out 
 
 =================================================================
 ==7829==ERROR: LeakSanitizer: detected memory leaks
@@ -41,9 +37,11 @@ Direct leak of 7 byte(s) in 1 object(s) allocated from:
 SUMMARY: AddressSanitizer: 7 byte(s) leaked in 1 allocation(s).
 }}}
 
+If you want to run an ASan-instrumented program without leak detection, you can pass `detect_leaks=0` in the `ASAN_OPTIONS` environment variable.
+
 == Stand-alone mode ==
 
-If you just need leak detection, and don't want to bear the ASan slowdown, you can build with `-fsanitize=leak` instead of `-fsanitize=address`. This will link your program against a runtime library containing just the bare necessities required for LeakSanitizer to work. No compile-time instrumentation will take place. Leak detection is on by default in this mode.
+If you just need leak detection, and don't want to bear the ASan slowdown, you can build with `-fsanitize=leak` instead of `-fsanitize=address`. This will link your program against a runtime library containing just the bare necessities required for LeakSanitizer to work. No compile-time instrumentation will be applied.
 
 Be aware that the stand-alone mode is less well tested compared to running LSan on top of ASan.
 
