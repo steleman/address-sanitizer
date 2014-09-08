@@ -6,8 +6,6 @@ LeakSanitizer is a memory leak detector which is integrated into AddressSanitize
 
 LeakSanitizer is present in all ASan builds, and can be enabled by passing a run-time option to ASan. Doing so does not introduce any additional slowdown compared to a plain ASan run. LSan lies dormant until the very end of the process, at which point there is an extra leak detection phase. In performance-critical scenarios, LSan can also be used without ASan instrumentation.
 
-LeakSanitizer is still in experimental stage, and the interface described below is subject to change.
-
 See also: LeakSanitizerDesignDocument, LeakSanitizerVsHeapChecker
 
 = Using LeakSanitizer =
@@ -28,9 +26,8 @@ int main() {
 $ clang -fsanitize=address -g memory-leak.c
 }}}
 
-Now run with `ASAN_OPTIONS="detect_leaks=1"`. (Optionally, pass a symbolizer path to get nice stack traces.)
+Now run with `ASAN_OPTIONS="detect_leaks=1"`. (To get symbolized stack traces, make sure to have llvm-symbolizer in PATH.)
 {{{
-$ export ASAN_SYMBOLIZER_PATH=$LLVM_BIN/llvm-symbolizer
 $ ASAN_OPTIONS="detect_leaks=1" ./a.out 
 
 =================================================================
