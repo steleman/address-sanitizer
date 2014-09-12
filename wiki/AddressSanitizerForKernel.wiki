@@ -157,3 +157,5 @@ https://lkml.org/lkml/2013/9/17/30
 http://www.spinics.net/lists/linux-ide/msg46213.html
   * Racy use-after-free in list_del_event
 https://lkml.org/lkml/2014/6/18/318
+
+[https://www.google.com/?gws_rd=ssl#q=site%3Alkml.org+%22Memory+state+around+the+buggy+address%22+%22Sasha+Levin%22 Bugs found by external users]
