@@ -9,7 +9,7 @@ Links: [http://gcc.gnu.org/wiki/Intel%20MPX%20support%20in%20the%20GCC%20compile
 [http://software.intel.com/en-us/articles/using-intel-mpx-with-the-intel-software-development-emulator Using the MPX-enabled GCC and SDE (emulator)]; 
 [http://download-software.intel.com/sites/default/files/319433-015.pdf Fresh documentation on Intel ISA which includes MPX]; 
 [http://software.intel.com/en-us/articles/pointer-checker-feature-in-intel-parallel-studio-xe-2013-how-is-it-different-from-static Intel Pointer Checker]. 
-Some external feedback: [https://groups.google.com/d/msg/comp.arch/iKAACmTrTQs/bzqG5Dp-FPEJ 1], [http://www.cs.rutgers.edu/news/articles/2013/07/24/intel-memory-protection-extensions 2].
+Some external feedback: [https://groups.google.com/d/msg/comp.arch/iKAACmTrTQs/bzqG5Dp-FPEJ 1], [http://www.cs.rutgers.edu/news/articles/2013/07/24/intel-memory-protection-extensions 2], [http://lists.cs.uiuc.edu/pipermail/cfe-dev/2014-September/039088.html 3].
 
 =Using SDE=
 == Set up ==
