@@ -71,7 +71,8 @@ cd projects/compiler-rt/lib/asan/tests
 # Make sure clang and llvm tools are in your PATH.
 export PATH="/path/to/llvm_cmake_build/bin:$PATH"
 # Run a specific output test.
-llvm-lit /path/to/llvm/checkout/projects/compiler-rt/lib/asan/lit_tests/deep_tail_call.cc
+cd llvm_cmake_build
+bin/llvm-lit projects/compiler-rt/test/asan/64bitConfig/TestCases/deep_tail_call.cc
 }}}
   * Visit [http://llvm.org/docs/CMake.html LLVM CMake guide] to see the ways you can customize your LLVM/Clang/ASan build. For example, you can build LLVM/Clang with ASan-ified Clang:
 {{{
