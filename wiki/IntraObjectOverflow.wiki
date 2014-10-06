@@ -1,0 +1,23 @@
+#summary intra-object-overflow bugs
+
+One class of bugs currently not properly detected by AddressSanitizer is *intra-object-overflow*:
+
+{{{
+struct S {
+  int buffer[5];
+  int other_field;
+};
+
+void Foo(S *s, int idx) {
+  s->buffer[idx] = 0;  // if idx == 5, asan will not complain
+}
+
+}}}
+
+
+This class of bugs will be detectable with the [IntelMemoryProtectionExtensions Intel MPX]. 
+
+In the meantime, we are trying the following approach in AddressSanitizer:
+if the type is a C++ non-standard-layout class with a destructor, we add poisoned gaps (redzones) between fields in the class.
+
+Stay tuned. 
