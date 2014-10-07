@@ -118,6 +118,8 @@ See also http://blog.mozilla.com/decoder/2012/01/27/trying-new-code-analysis-tec
 = Opera =
 [http://blogs.opera.com/desktop/changelog21/ DNA-15927]
 
+=vlc=
+https://trac.videolan.org/vlc/query?status=assigned&status=closed&status=new&status=reopened&reporter=mikispag&order=priority
 =ffmpeg=
 Some (but not all) bugs found in [http://ffmpeg.org/ ffmpeg]: 
   * http://git.videolan.org/?p=ffmpeg.git;a=commit;h=1149fbc7631a8c2258386f9aa247806715493b10
