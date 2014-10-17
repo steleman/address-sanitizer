@@ -84,11 +84,11 @@ In this way you may also find potential initialization-order problems.
 You may suppress false positives of init-order checker on certain global variables by using the `-fsanitize-blacklist=path/to/blacklist.txt` option. Relevant blacklist entries are:
 {{{
 # Disable init-order checking for a single variable:
-global-init:bad_variable
+global:bad_variable=init
 # Disable checking for all variables of a given type:
-global-init-type:*Namespace::ClassName*
+type:Namespace::ClassName=init
 # Disable checking for all variables in given files:
-global-init-src:path/to/bad/files/*
+src:path/to/bad/files/*=init
 }}}
 
 == Performance ==
