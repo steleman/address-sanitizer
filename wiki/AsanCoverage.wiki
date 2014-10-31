@@ -7,7 +7,8 @@ It allows to get function-level, basic-block-level, and edge-level coverage at a
 =Build and run=
   * Compile with `-fsanitize=address -mllvm -asan-coverage=1` for function-level coverage (very fast)
   * Compile with `-fsanitize=address -mllvm -asan-coverage=2` for basic-block-level coverage (may have up to 30% slowdown on top of AddressSanitizer)
-  * Compile with `-fsanitize=address -mllvm -asan-coverage=3` for edge-level coverage (up to 40% slowdown). Requires clang [http://llvm.org/viewvc/llvm-project?rev=199488&view=rev r217106]) 
+  * Compile with `-fsanitize=address -mllvm -asan-coverage=3` for edge-level coverage (up to 40% slowdown). Requires clang [http://llvm.org/viewvc/llvm-project?rev=217106&view=rev r217106]) 
+  * Compile with `-fsanitize=address -mllvm -asan-coverage=4` for additional calleer-callee coverage. Requires clang [http://llvm.org/viewvc/llvm-project?rev=220975&view=rev r220975]) 
   * Run with ASAN_OPTIONS=coverage=1
 {{{
 % cat -n cov.cc 
@@ -92,6 +93,25 @@ D  B
 |/
 C
 }}}
+
+=Caller-callee coverage=
+(Experimental!)
+Every indirect function call is instrumented with a run-time function call that captures caller and callee.
+At the shutdown time the process dumps a separate file called `caller-callee.PID.sancov`
+which contains caller/callee pairs as pairs of lines (odd lines are callers, even lines are callees)
+{{{
+a.out 0x4a2e0c
+a.out 0x4a6510
+a.out 0x4a2e0c
+a.out 0x4a87f0
+}}}
+
+Current limitations:
+  * Only the first 14 callers are recorded, the rest are silently ignored. 
+  * The output format is not very compact since caller and callee may reside in different modules and we need to spell out the module names.
+  * The routine that dumps the output is not optimized for speed
+  * Only Linux x86_64 is tested so far.
+  * Sandboxes are not supported.
 
 =Output directory=
 
