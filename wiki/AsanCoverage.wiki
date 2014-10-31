@@ -107,7 +107,7 @@ a.out 0x4a87f0
 }}}
 
 Current limitations:
-  * Only the first 14 callers are recorded, the rest are silently ignored. 
+  * Only the first 14 callees for every caller are recorded, the rest are silently ignored. 
   * The output format is not very compact since caller and callee may reside in different modules and we need to spell out the module names.
   * The routine that dumps the output is not optimized for speed
   * Only Linux x86_64 is tested so far.
