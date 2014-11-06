@@ -47,3 +47,14 @@ You may also filter the log file through `scripts/asan_symbolize.py` to get the 
    ...
 }}}
 To demangle functions names either add `-d` to `asan_symbolize.py` or use `c++filt`.
+
+You may want to introduce your own format of the stack traces using `stack_trace_format` [Flags runtime flag]. For example:
+{{{
+% ./a.out
+    ...
+    #0 0x4b615d in main /home/you/use-after-free.cc:12:3
+    ...
+% ASAN_OPTIONS='stack_trace_format="[frame=%n, function=%f, location=%S]"' ./a.out
+    ...
+    [frame=0, function=main, location=/home/you/use-after-free.cc:12:3]
+}}}
