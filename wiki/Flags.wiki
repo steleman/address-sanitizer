@@ -50,3 +50,4 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 || coverage_dir || ./ || Controls the path at which coverage is saved. ||
 || coverage_direct || 0 || Enables writing coverage directly to a memory-mapped file (compared to once at the end of the program). See AsanCoverage. ||
 || detect_odr_violation || 2 || If > 0, detect [OneDefinitionRuleViolation ODR Violations] ||
+|| stack_frame_format || "DEFAULT" || Format of the stackframe. Placeholders in user-provided string are replaced with actual data. See  [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/sanitizer_common/sanitizer_stacktrace_printer.h?view=markup sanitizer_stacktrace_printer.h] for format description. ||
