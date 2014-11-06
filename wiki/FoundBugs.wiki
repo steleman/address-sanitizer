@@ -142,9 +142,13 @@ ffmpeg's asan bot: http://fate.libav.org/x86_64-linux-clang-asan
   * https://rt.perl.org/rt3/Ticket/Display.html?id=111586
   * https://rt.perl.org/rt3/Public/Bug/Display.html?id=113060 
 
+=libcurl=
+  * http://curl.haxx.se/docs/adv_20141105.html  (CVE-2014-3707)
 =php=
   * https://bugs.php.net/bug.php?id=63700
   * https://bugs.php.net/bug.php?id=65564
+  * https://bugs.php.net/bug.php?id=68095
+  * https://bugs.php.net/bug.php?id=68027 (CVE-2014-3668)
 
 =parrot (http://www.parrot.org/)=
   * https://github.com/parrot/parrot/commit/df12f34e946553
