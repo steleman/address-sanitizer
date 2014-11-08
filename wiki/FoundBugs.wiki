@@ -50,6 +50,7 @@
   * http://support.apple.com/kb/HT5400
   * http://support.apple.com/kb/HT5485
   * http://support.apple.com/kb/HT5502
+  * http://support.apple.com/en-sa/HT5485
 
 Chromium's asan bot: http://build.chromium.org/p/chromium.memory/console
 
