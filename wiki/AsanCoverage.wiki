@@ -6,10 +6,13 @@ has a very simple coverage tool built in.
 It allows to get function-level, basic-block-level, and edge-level coverage at a very low cost.
 
 =Build and run=
-  * Compile with `-fsanitize=address -mllvm -asan-coverage=1` for function-level coverage (very fast)
-  * Compile with `-fsanitize=address -mllvm -asan-coverage=2` for basic-block-level coverage (may have up to 30% slowdown on top of AddressSanitizer)
-  * Compile with `-fsanitize=address -mllvm -asan-coverage=3` for edge-level coverage (up to 40% slowdown). Requires clang [http://llvm.org/viewvc/llvm-project?rev=217106&view=rev r217106]) 
-  * Compile with `-fsanitize=address -mllvm -asan-coverage=4` for additional calleer-callee coverage. Requires clang [http://llvm.org/viewvc/llvm-project?rev=220985&view=rev r220985.]) 
+*NEW* As of clang r221720 the flag has changed from `-fsanitize=address -mllvm -asan-coverage=N`
+to `-fsanitize=address -fsanitize-coverage=N`
+
+  * Compile with `-fsanitize=address -fsanitize-coverage=1` for function-level coverage (very fast)
+  * Compile with `-fsanitize=address -fsanitize-coverage=2` for basic-block-level coverage (may have up to 30% slowdown on top of AddressSanitizer)
+  * Compile with `-fsanitize=address -fsanitize-coverage=3` for edge-level coverage (up to 40% slowdown). Requires clang [http://llvm.org/viewvc/llvm-project?rev=217106&view=rev r217106]) 
+  * Compile with `-fsanitize=address -fsanitize-coverage=4` for additional calleer-callee coverage. Requires clang [http://llvm.org/viewvc/llvm-project?rev=220985&view=rev r220985.]) 
   * Run with ASAN_OPTIONS=coverage=1
 {{{
 % cat -n cov.cc 
@@ -22,7 +25,7 @@ It allows to get function-level, basic-block-level, and edge-level coverage at a
      7      foo();
      8    printf("main\n");
      9  }
-% clang++ -g cov.cc -fsanitize=address -mllvm -asan-coverage=1 
+% clang++ -g cov.cc -fsanitize=address -fsanitize-coverage=1 
 % ASAN_OPTIONS=coverage=1 ./a.out; ls -l *sancov
 main
 -rw-r----- 1 kcc eng 4 Nov 27 12:21 a.out.22673.sancov
