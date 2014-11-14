@@ -157,7 +157,7 @@ Coverage data could be useful for fuzzers and sometimes it is preferable to run 
 
 You can use `__sanitizer_get_total_unique_coverage()` from `<sanitizer/common_interface_defs.h>` 
 which returns the number of currently covered entities in the program. 
-This will tell the fuzzer if the coverage has increased after every new input.
+This will tell the fuzzer if the coverage has increased after testing every new input.
 
 If a fuzzer finds a bug in the ASan run, you will need to save the reproducer before exiting the process. 
 Use `__asan_set_death_callback` from `<sanitizer/asan_interface.h>` to do that. 
