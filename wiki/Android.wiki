@@ -1,14 +1,6 @@
 #summary How to build and run AddressSanitizer on Android
 
-== Android platform workflow ==
-
-AddressSanitizer is fully supported in AOSP starting with JellyBean release. To run applications built with ASan you'll need an -eng build of Android.
-
-To build any part of Android system with ASan, add LOCAL_ADDRESS_SANITIZER:=true to the appropriate Android.mk.
-
-To run a standalone native binary, prefix it with asanwrapper: `/system/bin/asanwrapper _path_to_your_binary_ _options_`
-
-NOTE: if you get an assertion failure about INTERCEPT(something), this means ASan interceptors have not kicked in. Verify that you are running the program with asanwrapper.
+NOTE: this document is about running Android applications built with the NDK under AddressSanitizer. For information about using AddressSanitizer on Android platform components, see AndroidPlatform.
 
 
 == Android NDK workflow ==
