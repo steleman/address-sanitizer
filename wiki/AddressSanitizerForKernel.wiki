@@ -146,6 +146,10 @@ http://lkml.org/lkml/2013/9/3/286
  * Stack-out-of-bounds in idr_for_each
 https://lkml.org/lkml/2014/6/23/516
 
+ * Out-of-bounds memory write in fs/ecryptfs/crypto.c
+https://lkml.org/lkml/2014/11/21/230
+
+
 *Not confirmed:*
  * Use-after-free in drivers/net/ethernet/intel/e1000:
 http://permalink.gmane.org/gmane.linux.drivers.e1000.devel/12441
