@@ -22,7 +22,7 @@ More extensive documentation: https://github.com/google/kasan/blob/asan/Document
 
 To simplify reading the reports you can use our [https://code.google.com/p/address-sanitizer/source/browse/trunk/tools/kasan_symbolize.py symbolizer script]:
 {{{
-$ cat ./report
+$ cat report
 ...
 [  107.327411]  [<ffffffff8110424c>] call_usermodehelper_freeinfo+0x2c/0x30
 [  107.328668]  [<ffffffff811049d5>] call_usermodehelper_exec+0xa5/0x1c0
@@ -33,7 +33,7 @@ $ cat ./report
 ...
 }}}
 {{{
-$ cat ./report | ./kasan_symbolize.py ./vmlinux
+$ cat report | ./kasan_symbolize.py path/to/kernel/
 ...
  [<ffffffff8110424c>] call_usermodehelper_freeinfo+0x2c/0x30 ./kernel/kmod.c:265
  [<ffffffff811049d5>] call_usermodehelper_exec+0xa5/0x1c0 ./kernel/kmod.c:612
