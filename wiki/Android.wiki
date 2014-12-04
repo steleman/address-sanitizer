@@ -1,84 +1,85 @@
-#summary How to build and run AddressSanitizer on Android
+#summary How to use AddressSanitizer on Android
 
-NOTE: this document is about running Android applications built with the NDK under AddressSanitizer. For information about using AddressSanitizer on Android platform components, see AndroidPlatform.
+NOTE: _this document is about running Android applications built with the NDK under AddressSanitizer. For information about using AddressSanitizer on Android platform components, see https://code.google.com/p/address-sanitizer/wiki/AndroidPlatform._
 
+NOTE: _ASan is broken on Android L. Use a K`*` build. This will be fixed in one of the future L updates._
 
-== Android NDK workflow ==
+NOTE: _AddressSanitizer on Android requires a rooted device (either -eng or -userdebug build, or any other setup that allows editing the contents of the /system partition)._
 
-*WARNING: ASan is broken on Android L. Use a `K*` build. *
+Android NDK supports AddressSanitizer on arm, armv7 and x86 ABIs starting with version r10d.
 
-Grab Android SDK and NDK from the internet.
+== Building ==
 
-Then do one of the following:
-  * (make build) Read http://src.chromium.org/viewvc/chrome/trunk/src/tools/clang/scripts/update.sh?revision=HEAD&view=markup and do the same (search for "android"). 
-  * (cmake build) Read https://code.google.com/p/address-sanitizer/source/browse/trunk/build/scripts/slave/buildbot_cmake.sh and do the same (search for "ANDROID"). 
+To build your app's native (JNI) code with AddressSanitizer, add the following to Android.mk:
 
-Either of the above will get you Clang with arm-android ASan runtime library. Cmake build (the second bullet) will also build ASan tests for Android and put asan_device_setup binary under bin/.
-
-Find the GCC-based ARM toolchain in `<ndk>/toolchains/arm-linux-androideabi-4.4.3`, and copy Clang build over it:
 {{{
-cp Release+Asserts/bin/clang $TOOLCHAIN/prebuilt/linux-x86/bin/
-cp -r Release+Asserts/lib/clang $TOOLCHAIN/prebuilt/linux-x86/lib/
-ln -sf clang $TOOLCHAIN/prebuilt/linux-x86/bin/arm-linux-androideabi-gcc
-ln -sf clang $TOOLCHAIN/prebuilt/linux-x86/bin/arm-linux-androideabi-g++
+LOCAL_CFLAGS    := -fsanitize=address -fno-omit-frame-pointer
+LOCAL_LDFLAGS   := -fsanitize=address
+LOCAL_ARM_MODE := arm
 }}}
 
-And that's all! Now ndk-build will use Clang for "armeabi" and
-"armeabi-v7a" platforms.
+AddressSanitizer is only supported in clang-3.5 toolchain, so you Application.mk should include
 
-It is also possible to do this without copying Clang with a set of --sysroot and -B flags.
-
-If you choose to keep the original toolchain, ndk-build has a handy
-switch NDK_TOOLCHAIN= (ex., NDK_TOOLCHAIN=arm-linux-androideabi-4.4.3)
-to pick one or the other.
-
-With Clang-based toolchain, add the following to your Android.mk to enable ASan:
 {{{
-LOCAL_CFLAGS += -fsanitize=address
-LOCAL_LDFLAGS += -fsanitize=address
+NDK_TOOLCHAIN_VERSION=clang3.5
 }}}
 
-
-== Running NDK applications with ASan ==
-
-The "old" way (see below) adds a huge (10-20s) delay at the start of any ASan process, because the entire VM needs to be restarted and set up from scratch in order to preload the ASan runtime library. The new way, described in this section, is superior in most respects, except for slightly higher memory usage.
-
- * No need to set system properties for every app you want to run with ASan.
- * -eng build is not required. -userdebug works perfectly well. Even -user would work if you somehow can edit /system partition (ex. by patching the system image before flashing it to the device).
- * No startup delay. Applications start almost instantly (at the usual 2x slowdown compared to native run).
-
-Drawbacks:
- * One-time device setup step is required. It can be repeated to update ASan runtime library.
- * Slightly higher memory usage in all VM processes. We've observed +85Mb used memory after reboot (20% increase).
- * At the moment there are issues with using logwrapper on ASan processes, which makes reading ASan reports problematic. This will be fixed one way or the other.
-
-The idea is to preload ASan runtime library into *zygote* process. This way, all VM processes run ASan. To not run out of memory right away, we tune down ASan allocator to the absolute minimum by reducing redzones, disabling quarantine, heap poisoning and allocation stack traces. All these features are re-enabled automatically when zygote forks to specialize into your application, and dlopens the first ASan-instrumented library.
-
-This behavior is enabled with ASAN_OPTIONS=start_deactivated=1.
-
-A [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/asan/scripts/asan_device_setup?view=markup script] can be used to prepare device to run ASan applications. You may need to pass --lib option if it fails to find ASan runtime library.
-
-This script replaces zygote with a wrapper script that preloads ASan runtime library into the process. As a result, ASan packages (.apk) simply work. The script also installs a wrapper in /system/bin/asanwrapper to run ASan binaries.
-
-
-== Getting good stack traces ==
-
-AddressSanitizer relies on frame pointers to get stack trace in malloc() and other interceptors. To work properly, this requires
-`-marm -fno-omit-frame-pointer`.
-
-Alternatively, pass `--extra_options=fast_unwind_on_malloc=0` to asan_device_setup.sh. This will enable dwarf-based unwinder for allocation stack traces, which is more reliable, but very slow. It would be wise to also pass something like `malloc_context_size=3`.
-
-== Running NDK applications with ASan (old way) ==
-
-Copy libclang_rt.asan-arm-android.so (in Clang library directory) somewhere on the device.
-
-Preload it into Dalvik VM by setting the wrap._program_name_ system property as detailed below.
-
-`adb shell setprop wrap._name_ _wrapper_` will spawn a new Dalvik process (fork+exec) for any instance of a given application, with `_wrapper_` prepended to the command line. System properties on Android are limited in length, so write a script like
+Note that AddressSanitizer in NDK r10d does not support 64-bit ABIs, and compilation with `APP_ABI := all` will fail. Use 
 {{{
-ASAN_OPTIONS=debug=1,verbosity=1 \
-LD_LIBRARY_PATH=/data/local/tmp/asan:$LD_LIBRARY_PATH \
-LD_PRELOAD=libclang_rt.asan-arm-android.so \
-exec $@
+APP_ABI := armeabi armeabi-v7a x86
 }}}
-, push it on device beside the runtime library and run `adb shell setprop wrap._name_ /data/local/tmp/asan/asanwrapper.sh`. Then start your program as usual. Reports will be printed to `adb logcat` (you may need to add `logwrapper` to the `setprop` line for that to happen).
+or a subset of those.
+
+
+== Stack traces ==
+
+AddressSanitizer needs to unwind stack on every `malloc`/`realloc`/`free` call. There are 2 options here:
+
+  * A "fast" frame pointer-based unwinder.
+  It requires 
+  {{{
+  LOCAL_CFLAGS=-fno-omit-frame-pointer
+  LOCAL_ARM_MODE := arm
+  APP_STL := gnustl_shared  # or any other _shared option
+  }}}
+  Implementations of operators new and delete in libstdc++ are usually built without frame pointer. ASan brings its own implementation, but it can't be used if the C++ stdlib is linked statically into the application.
+
+  * A "slow" CFI unwinder.
+  In this mode ASan simply calls `_Unwind_Backtrace`. It requires only `-funwind-tables`, which is normally enabled by default.
+  Warning: the "slow" unwinder is SLOW (10x or more, depending on how ofter you call `malloc`/`free`).
+
+Fast unwinder is the default for malloc/realloc/free. Slow unwinder is the default for "fatal" stack traces, i.e. in the case when an error is detected.
+Slow unwinder can be enabled for all stack traces with
+{{{
+ASAN_OPTIONS=fast_unwind_on_malloc=0
+}}}
+
+== Running ==
+
+Device setup step is required before applications built with AddressSanitizer can be started. Android NDK includes a script `asan_device_setup` that will do this for you. It must be run once for any device you want to install ASan applications to.
+
+Once this is done, applications built with ASan can be installed and executed as any other.
+
+Native binaries built with ASan must be prefixed with `LD_PRELOAD=libclang_rt.asan-arm-android.so` (replace `arm` with the target arch: `x86`, etc).
+
+== Under the hood ==
+
+This script uploads the ASan runtime library to `/system/lib`
+and sets up the Zygote binary (`/system/bin/app_process`) in such a way that ASan runtime library is `LD_PRELOAD`-ed into the Zygote
+This guarantees that ASan runtime library is the first DSO in the global symbol lookup order, which is necessary for ASan libc interception to work. It also ensures that the memory allocator (`malloc`/`realloc`/`free` etc) is replaced with ASan implementation very early in the process lifetime.
+
+To preserve memory, most AddressSanitizer features are disabled until the first DSO with ASan-instrumented code is loaded into the process memory. Normally, this happens in individual application processes (when the Zygote forks and loads the application-specific code), and does not affect the rest of applications on the device.
+
+== Run-time flags ==
+
+{{{
+asan_device_setup --extra-options=<options text>
+}}}
+  this flag can be used to set default ASAN_OPTIONS for the Zygote process. Note that this will affect all applications on the device!
+
+{{{
+adb shell setprop asan.option <options text>
+}}}
+  these are additional `ASAN_OPTIONS` that are evaluated at the moment the first instrumented DSO is loaded into the Zygote process. Beware of the system property length limit (90-something characters?). Also, not all possible `ASAN_OPTIONS` can be set here. Setting options through `asan_device_setup` is preferable.
+
+See https://code.google.com/p/address-sanitizer/wiki/Flags for the list of supported flags.
