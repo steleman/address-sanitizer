@@ -43,6 +43,8 @@ one `*.sancov` file is created during the process shutdown.
 If the executable is dynamically linked against instrumented DSOs, 
 one `*.sancov` file will be also created for every DSO. 
 
+The same flag `-fsanitize-coverage=N` works with [https://code.google.com/p/memory-sanitizer/ MemorySanitizer] and LeakSanitizer, but you will need to enable it at run-time with `MSAN_OPTIONS=coverage=1` and `LSAN_OPTIONS=coverage=1` respectively. 
+
 =Postprocess=
 The format of `*.sancov` files is very simple: they contain 4-byte offsets in the corresponding binary/DSO that were executed during the run. 
 
