@@ -101,7 +101,7 @@ C
 }}}
 
 =Bitset=
-When `coverage_bitset` run-time [Flags flag] is given, the coverage will also be dumped as a bitset 
+When `coverage_bitset=1` run-time [Flags flag] is given, the coverage will also be dumped as a bitset 
 (text file with 1 for blocks that have been executed and 0 for blocks that were not).
 {{{
 % clang++ -fsanitize=address -fsanitize-coverage=3 cov.cc 
