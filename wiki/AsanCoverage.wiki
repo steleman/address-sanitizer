@@ -100,6 +100,26 @@ D  B
 C
 }}}
 
+=Bitset=
+When `coverage_bitset` run-time [Flags flag] is given, the coverage will also be dumped as a bitset 
+(text file with 1 for blocks that have been executed and 0 for blocks that were not).
+{{{
+% clang++ -fsanitize=address -fsanitize-coverage=3 cov.cc 
+% ASAN_OPTIONS=coverage=1:coverage_bitset=1 ./a.out 
+main
+% ASAN_OPTIONS=coverage=1:coverage_bitset=1 ./a.out 1 
+foo
+main
+% head *bitset*
+==> combined.38214.bitset-sancov <==
+01101
+==> combined.6128.bitset-sancov <==
+11011%
+
+For a given executable the length of the bitset is always the same (well, unless dlopen/dlclose come into play),
+so the bitset coverage can be easily used for bitset-based corpus distillation. 
+
+}}}
 =Caller-callee coverage=
 (Experimental!)
 Every indirect function call is instrumented with a run-time function call that captures caller and callee.
