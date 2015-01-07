@@ -25,7 +25,8 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 || redzone || 16 || Size of the minimal redzone. Since LLVM 3.3 asan uses adaptive redzones for heap, i.e. for large heap allocations the redzones are larger. ||
 || log_path|| (none) || Path to the log files. If log_path=PATH is given, every process will write error reports to PATH.PID. By default all reports are written to stderr. ||
 || sleep_before_dying || 0 || Sleep for this number of seconds before exiting the process on failure. ||
-|| quarantine_size || 256Mb || Size of quarantine (in bytes) for finding use-after-free errors. Lower values save memory but increase false negatives rate. ||
+|| quarantine_size_mb || 256 || Size of quarantine (in Mb) for finding use-after-free errors. Lower values save memory but increase false negatives rate. ||
+|| quarantine_size || 0 || Deprecated since [http://llvm.org/viewvc/llvm-project?rev=225337&view=rev r225337], use quarantine_size_mb ||
 || fast_unwind_on_fatal || 0 || Use fast unwinder when found a bug. The fast one relies on frame pointers, while slow one does not. See also CallStack ||
 || fast_unwind_on_malloc || 1 || Same as `fast_unwind_on_fatal`, but control unwinding inside `malloc`/`free`, i.e. performance critical. See also CallStack ||
 || exitcode || 1 || Call `_exit(exitcode)` on error.  ||
