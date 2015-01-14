@@ -14,9 +14,9 @@ AddressSanitizer for Linux kernel:
 
 = Details =
 
-Pre-alpha repository: https://github.com/google/kasan
+Pre-alpha repository: https://github.com/google/kasan/tree/kasan
 
-More extensive documentation: https://github.com/google/kasan/blob/asan/Documentation/asan.txt
+More extensive documentation: https://github.com/google/kasan/blob/kasan/Documentation/kasan.txt
 
 == Reports ==
 
@@ -49,43 +49,14 @@ $ cat report | ./kasan_symbolize.py path/to/kernel/
 
 NB: These steps are also can be reproduced using dedicated vagrant VM: KasanOnVagrant.
 
-To instrument the kernel you need to use a custom GCC, which you can download [https://address-sanitizer.googlecode.com/files/gcc-r203101-snapshot.tar.gz here].
+To instrument the kernel you need to use a reasonably fresh GCC (4.9.2+).
 
-You need to set GCC path in the make command line:
+You may need to set GCC path in the make command line:
 {{{
 make CC='$GCC_KASAN/bin/gcc'
 }}}
 
 You will also need to enable SLAB allocator (General setup > Choose SLAB allocator) and AddressSanitizer (Kernel hacking > Memory Debugging) during kernel configuration.
-
-If you would like to build GCC yourself read the instructions below.
-
-Checkout GCC:
-{{{
-svn checkout -r 203101 svn://gcc.gnu.org/svn/gcc/trunk $GCC_KASAN
-}}}
-
-Apply [https://address-sanitizer.googlecode.com/files/gcc-r203101-kasan.patch this patch] to GCC:
-{{{
-cd $GCC_KASAN
-patch -p0 -i gcc-r203101-kasan.patch
-}}}
-
-Install GCC prerequisites:
-{{{
-sudo apt-get install flex bison libc6-dev libc6-dev-i386 libgmp3-dev libmpfr-dev libmpc-dev
-}}}
-
-Build GCC:
-{{{
-cd $GCC_KASAN
-mkdir build
-mkdir install
-cd build
-../configure --enable-languages=c,c++ --disable-bootstrap --enable-checking=no --with-gnu-as --with-gnu-ld --with-ld=/usr/bin/ld.bfd --prefix=$GCC_KASAN/install
-make
-make install
-}}}
 
 = Trophies =
 
