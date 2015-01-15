@@ -54,3 +54,6 @@ ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
 || detect_odr_violation || 2 || If > 0, detect [OneDefinitionRuleViolation ODR Violations] ||
 || stack_frame_format || "DEFAULT" || Format of the stackframe. Placeholders in user-provided string are replaced with actual data. See  [http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/sanitizer_common/sanitizer_stacktrace_printer.h?view=markup sanitizer_stacktrace_printer.h] for format description. ||
 || mmap_limit_mb || 0 || If > 0, abort if more than this number of megabytes were mmap-ed by user. Experimental, may change in future! ||
+||  ||  ||  ||
+||hard_rss_limit_mb|| 0 || Experimental. Hard RSS limit in Mb. If non-zero, a background thread is spawned at startup which periodically reads RSS and aborts the process if the limit is reached ||
+|| soft_rss_limit_mb || 0 || Experimental. Soft RSS limit in Mb. If non-zero, a background thread is spawned at startup which periodically reads RSS. If the limit is reached all subsequent malloc/new calls will fail or return NULL (depending on the value of allocator_may_return_null) until the RSS goes below the soft limit. This limit does not affect memory allocations other than malloc/new. ||
