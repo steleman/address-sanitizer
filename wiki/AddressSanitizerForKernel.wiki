@@ -18,7 +18,10 @@ AddressSanitizer for Linux kernel:
 
 = Details =
 
-Pre-alpha repository: https://github.com/google/kasan/tree/kasan
+Pre-alpha repository: https://github.com/google/kasan/tree/kasan . To checkout, do
+{{{
+git clone http://github.com/google/kasan -b kasan
+}}}
 
 More extensive documentation: https://github.com/google/kasan/blob/kasan/Documentation/kasan.txt
 
