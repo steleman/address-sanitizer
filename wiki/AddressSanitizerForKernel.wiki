@@ -47,16 +47,26 @@ $ cat report | ./kasan_symbolize.py path/to/kernel/
 
 == Instrumentation ==
 
-NB: These steps are also can be reproduced using dedicated vagrant VM: KasanOnVagrant.
+The most recent instructions are available at https://github.com/google/kasan/blob/kasan/Documentation/kasan.txt
 
-To instrument the kernel you need to use a reasonably fresh GCC (4.9.2+).
+KASan uses compile-time instrumentation for checking every memory access,
+therefore you will need a certain version of GCC >= 4.9.2
 
-You may need to set GCC path in the make command line:
-{{{
-make CC='$GCC_KASAN/bin/gcc'
-}}}
+Currently KASan is supported only for x86_64 architecture and requires that the
+kernel be built with the SLUB allocator.
 
-You will also need to enable SLAB allocator (General setup > Choose SLAB allocator) and AddressSanitizer (Kernel hacking > Memory Debugging) during kernel configuration.
+To enable KASAN configure kernel with:
+
+	  CONFIG_KASAN = y
+
+and choose between CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE. Outline/inline
+is compiler instrumentation types. The former produces smaller binary the
+latter is 1.1 - 2 times faster. Inline instrumentation requires GCC 5.0 or
+latter.
+
+Currently KASAN works only with the SLUB memory allocator.
+For better bug detection and nicer report, enable CONFIG_STACKTRACE and put
+at least 'slub_debug=U' in the boot cmdline.
 
 = Trophies =
 
