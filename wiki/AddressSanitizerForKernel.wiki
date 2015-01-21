@@ -2,8 +2,12 @@
 
 = Overview =
 
-A dynamic memory error detector for Linux kernel.
-Currently works only on x86_64, supports only SLAB allocator.
+Kernel Address sanitizer (KASan) is a dynamic memory error detector. It provides
+a fast and comprehensive solution for finding use-after-free and out-of-bounds
+bugs.
+
+Currently KASan is supported only for x86_64 architecture and requires that the
+kernel be built with the SLUB allocator.
 
 AddressSanitizer for Linux kernel:
  * Is based on compiler instrumentation (fast)
