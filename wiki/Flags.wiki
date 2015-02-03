@@ -24,11 +24,11 @@ Note that below list may (and probably is) incomplete. Also older versions of AS
 ASAN_OPTIONS=help=1 ./a.out
 }}}
 
-|| flag|| default || description ||
+|| *Flag* || *Default value* || *Description* ||
 || verbosity  || 0 || Be more verbose (mostly for testing the tool itself) ||
 || malloc_context_size || 30 || Number of frames in `malloc`/`free` stack traces. Valid values are 0...256.  ||
 || redzone || 16 || Size of the minimal redzone. Since LLVM 3.3 asan uses adaptive redzones for heap, i.e. for large heap allocations the redzones are larger. ||
-|| log_path|| (none) || Path to the log files. If log_path=PATH is given, every process will write error reports to PATH.PID. By default all reports are written to stderr. ||
+|| log_path || (none) || Path to the log files. If log_path=PATH is given, every process will write error reports to PATH.PID. By default all reports are written to stderr. ||
 || sleep_before_dying || 0 || Sleep for this number of seconds before exiting the process on failure. ||
 || quarantine_size_mb || 256 || Size of quarantine (in Mb) for finding use-after-free errors. Lower values save memory but increase false negatives rate. ||
 || quarantine_size || 0 || Deprecated since [http://llvm.org/viewvc/llvm-project?rev=225337&view=rev r225337], use quarantine_size_mb ||
@@ -38,14 +38,20 @@ ASAN_OPTIONS=help=1 ./a.out
 || abort_on_error || 0 || If `1`, call `abort()` instead of `_exit(exitcode)` on error.||
 || allow_user_poisoning  || 1 || Allow/disallow ManualPoisoning || 
 || strict_memcmp || 1 || When set to `1` (default), `memcmp("foo", "bar", 100)` is treated as a bug ||
+|| allocator_may_return_null || 1 || If false, the allocator will crash instead of returning 0 on out-of-memory. ||
 || alloc_dealloc_mismatch || 1 || When set to `1`, checks for malloc()/new/new[] vs. free()/delete/delete[] mismatches. Default: 0 on Mac and Windows, 1 otherwise ||
 || detect_stack_use_after_return || 0 || If 1, will try to detect UseAfterReturn errors ||
 || min_uar_stack_size_log || 16 || Controls the size of Fake Stack for UseAfterReturn detector ||
 || max_uar_stack_size_log || 20 || Controls the size of Fake Stack for UseAfterReturn detector ||
+|| debug || 0 || If set, prints some debugging information and does additional checks. ||
 || disable_core || 0/1 || Disable the core dumper. Since asan consumes many terabytes of virtual memory on 64-bit, dumping core is unwise. Default: 0 on 32-bit and 1 on 64-bit. ||
+|| use_madv_dontdump || 1 || Instructs kernel to not store the (huge) shadow in core file. ||
 || handle_segv || 1 || When set to 1, AddressSanitizer installs its own handler for SIGSEGV ||
+|| full_address_space || 0/1 || Sanitize complete address space; by default kernel area on 32-bit platforms will not be sanitized. ||
 || allow_user_segv_handler || 0 || When set to 1, allows user to override SIGSEGV handler installed by ASan ||
 || check_initialization_order || 0 || When set to 1, detect existing [ExampleInitOrderFiasco InitOrderFiasco] problems. ||
+|| report_globals || 1 || Controls the way to handle globals (0 - don't detect buffer overflow on globals, 1 - detect buffer overflow, 2 - print data about registered globals). ||
+|| start_deactivated || 0 || If true, ASan tweaks a bunch of other flags (quarantine, redzone, heap poisoning) to reduce memory consumption as much as possible, and restores them to original values when the first instrumented module is loaded into the process. This is mainly intended to be used on Android. ||
 || strict_init_order || 0 || When set to 1, [ExampleInitOrderFiasco InitOrderFiasco] also finds potential init order problems. ||
 || strip_path_prefix || "" || When `strip_path_prefix=PREFIX` the substring `.*PREFIX` will be removed from the reported file names. ||
 || detect_leaks || 1 || If 1, enables memory leak detection. See LeakSanitizer (Linux/x86_64-only). ||
