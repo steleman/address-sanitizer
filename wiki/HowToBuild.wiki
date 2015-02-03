@@ -49,6 +49,10 @@ make check-all -j12 # build and run all tests (llvm+clang+ASan)
 make check-sanitizer -j12 # build and run sanitizer_common tests
 make check-asan -j12 # build and run ASan unit and output tests
 }}}
+  Note that dynamic runtime tests are not included into check-asan or check-all on platforms where static runtime is default; to run them, you'll need to manually
+{{{
+make -j12 check-asan-dynamic
+}}}
   To build only ASan runtime library:
 {{{
 # On Linux:
