@@ -14,9 +14,14 @@ ASan-specific compile-time flags are passed via clang flag `-mllvm <flag>`. In m
 
 =Run-time flags=
 
-Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this: 
+Most run-time flags are passed to AddressSanitizer via `ASAN_OPTIONS` environment variable like this:
 {{{
 ASAN_OPTIONS=verbosity=1:malloc_context_size=20 ./a.out
+}}}
+
+Note that below list may (and probably is) incomplete. Also older versions of ASan may not support some of the listed flags. To get the idea of what's supported in your version, run
+{{{
+ASAN_OPTIONS=help=1 ./a.out
 }}}
 
 || flag|| default || description ||
