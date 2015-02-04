@@ -177,7 +177,7 @@ Note that on 64-bit platforms, this method writes 2x more data than the default,
 =In-process fuzzing=
 Coverage data could be useful for fuzzers and sometimes it is preferable to run a fuzzer in the same process as the code being fuzzed (in-process fuzzer).
 
-You can use `__sanitizer_get_total_unique_coverage()` from `<sanitizer/common_interface_defs.h>` 
+You can use `__sanitizer_get_total_unique_coverage()` from `<sanitizer/coverage_interface.h>` 
 which returns the number of currently covered entities in the program. 
 This will tell the fuzzer if the coverage has increased after testing every new input.
 
