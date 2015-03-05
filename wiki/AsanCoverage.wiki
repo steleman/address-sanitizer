@@ -14,6 +14,7 @@ to `-fsanitize=address -fsanitize-coverage=N`
   * Compile with `-fsanitize=address -fsanitize-coverage=3` for edge-level coverage (up to 40% slowdown). Requires clang [http://llvm.org/viewvc/llvm-project?rev=217106&view=rev r217106]) 
   * Compile with `-fsanitize=address -fsanitize-coverage=4` for additional calleer-callee coverage. Requires clang [http://llvm.org/viewvc/llvm-project?rev=220985&view=rev r220985.]) 
   * Run with ASAN_OPTIONS=coverage=1
+  * Additionally use `-mllvm -sanitizer-coverage-8bit-counters=1` at compile time and `ASAN_OPTIONS=coverage=1:coverage_counters=1` at run-time to get [#Coverage_counters Coverage counters]. Requires clang [http://llvm.org/viewvc/llvm-project?rev=231343&view=rev r231343].
 {{{
 % cat -n cov.cc 
      1  #include <stdio.h>
@@ -138,6 +139,47 @@ Current limitations:
   * The routine that dumps the output is not optimized for speed
   * Only Linux x86_64 is tested so far.
   * Sandboxes are not supported.
+
+=Coverage counters=
+This experimental feature is inspired by [http://lcamtuf.coredump.cx/afl/technical_details.txt AFL]'s coverage instrumentation. 
+With additional compile-time and run-time flags you can get more sensitive coverage information.
+In addition to boolean values assigned to every basic block (edge) the instrumentation will collect imprecise counters.
+On exit, every counter will be mapped to a 8-bit bitset representing counter ranges: 
+`1, 2, 3, 4-7, 8-15, 16-31, 32-127, 128+` and those 8-bit bitsets will be dumped to disk. 
+
+{{{
+% clang++ -g cov.cc -fsanitize=address -fsanitize-coverage=3  -mllvm -sanitizer-coverage-8bit-counters=1
+% ASAN_OPTIONS=coverage=1:coverage_counters=1 ./a.out
+% ls -l *counters-sancov
+... a.out.17110.counters-sancov
+% xxd *counters-sancov
+0000000: 0001 0100 01
+}}}
+
+These counters may also be used for in-process coverage-guided fuzzers:
+{{{
+include/sanitizer/coverage_interface.h:
+}}}
+{{{
+  // The coverage instrumentation may optionally provide imprecise counters.
+  // Rather than exposing the counter values to the user we instead map
+  // the counters to a bitset.
+  // Every counter is associated with 8 bits in the bitset.
+  // We define 8 value ranges: 1, 2, 3, 4-7, 8-15, 16-31, 32-127, 128+
+  // The i-th bit is set to 1 if the counter value is in the i-th range.
+  // This counter-based coverage implementation is *not* thread-safe.
+
+  // Returns the number of registered coverage counters.
+  uintptr_t __sanitizer_get_number_of_counters();
+  // Updates the counter 'bitset', clears the counters and returns the number of
+  // new bits in 'bitset'.
+  // If 'bitset' is nullptr, only clears the counters.
+  // Otherwise 'bitset' should be at least
+  // __sanitizer_get_number_of_counters bytes long and 8-aligned.
+  uintptr_t
+  __sanitizer_update_counter_bitset_and_clear_counters(uint8_t *bitset);
+
+}}}
 
 =Output directory=
 
