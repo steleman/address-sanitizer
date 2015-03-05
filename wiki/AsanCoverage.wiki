@@ -226,6 +226,8 @@ This will tell the fuzzer if the coverage has increased after testing every new 
 If a fuzzer finds a bug in the ASan run, you will need to save the reproducer before exiting the process. 
 Use `__asan_set_death_callback` from `<sanitizer/asan_interface.h>` to do that. 
 
+An example of such fuzzer can be found in [http://llvm.org/viewvc/llvm-project/llvm/trunk/lib/Fuzzer/README.txt?view=markup the LLVM tree]. 
+
 =Performance=
 
 This coverage implementation is *fast*. <BR>
