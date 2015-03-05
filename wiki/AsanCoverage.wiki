@@ -112,9 +112,9 @@ main
 foo
 main
 % head *bitset*
-==> combined.38214.bitset-sancov <==
+==> a.out.38214.bitset-sancov <==
 01101
-==> combined.6128.bitset-sancov <==
+==> a.out.6128.bitset-sancov <==
 11011%
 }}}
 
