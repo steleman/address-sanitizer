@@ -38,7 +38,7 @@ ASAN_OPTIONS=help=1 ./a.out
 || abort_on_error || 0 || If `1`, call `abort()` instead of `_exit(exitcode)` on error.||
 || allow_user_poisoning  || 1 || Allow/disallow ManualPoisoning || 
 || strict_memcmp || 1 || When set to `1` (default), `memcmp("foo", "bar", 100)` is treated as a bug ||
-|| allocator_may_return_null || 1 || If false, the allocator will crash instead of returning 0 on out-of-memory. ||
+|| allocator_may_return_null || 0 || If false, the allocator will crash instead of returning 0 on out-of-memory. ||
 || alloc_dealloc_mismatch || 1 || When set to `1`, checks for malloc()/new/new[] vs. free()/delete/delete[] mismatches. Default: 0 on Mac and Windows, 1 otherwise ||
 || detect_stack_use_after_return || 0 || If 1, will try to detect UseAfterReturn errors ||
 || min_uar_stack_size_log || 16 || Controls the size of Fake Stack for UseAfterReturn detector ||
