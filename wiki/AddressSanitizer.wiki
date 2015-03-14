@@ -141,6 +141,12 @@ fun:*MyFooBar*
   * Q: Why didn't ASan report an obviously invalid memory access in my code?
   * A: If your error is too obvious, compiler might have already optimized it out by the time Asan gets a chance to see it.
 
+  * Q: When I link my shared library with -fsanitize=address, it fails due to some undefined ASan symbols.
+  * A: Most probably you link with -Wl,-z,defs or -Wl,--no-undefined. These flags don't work with ASan.
+
+  * Q: My malloc stacktraces are too short?
+  * A: Try to compile your code with -fno-omit-frame-pointer or set ASAN_OPTIONS=fast_unwind_on_malloc=0 (the latter would be a performance killer though).
+
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com 
 or [https://plus.google.com/117014197169958493500 in Google+].
