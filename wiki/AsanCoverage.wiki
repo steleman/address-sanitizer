@@ -6,8 +6,6 @@ has a very simple coverage tool built in.
 It allows to get function-level, basic-block-level, and edge-level coverage at a very low cost.
 
 =Build and run=
-*NEW* As of clang r221720 the flag has changed from `-fsanitize=address -mllvm -asan-coverage=N`
-to `-fsanitize=address -fsanitize-coverage=N`
 
   * Compile with `-fsanitize=address -fsanitize-coverage=1` for function-level coverage (very fast)
   * Compile with `-fsanitize=address -fsanitize-coverage=2` for basic-block-level coverage (may have up to 30% slowdown on top of AddressSanitizer)
@@ -47,12 +45,13 @@ one `*.sancov` file will be also created for every DSO.
 The same flag `-fsanitize-coverage=N` works with [https://code.google.com/p/memory-sanitizer/ MemorySanitizer] and LeakSanitizer, but you will need to enable it at run-time with `MSAN_OPTIONS=coverage=1` and `LSAN_OPTIONS=coverage=1` respectively. 
 
 =Postprocess=
-The format of `*.sancov` files is very simple: they contain 4-byte offsets in the corresponding binary/DSO that were executed during the run. 
+The format of `*.sancov` files is very simple: they contain offsets in the corresponding binary/DSO that were executed during the run. 
+For a 32-bit binary the offsets are 32-bit, and for a 64-bit binary they are 64-bit. (Note, this is new since [http://llvm.org/viewvc/llvm-project?view=revision&revision=232555 r232555]
 
-
-A simple script `$LLVM/projects/compiler-rt/lib/sanitizer_common/scripts/sancov.py` is provided to dump these offsets: 
+A simple script `$LLVM/projects/compiler-rt/lib/sanitizer_common/scripts/sancov.py` is provided to dump these offsets.
+The first parameter indicates the bitness (32 or 64).  
 {{{
-% sancov.py print a.out.22679.sancov a.out.22673.sancov
+% sancov.py 64 print a.out.22679.sancov a.out.22673.sancov
 sancov.py: read 2 PCs from a.out.22679.sancov
 sancov.py: read 1 PCs from a.out.22673.sancov
 sancov.py: 2 files merged; 2 PCs total
@@ -63,7 +62,7 @@ sancov.py: 2 files merged; 2 PCs total
 You can then filter the output of `sancov.py` through `addr2line --exe ObjectFile`
 or `llvm-symbolizer --obj ObjectFile` to get file names and line numbers:
 {{{
-% sancov.py print a.out.22679.sancov a.out.22673.sancov 2> /dev/null | llvm-symbolizer --obj a.out
+% sancov.py 64 print a.out.22679.sancov a.out.22673.sancov 2> /dev/null | llvm-symbolizer --obj a.out
 cov.cc:3
 cov.cc:5
 }}}
@@ -204,11 +203,11 @@ With ASAN_OPTIONS=coverage=1,coverage_direct=1 coverage data is written to a mem
 main
 % ls
 7036.sancov.map  7036.sancov.raw  a.out
-% sancov.py rawunpack 7036.sancov.raw 
+% sancov.py 64 rawunpack 7036.sancov.raw 
 sancov.py: reading map 7036.sancov.map
 sancov.py: unpacking 7036.sancov.raw
 writing 1 PCs to a.out.7036.sancov
-% sancov.py print a.out.7036.sancov 
+% sancov.py 64 print a.out.7036.sancov 
 sancov.py: read 1 PCs from a.out.7036.sancov
 sancov.py: 1 files merged; 1 PCs total
 0x4b2bae
