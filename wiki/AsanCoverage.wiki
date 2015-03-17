@@ -46,7 +46,7 @@ The same flag `-fsanitize-coverage=N` works with [https://code.google.com/p/memo
 
 =Postprocess=
 The format of `*.sancov` files is very simple: they contain offsets in the corresponding binary/DSO that were executed during the run. 
-For a 32-bit binary the offsets are 32-bit, and for a 64-bit binary they are 64-bit. (Note, this is new since [http://llvm.org/viewvc/llvm-project?view=revision&revision=232555 r232555]
+For a 32-bit binary the offsets are 32-bit, and for a 64-bit binary they are 64-bit. (Note, this is new since [http://llvm.org/viewvc/llvm-project?view=revision&revision=232555 r232555])
 
 A simple script `$LLVM/projects/compiler-rt/lib/sanitizer_common/scripts/sancov.py` is provided to dump these offsets.
 The first parameter indicates the bitness (32 or 64).  
