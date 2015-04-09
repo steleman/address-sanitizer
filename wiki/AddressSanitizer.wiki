@@ -147,6 +147,9 @@ fun:*MyFooBar*
   * Q: My malloc stacktraces are too short?
   * A: Try to compile your code with -fno-omit-frame-pointer or set ASAN_OPTIONS=fast_unwind_on_malloc=0 (the latter would be a performance killer though).
 
+  * Q: I'm using dynamic ASan runtime and my program crashes at start with "Shadow memory range interleaves with an existing memory mapping. ASan cannot proceed correctly.".
+  * A: This is a known limitation of dynamic runtime. It's initialized at the end of program startup so if some preceeding library initializer did lots of memory allocations memory region required for ASan shadow memory could be occupied by unrelated mappings.
+
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com 
 or [https://plus.google.com/117014197169958493500 in Google+].
