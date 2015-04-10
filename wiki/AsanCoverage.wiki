@@ -69,6 +69,16 @@ cov.cc:3
 cov.cc:5
 }}}
 
+=How good is the coverage?=
+
+If you want to know what PCs are still not covered, you can get the list of all instrumented PCs and then subtract all covered PCs from it. 
+You can use `objdump` to get all instrumented PCs:
+{{{
+objdump -d ./your-binary | grep '__sanitizer_cov\>' | grep -o "^ *[0-9a-f]\+"
+}}}
+
+TODO: implement scripts for doing this. 
+
 =Edge coverage=
 Consider this code:
 {{{
