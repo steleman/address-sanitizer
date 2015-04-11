@@ -141,14 +141,14 @@ fun:*MyFooBar*
   * Q: Why didn't ASan report an obviously invalid memory access in my code?
   * A: If your error is too obvious, compiler might have already optimized it out by the time Asan gets a chance to see it.
 
-  * Q: When I link my shared library with -fsanitize=address, it fails due to some undefined ASan symbols.
+  * Q: When I link my shared library with -fsanitize=address, it fails due to some undefined ASan symbols (e.g. __asan_init_v4)?
   * A: Most probably you link with -Wl,-z,defs or -Wl,--no-undefined. These flags don't work with ASan.
 
   * Q: My malloc stacktraces are too short?
   * A: Try to compile your code with -fno-omit-frame-pointer or set ASAN_OPTIONS=fast_unwind_on_malloc=0 (the latter would be a performance killer though).
 
   * Q: I'm using dynamic ASan runtime and my program crashes at start with "Shadow memory range interleaves with an existing memory mapping. ASan cannot proceed correctly.".
-  * A: This is a known limitation of dynamic runtime. It's initialized at the end of program startup so if some preceeding library initializer did lots of memory allocations memory region required for ASan shadow memory could be occupied by unrelated mappings.
+  * A: This is a known limitation of dynamic runtime. Libasan is initialized at the end of program startup so if some preceeding library initializer did lots of memory allocations memory region required for ASan shadow memory could be occupied by unrelated mappings.
 
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com 
