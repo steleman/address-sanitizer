@@ -30,4 +30,5 @@ It is possible to use ASAN in this scenario (e.g. JVM+JNI, Python+SWIG):
 
 A simple solution is to build ASAN-DSO and LD_PRELOAD it into the process, however the devil is in the detail.
   * If the process creates sub-processes, they will also have ASAN-DSO preloaded, which may be undesirable.
+  * You have to ensure that version of LD_PRELOAD'ed ASAN-DSO matches ASAN-DSO that was used to build sanitized shared libraries
   * TODO (stay tuned)
