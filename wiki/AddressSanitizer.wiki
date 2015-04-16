@@ -151,6 +151,9 @@ fun:*MyFooBar*
   * A1: If you are using shared ASan DSO, try LD_PRELOAD'ing Asan runtime into your program.
   * A2: Otherwise you are probably hitting a known limitation of dynamic runtime. Libasan is initialized at the end of program startup so if some preceeding library initializer did lots of memory allocations memory region required for ASan shadow memory could be occupied by unrelated mappings.
 
+  * Q: The PC printed in ASan stack traces is consistently off by 1?
+  * A: This is not a bug but rather a design choice. It is hard to compute exact size of preceding instruction on CISC platforms. So ASan just decrements 1 which is enough for tools like addr2line or readelf to symbolize addresses.
+
 =Comments?=
 Send comments to address-sanitizer@googlegroups.com 
 or [https://plus.google.com/117014197169958493500 in Google+].
