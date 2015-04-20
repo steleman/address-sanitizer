@@ -2,7 +2,8 @@
 
 = AddressSanitizer for Mac: don’t be afraid. =
 
-Attention: some of the implementation details of ASan on Mac have changed recently and aren't reflected in this document yet. Please refer to the source.
+*ATTENTION*: most of the implementation details of ASan on Mac have changed in the past years and aren't reflected in this document. Please refer to the source. In particular, we are no longer using mach_override (which used to be a maintenance hell and didn't work on iOS) in favor of dyld interposition (see http://llvm.org/viewvc/llvm-project/compiler-rt/trunk/lib/interception/interception.h?view=markup) and re-exec()ution. This allows us to hook the allocation/deallocation routines early and eliminates the need to replace CFAllocator and wrap various CF* functions.
+Overall, we've stopped relying on most of the undocumented functions and assumptions.
 
 This document should cover the implementation details of AddressSanitizer for Mac OS, because there are notable differences from Linux. We are almost sure that not all the possible issues are covered here (and in the code), so any comments and suggestions are welcome.
 
