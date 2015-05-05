@@ -35,20 +35,18 @@ If you want something more robust come back later or wait for
 =Example=
 Here is a complete example of running the trace on a RE2 test:
 {{{
-// re2_hello_world.cc
+mkdir tracing_example
+cd tracing_example
+
+cat << EOF > re2_hello_world.cc
 #include "re2/re2.h"
 #include <cassert>
 int main(int argc, char **argv) {
   assert(argc == 3);
   return RE2::PartialMatch(/*text*/argv[1], /*re=*/argv[2]);
 }
+EOF
 
-}}}
-
-{{{
-mkdir tracing_example
-cd tracing_example
-cp ../re2_hello_world.cc .
 hg clone https://re2.googlecode.com/hg re2
 ASAN="-fsanitize=address" 
 TRACE="-fsanitize-coverage=3 -mllvm -sanitizer-coverage-experimental-tracing"
